@@ -36,3 +36,12 @@ void AAuraEnemy::UnHighlightActor()
 	GetMesh()->SetRenderCustomDepth(false);
 	Weapon->SetRenderCustomDepth(false);
 }
+
+
+void AAuraEnemy::BeginPlay()
+{
+	Super::BeginPlay();
+
+	// Enemies are a AI-PlayerController entities. No PlayerState. The owner and avatar are the same thing.
+	AbilitySystemComponent->InitAbilityActorInfo(this, this);
+}
