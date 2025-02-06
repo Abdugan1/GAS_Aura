@@ -8,13 +8,6 @@
 #include "UI/Widget/AuraUserWidget.h"
 #include "UI/WidgetController/OverlayWidgetController.h"
 
-void AAuraHUD::BeginPlay()
-{
-	Super::BeginPlay();
-
-
-}
-
 
 UOverlayWidgetController* AAuraHUD::GetOverlayWidgetController(const FWidgetControllerParams& WidgetControllerParams)
 {
@@ -41,7 +34,16 @@ void AAuraHUD::InitOverlay(APlayerController* PC, APlayerState* PS, UAbilitySyst
 	UOverlayWidgetController *WidgetController = GetOverlayWidgetController(WidgetControllerParams);
 
 	OverlayWidget->SetWidgetController(WidgetController);
+
+	/**
+	 * So the controller sends events whenever attributes specified changes.
+	 * To keep the UI up-to-date. If these two aren't called, no events will be sent.
+	 */
 	WidgetController->BroadcastInitialValues();
+
+	// TODO: Stephen calls this in AAuraHUD::GetOverlayWidgetController,
+	// after OverlayWidgetController->SetWidgetControllerParams(WidgetControllerParams);
+	WidgetController->BindCallbacksToDependencies();
 	
 	Widget->AddToViewport();
 }

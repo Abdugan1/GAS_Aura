@@ -49,8 +49,21 @@ class AURA_API UAuraWidgetController : public UObject
 public:
 	UFUNCTION(BlueprintCallable)
 	void SetWidgetControllerParams(const FWidgetControllerParams &WidgetControllerParams);
-	
+
+	/**
+	 * This is necessary to because initial values DO NOT trigger any events.
+	 * So just to keep our UI up-to-date, we need to broadcast it manually.
+	 * All child classes must broadcast on their own.
+	 *
+	 * Called in Aura
+	 */
 	virtual void BroadcastInitialValues();
+
+	/**
+	 * Bind necessary ASC's attributes to callbacks, broadcasts.
+	 * All child classes must do it on their own.
+	 */
+	virtual void BindCallbacksToDependencies();
 	
 protected:
 	UPROPERTY(BlueprintReadOnly, Category="WidgetController")

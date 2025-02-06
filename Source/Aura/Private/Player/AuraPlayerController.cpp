@@ -31,6 +31,7 @@ void AAuraPlayerController::BeginPlay()
 	check(AuraContext);
 
 	UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(GetLocalPlayer());
+	// TODO: Don't know why we need to do this. It's because of multiplayer. Need further investigations.
 	if (Subsystem)
 	{
 		Subsystem->AddMappingContext(AuraContext, 0);

@@ -19,16 +19,17 @@ UCLASS()
 class AURA_API AAuraHUD : public AHUD
 {
 	GENERATED_BODY()
-protected:
-	virtual void BeginPlay() override;	
+public:
+	UOverlayWidgetController* GetOverlayWidgetController(const FWidgetControllerParams &WidgetControllerParams);
+
+	/**
+	 * Inits the overlay(HUD). We need these params to pass them into the controller.
+	 */
+	void InitOverlay(APlayerController *PC, APlayerState* PS, UAbilitySystemComponent *ASC, UAttributeSet *AS);
 	
 public:
 	UPROPERTY()
 	TObjectPtr<UAuraUserWidget> OverlayWidget;
-
-	UOverlayWidgetController* GetOverlayWidgetController(const FWidgetControllerParams &WidgetControllerParams);
-
-	void InitOverlay(APlayerController *PC, APlayerState* PS, UAbilitySystemComponent *ASC, UAttributeSet *AS);
 	
 private:
 	UPROPERTY(EditAnywhere)

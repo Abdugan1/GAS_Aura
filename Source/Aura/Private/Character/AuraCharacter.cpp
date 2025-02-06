@@ -57,6 +57,10 @@ void AAuraCharacter::OnRep_PlayerState()
 }
 
 
+/**
+ * This is basically called in both the client and sever.
+ * No need to worry about PlayerState and PlayerController whether we received it.
+ */
 void AAuraCharacter::InitAbilityActorInfo()
 {
 	AAuraPlayerState* AuraPlayerState = GetPlayerState<AAuraPlayerState>();
@@ -67,6 +71,7 @@ void AAuraCharacter::InitAbilityActorInfo()
 	
 	AttributeSet = AuraPlayerState->GetAttributeSet();
 
+	// Clients do NOT have a PlayerController for all Pawns. Only the client's pawn has a valid controller.
 	if (AAuraPlayerController* AuraPlayerController =  Cast<AAuraPlayerController>(GetController()))
 	{
 		if (AAuraHUD *AuraHUD = Cast<AAuraHUD>(AuraPlayerController->GetHUD()))
