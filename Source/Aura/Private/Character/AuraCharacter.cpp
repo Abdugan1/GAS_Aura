@@ -71,6 +71,7 @@ void AAuraCharacter::InitAbilityActorInfo()
 	
 	AttributeSet = AuraPlayerState->GetAttributeSet();
 
+	// Basically we are setting up the UI, i.e., the HUD.
 	// Clients do NOT have a PlayerController for all Pawns. Only the client's pawn has a valid controller.
 	if (AAuraPlayerController* AuraPlayerController =  Cast<AAuraPlayerController>(GetController()))
 	{
