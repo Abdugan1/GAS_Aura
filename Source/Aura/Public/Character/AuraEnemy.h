@@ -24,4 +24,8 @@ public:
 
 protected:
 	virtual void BeginPlay() override;
+
+	/* AuraCharacterBase interface */
+	virtual void InitAbilityActorInfo() override;
+	/* end AuraCharacterBase interface */
 };

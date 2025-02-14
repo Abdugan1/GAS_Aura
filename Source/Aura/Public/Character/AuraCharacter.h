@@ -23,8 +23,8 @@ public:
 	virtual void OnRep_PlayerState() override;
 	/** end Init AbilitySystem **/
 
-private:
-	void InitAbilityActorInfo();
+protected:
+	virtual void InitAbilityActorInfo() override;
 	
 protected:
 	UPROPERTY(VisibleAnywhere, Category="Components")

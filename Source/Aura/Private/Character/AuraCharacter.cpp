@@ -4,6 +4,7 @@
 #include "Character/AuraCharacter.h"
 
 #include "AbilitySystemComponent.h"
+#include "AbilitySystem/AuraAbilitySystemComponent.h"
 #include "Camera/CameraComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/SpringArmComponent.h"
@@ -68,6 +69,9 @@ void AAuraCharacter::InitAbilityActorInfo()
 	
 	AbilitySystemComponent = AuraPlayerState->GetAbilitySystemComponent();
 	AbilitySystemComponent->InitAbilityActorInfo(AuraPlayerState, this);
+
+	// We must call this to broadcast effects applied
+	Cast<UAuraAbilitySystemComponent>(AbilitySystemComponent)->AbilityActorInfoSet();
 	
 	AttributeSet = AuraPlayerState->GetAttributeSet();
 
