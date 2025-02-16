@@ -25,6 +25,12 @@ void UAuraAttributeSet::PreAttributeChange(const FGameplayAttribute& Attribute, 
 	// It seems it's changing the CurrentValue. So when you pick up several health potions, your Health actually exceeds the HealthMax.
 	// So when you get hurt, health does not change until the BaseValue is lower than the MaxValue.
 	// There's another function named 'PreAttributeBaseValue'. The same logic is applied there, but it clamps both values.
+
+	// Future me. The comment above is not accurate. Check the docs to gain true explanation.
+	// For now, I know that this does clamp, but not what you expect. It ONLY clamps the final value.
+	// Something out there still has a different value. If you overflow your health to 150,
+	// and your MaxHealth is 100, then it clamps the final value to 100, but somewhere there, there's still
+	// calculations going on to 150!
 	if (Attribute == GetHealthAttribute())
 	{
 		NewValue = FMath::Clamp(NewValue, 0.0f, GetMaxHealth());
@@ -32,6 +38,25 @@ void UAuraAttributeSet::PreAttributeChange(const FGameplayAttribute& Attribute, 
 	if (Attribute == GetManaAttribute())
 	{
 		NewValue = FMath::Clamp(NewValue, 0.0f, GetMaxMana());
+	}
+}
+
+
+void UAuraAttributeSet::PostGameplayEffectExecute(const FGameplayEffectModCallbackData& Data)
+{
+	Super::PostGameplayEffectExecute(Data);
+
+	FEffectProperties EffectProperties;
+	SetEffectProperties(Data, EffectProperties);
+
+	// This helps to prevent overflow. Doesn't understand how though.
+	if (Data.EvaluatedData.Attribute == GetHealthAttribute())
+	{
+		SetHealth(FMath::Clamp(GetHealth(), 0.0f, GetMaxHealth()));
+	}
+	if (Data.EvaluatedData.Attribute == GetManaAttribute())
+	{
+		SetMana(FMath::Clamp(GetMana(), 0.0f, GetMaxMana()));
 	}
 }
 
@@ -78,15 +103,6 @@ void UAuraAttributeSet::SetEffectProperties(const FGameplayEffectModCallbackData
 		EffectProperties.TargetAbilitySystemComponent = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(
 			EffectProperties.TargetAvatarActor);
 	}
-}
-
-
-void UAuraAttributeSet::PostGameplayEffectExecute(const FGameplayEffectModCallbackData& Data)
-{
-	Super::PostGameplayEffectExecute(Data);
-
-	FEffectProperties EffectProperties;
-	SetEffectProperties(Data, EffectProperties);
 }
 
 
