@@ -18,9 +18,4 @@ void UAuraAbilitySystemComponent::OnEffectAppliedToSelf(UAbilitySystemComponent*
 	EffectSpec.GetAllAssetTags(AssetTags);
 
 	EffectAssetTags.Broadcast(AssetTags);
-	
-	for (FGameplayTag Tag : AssetTags)
-	{
-		
-	}
 }
