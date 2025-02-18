@@ -58,6 +58,15 @@ void AAuraCharacter::OnRep_PlayerState()
 }
 
 
+int32 AAuraCharacter::GetPlayerLevel()
+{
+	const AAuraPlayerState* AuraPlayerState = GetPlayerState<AAuraPlayerState>();
+	check(AuraPlayerState);
+
+	return AuraPlayerState->GetPlayerLevel(); 
+}
+
+
 /**
  * This is basically called in both the client and sever.
  * No need to worry about PlayerState and PlayerController whether we received it.
