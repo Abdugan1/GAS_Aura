@@ -186,8 +186,6 @@ public:
 	FGameplayAttributeData MaxHealth;
 	ATTRIBUTE_ACCESSORS(UAuraAttributeSet, MaxHealth)
 	
-	// MaxHealth and MaxMana???
-	
 	/**
 	 * Vital Attributes
 	 */
