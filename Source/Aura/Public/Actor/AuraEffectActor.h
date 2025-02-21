@@ -38,12 +38,22 @@ public:
 protected:
 	virtual void BeginPlay() override;
 
+	/**
+	 * You can use this, but this class relies more on the OnOverlap and OnEndOverlap functions.
+	 * -- THESE functions depend on application and removal policies. This function does NOT do that.
+	 * You have to manually remove your effects
+	 * */
 	UFUNCTION(BlueprintCallable)
 	void ApplyEffectToTarget(AActor *TargetActor, TSubclassOf<UGameplayEffect> GameplayEffectClass);
 
+	/** This function automatically applies the effects based on their Application Policy */
 	UFUNCTION(BlueprintCallable)
 	void OnOverlap(AActor *TargetActor);
 
+	/**
+	 * This function automatically removes effects based on their Removal Policies
+	 * Also can apply effects if their Application Policy is ApplyOnEndOverlap.
+	 */
 	UFUNCTION(BlueprintCallable)
 	void OnEndOverlap(AActor *TargetActor);
 	
