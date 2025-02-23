@@ -75,7 +75,9 @@ void AAuraCharacter::InitAbilityActorInfo()
 {
 	AAuraPlayerState* AuraPlayerState = GetPlayerState<AAuraPlayerState>();
 	check(AuraPlayerState);
-	
+
+	// Ability System Comp and Attribute Set is in the PlayerState.
+	// So we need to set our pointers to it. Otherwise, it always returns nullptr.
 	AbilitySystemComponent = AuraPlayerState->GetAbilitySystemComponent();
 	AbilitySystemComponent->InitAbilityActorInfo(AuraPlayerState, this);
 

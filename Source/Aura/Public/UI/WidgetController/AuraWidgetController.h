@@ -57,6 +57,7 @@ public:
 	 *
 	 * Called in Aura
 	 */
+	UFUNCTION(BlueprintCallable)
 	virtual void BroadcastInitialValues();
 
 	/**
