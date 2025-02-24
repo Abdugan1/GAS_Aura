@@ -8,6 +8,10 @@
 #include "Engine/DataAsset.h"
 #include "AttributeInfo.generated.h"
 
+/**
+ * Used for updating Attribute Menu. Everytime an attribute changes,
+ * AttributeMenuWidgetController sends this with AttributeValue deviated.
+ */
 USTRUCT(BlueprintType)
 struct FAuraAttributeInfo
 {
@@ -30,7 +34,8 @@ public:
 };
 
 /**
- * 
+ * DataAsset to assign every attribute need to its own GameplayTag.
+ * So it's easier to find an attribute changed
  */
 UCLASS()
 class AURA_API UAttributeInfo : public UDataAsset

@@ -7,7 +7,8 @@
 #include "AuraUserWidget.generated.h"
 
 /**
- * 
+ * Design based. User created WBPs should have their own widget controller.
+ * The controller is responsible to retrieve and serve data.
  */
 UCLASS()
 class AURA_API UAuraUserWidget : public UUserWidget

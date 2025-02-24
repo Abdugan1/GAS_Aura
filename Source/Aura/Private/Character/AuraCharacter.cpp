@@ -43,6 +43,9 @@ void AAuraCharacter::PossessedBy(AController* NewController)
 {
 	Super::PossessedBy(NewController);
 	InitAbilityActorInfo();
+	// Since Abilities are granted in the server, 
+	// and this function works in the server, we are good.
+	AddCharacterAbilities();
 }
 
 

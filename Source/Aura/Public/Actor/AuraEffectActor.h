@@ -27,6 +27,11 @@ enum class EEffectRemovalPolicy
 	DoNotRemove,
 };
 
+/**
+ * You can consider this as a pick-ups. I guess it can be used more than a pick-up,
+ * since the developer decides what to do. We add a sphere/any collision and a mesh.
+ * When it enters the collision, it applies the effects
+ */
 UCLASS()
 class AURA_API AAuraEffectActor : public AActor
 {

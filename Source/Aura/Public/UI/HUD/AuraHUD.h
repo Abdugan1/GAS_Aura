@@ -21,8 +21,16 @@ class AURA_API AAuraHUD : public AHUD
 {
 	GENERATED_BODY()
 public:
+	/**
+	 * Singleton. Is used in our BlueprintLibrary. Set the params and calls BindCallbacksToDependencies immediately.
+	 * If already exists, just returns existing object.
+	 */
 	UOverlayWidgetController* GetOverlayWidgetController(const FWidgetControllerParams &WidgetControllerParams);
 
+	/**
+	 * Singleton. Is used in our BlueprintLibrary. Set the params and calls BindCallbacksToDependencies immediately.
+	 * If already exists, just returns existing object.
+	 */
 	UAttributeMenuWidgetController* GetAttributeMenuController(const FWidgetControllerParams &WidgetControllerParams);
 
 	/**

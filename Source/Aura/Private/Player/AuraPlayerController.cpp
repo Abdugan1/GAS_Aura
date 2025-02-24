@@ -3,9 +3,13 @@
 
 #include "Player/AuraPlayerController.h"
 
+#include "AbilitySystemBlueprintLibrary.h"
 #include "EnhancedInputSubsystems.h"
 #include "EnhancedInputComponent.h"
+#include "GameplayTagContainer.h"
+#include "AbilitySystem/AuraAbilitySystemComponent.h"
 #include "Character/AuraCharacter.h"
+#include "Input/AuraInputComponent.h"
 #include "Interaction/EnemyInterface.h"
 #include "Player/AuraPlayerState.h"
 
@@ -52,9 +56,10 @@ void AAuraPlayerController::SetupInputComponent()
 {
 	Super::SetupInputComponent();
 
-	UEnhancedInputComponent* EnhancedInputComponent = CastChecked<UEnhancedInputComponent>(InputComponent);
+	UAuraInputComponent* AuraInputComponent = CastChecked<UAuraInputComponent>(InputComponent);
 
-	EnhancedInputComponent->BindAction(MoveAction, ETriggerEvent::Triggered, this, &AAuraPlayerController::Move);
+	AuraInputComponent->BindAction(MoveAction, ETriggerEvent::Triggered, this, &AAuraPlayerController::Move);
+	AuraInputComponent->BindAbilityActions(InputConfig, this, &ThisClass::AbilityInputTagPressed, &ThisClass::AbilityInputKeyReleased, &ThisClass::AbilityInputKeyHeld);
 }
 
 
@@ -136,3 +141,39 @@ void AAuraPlayerController::CursorTrace()
 		}
 	}
 }
+
+
+void AAuraPlayerController::AbilityInputTagPressed(FGameplayTag Tag)
+{
+	// GEngine->AddOnScreenDebugMessage(1, 3.f, FColor::Red, *Tag.ToString());
+}
+
+
+void AAuraPlayerController::AbilityInputKeyReleased(FGameplayTag Tag)
+{
+	if (GetAuraAbilitySystemComponent() != nullptr)
+	{
+		GetAuraAbilitySystemComponent()->AbilityInputKeyReleased(Tag);
+	}
+}
+
+
+void AAuraPlayerController::AbilityInputKeyHeld(FGameplayTag Tag)
+{
+	if (GetAuraAbilitySystemComponent() != nullptr)
+	{
+		GetAuraAbilitySystemComponent()->AbilityInputKeyHeld(Tag);
+	}
+}
+
+
+UAuraAbilitySystemComponent* AAuraPlayerController::GetAuraAbilitySystemComponent()
+{
+	if (AuraAbilitySystemComponent == nullptr)
+	{
+		AuraAbilitySystemComponent = Cast<UAuraAbilitySystemComponent>(
+			UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(GetPawn<APawn>()));
+	}
+	return AuraAbilitySystemComponent;
+}
+

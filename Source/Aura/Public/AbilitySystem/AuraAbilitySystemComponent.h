@@ -27,6 +27,16 @@ public:
 	 * Broadcasts the effect's AssetTags whenever it's applied to self.
 	 */
 	FEffectAssetTags EffectAssetTags;
+
+	void AddCharacterAbilities(const TArray<TSubclassOf<UGameplayAbility>>& StartupAbilities);
+
+	// void AbilityInputTagPressed(FGameplayTag InputTag);
+
+	/** Calls AbilitySpecInputReleased. Does NOT cancel the ability. */
+	void AbilityInputKeyReleased(FGameplayTag InputTag);
+
+	/** Calls AbilitySpecInputPressed. TRYies to enable the ability. Does NOT enable if already enabled */
+	void AbilityInputKeyHeld(FGameplayTag InputTag);
 	
 protected:
 	/**

@@ -7,7 +7,7 @@
 #include "AuraAssetManager.generated.h"
 
 /**
- * 
+ * Used as means to init native GameplayTags
  */
 UCLASS()
 class AURA_API UAuraAssetManager : public UAssetManager
