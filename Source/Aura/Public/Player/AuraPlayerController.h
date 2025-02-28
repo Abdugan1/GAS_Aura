@@ -59,7 +59,8 @@ private:
 
 	UPROPERTY()
 	TObjectPtr<UAuraAbilitySystemComponent> AuraAbilitySystemComponent;
-	
+
+	FHitResult CursorHit;
 	TScriptInterface<IEnemyInterface> LastActor;
 	TScriptInterface<IEnemyInterface> CurrentActor;
 

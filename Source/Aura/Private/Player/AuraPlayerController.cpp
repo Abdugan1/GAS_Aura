@@ -36,61 +36,24 @@ void AAuraPlayerController::PlayerTick(float DeltaTime)
 
 void AAuraPlayerController::CursorTrace()
 {
-	FHitResult Hit;
-	GetHitResultUnderCursor(ECC_Visibility, false, Hit);
-	if (!Hit.bBlockingHit)
+	GetHitResultUnderCursor(ECC_Visibility, false, CursorHit);
+	if (!CursorHit.bBlockingHit)
 	{
 		return;
 	}
 
 	LastActor = CurrentActor;
-	CurrentActor = Hit.GetActor();
-
-	/*
-	 * Line trance from the cursor. There are several scenarios:
-	 * A. LastActor is null && CurrentActor is null
-	 *  - Do nothing.
-	 * B. LastActor is null && CurrentActor is valid
-	 *  - Highlight CurrentActor
-	 * C. LastActor is valid && CurrentActor is null
-	 *  - UnHighlight LastActor
-	 * D. Both actors are valid, but LastActor != CurrentActor
-	 *  - UnHighlight LastActor, and Highlight CurrentActor
-	 * E. Both actors are valid, and are the same actor
-	 *  - Do nothing.
-	 */
+	CurrentActor = CursorHit.GetActor();
 	
-	if (LastActor == nullptr)
+	if (LastActor != CurrentActor)
 	{
-		if (CurrentActor != nullptr)
+		if (LastActor)
 		{
-			// Case B
-			CurrentActor->HighlightActor();
-		}
-		else
-		{
-			// Case A -- do nothing.
-		}
-	}
-	else // LastActor is valid
-	{
-		if (CurrentActor == nullptr)
-		{
-			// Case C
 			LastActor->UnHighlightActor();
 		}
-		else // both actors are valid
+		if (CurrentActor)
 		{
-			if (LastActor != CurrentActor)
-			{
-				// Case D
-				LastActor->UnHighlightActor();
-				CurrentActor->HighlightActor();
-			}
-			else
-			{
-				// Case E -- do nothing.
-			}
+			CurrentActor->HighlightActor();
 		}
 	}
 }
@@ -239,10 +202,9 @@ void AAuraPlayerController::AbilityInputKeyHeld(FGameplayTag Tag)
 	FollowTime += GetWorld()->GetDeltaSeconds();
 
 	// Get the location under the cursor and move there
-	FHitResult Hit;
-	if (GetHitResultUnderCursor(ECC_Visibility, false, Hit))
+	if (CursorHit.bBlockingHit)
 	{
-		CachedDestination = Hit.ImpactPoint;
+		CachedDestination = CursorHit.ImpactPoint;
 	}
 
 	if (APawn* ControlledPawn = GetPawn<APawn>())

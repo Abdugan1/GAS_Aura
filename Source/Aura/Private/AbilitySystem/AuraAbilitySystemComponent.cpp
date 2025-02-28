@@ -8,7 +8,7 @@
 
 void UAuraAbilitySystemComponent::AbilityActorInfoSet()
 {
-	OnGameplayEffectAppliedDelegateToSelf.AddUObject(this, &UAuraAbilitySystemComponent::OnEffectAppliedToSelf);
+	OnGameplayEffectAppliedDelegateToSelf.AddUObject(this, &UAuraAbilitySystemComponent::ClientOnEffectAppliedToSelf);
 }
 
 
@@ -64,7 +64,7 @@ void UAuraAbilitySystemComponent::AbilityInputKeyHeld(FGameplayTag InputTag)
 }
 
 
-void UAuraAbilitySystemComponent::OnEffectAppliedToSelf(UAbilitySystemComponent* AbilitySystemComponent,
+void UAuraAbilitySystemComponent::ClientOnEffectAppliedToSelf_Implementation(UAbilitySystemComponent* AbilitySystemComponent,
                                                         const FGameplayEffectSpec& EffectSpec,
                                                         FActiveGameplayEffectHandle ActiveGameplayEffectHandle)
 {

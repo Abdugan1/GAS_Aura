@@ -43,5 +43,6 @@ protected:
 	 * This gets called whenever an effect is applied to self.
 	 * NOTE: To get this callback to work, users MUST call AbilityActorInfoSet. See the definition for more.
 	 */
-	void OnEffectAppliedToSelf(UAbilitySystemComponent* AbilitySystemComponent, const FGameplayEffectSpec& EffectSpec, FActiveGameplayEffectHandle ActiveGameplayEffectHandle);
+	 UFUNCTION(Client, Reliable)
+	void ClientOnEffectAppliedToSelf(UAbilitySystemComponent* AbilitySystemComponent, const FGameplayEffectSpec& EffectSpec, FActiveGameplayEffectHandle ActiveGameplayEffectHandle);
 };
