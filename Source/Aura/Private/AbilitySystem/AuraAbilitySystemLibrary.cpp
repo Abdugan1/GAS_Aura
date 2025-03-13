@@ -11,6 +11,7 @@
 
 UOverlayWidgetController* UAuraAbilitySystemLibrary::GetOverlayWidgetController(const UObject* WorldContextObject)
 {
+	// TODO: PlayerController index is 0. Multiplayer issues?
 	if (APlayerController *PlayerController = UGameplayStatics::GetPlayerController(WorldContextObject, 0))
 	{
 		if (AAuraHUD* AuraHUD = Cast<AAuraHUD>(PlayerController->GetHUD()))
@@ -30,6 +31,7 @@ UOverlayWidgetController* UAuraAbilitySystemLibrary::GetOverlayWidgetController(
 UAttributeMenuWidgetController* UAuraAbilitySystemLibrary::GetAttributeMenuWidgetController(
 	const UObject* WorldContextObject)
 {
+	// TODO: PlayerController index is 0. Multiplayer issues?
 	if (APlayerController *PlayerController = UGameplayStatics::GetPlayerController(WorldContextObject, 0))
 	{
 		if (AAuraHUD *AuraHUD = Cast<AAuraHUD>(PlayerController->GetHUD()))

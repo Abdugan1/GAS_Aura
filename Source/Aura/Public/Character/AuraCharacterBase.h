@@ -33,11 +33,17 @@ protected:
 	void InitializeDefaultAttributes() const;
 
 	void AddCharacterAbilities() const;
-	
+
+	/** ICombatInterface */
+	virtual FVector GetCombatSocketLocation() override;
+	/** end ICombatInterface */
 protected:
 	UPROPERTY(EditAnywhere, Category = "Combat")
 	TObjectPtr<USkeletalMeshComponent> Weapon;
 
+	UPROPERTY(EditAnywhere, Category = "Combat")
+	FName WeaponTipSocketName;
+	
 	UPROPERTY()
 	TObjectPtr<UAbilitySystemComponent> AbilitySystemComponent;
 
