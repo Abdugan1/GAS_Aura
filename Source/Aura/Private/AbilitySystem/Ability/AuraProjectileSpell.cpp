@@ -12,11 +12,15 @@ void UAuraProjectileSpell::ActivateAbility(const FGameplayAbilitySpecHandle Hand
                                            const FGameplayEventData* TriggerEventData)
 {
 	Super::ActivateAbility(Handle, ActorInfo, ActivationInfo, TriggerEventData);
+}
 
+
+void UAuraProjectileSpell::SpawnProjectile()
+{
 	check(ProjectileClass);
 	
 	// Spawn projectiles only on the server. Projectiles MUST be replicated so it also appears on clients.
-	if (HasAuthority(&ActivationInfo))
+	if (GetAvatarActorFromActorInfo()->HasAuthority())
 	{
 		ICombatInterface *CombatInterface = Cast<ICombatInterface>(GetAvatarActorFromActorInfo());
 		if (CombatInterface)

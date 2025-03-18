@@ -175,7 +175,17 @@ void AAuraPlayerController::AbilityInputKeyReleased(FGameplayTag Tag)
 
 			// Point under cursor may be unreachable. So to avoid infinite running, replace the path's last point
 			// as our CachedDestination as we are comparing the distance using CachedDestination
-			CachedDestination = NavigationPath->PathPoints[NavigationPath->PathPoints.Num() - 1];
+			// Bug, in some cases, there is no path to the destination
+			if (NavigationPath->PathPoints.Num() > 0)
+			{
+				CachedDestination = NavigationPath->PathPoints[NavigationPath->PathPoints.Num() - 1];
+			}
+			else
+			{
+				// Path finding failed, setting CachedDestination to Zero and disabling AutoRunning
+				CachedDestination = FVector::ZeroVector;
+				bAutoRunning = false;
+			}
 			
 			bAutoRunning = true;
 		}
@@ -188,6 +198,8 @@ void AAuraPlayerController::AbilityInputKeyReleased(FGameplayTag Tag)
 
 void AAuraPlayerController::AbilityInputKeyHeld(FGameplayTag Tag)
 {
+	// NOTE: Includes code both for click-to-move and activation of GAs
+	
 	// If the button is not LBM || if we weren't hovering something during the press,
 	// We call GAS function
 	if (!Tag.MatchesTagExact(FAuraGameplayTags::Get().InputTag_LMB) || bTargeting)
