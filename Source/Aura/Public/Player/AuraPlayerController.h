@@ -46,6 +46,9 @@ private:
 	void AbilityInputKeyHeld(FGameplayTag Tag);
 
 	UAuraAbilitySystemComponent* GetAuraAbilitySystemComponent();
+
+	void ShiftPressed() { bShiftPressed = true; }
+	void ShiftReleased() { bShiftPressed = false; }
 	
 private:
 	UPROPERTY(EditAnywhere, Category="Input")
@@ -53,6 +56,9 @@ private:
 
 	UPROPERTY(EditAnywhere, Category = "Input")
 	TObjectPtr<UInputAction> MoveAction;
+
+	UPROPERTY(EditAnywhere, Category = "Input")
+	TObjectPtr<UInputAction> ShiftAction;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Input")
 	TObjectPtr<UAuraInputConfig> InputConfig;
@@ -70,6 +76,8 @@ private:
 	bool bAutoRunning = false;
 	bool bTargeting = false;
 
+	bool bShiftPressed = false;
+	
 	UPROPERTY(EditDefaultsOnly)
 	float AutoRunAcceptanceRadius = 50.f;
 

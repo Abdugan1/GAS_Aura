@@ -115,6 +115,8 @@ void AAuraPlayerController::SetupInputComponent()
 	UAuraInputComponent* AuraInputComponent = CastChecked<UAuraInputComponent>(InputComponent);
 
 	AuraInputComponent->BindAction(MoveAction, ETriggerEvent::Triggered, this, &AAuraPlayerController::Move);
+	AuraInputComponent->BindAction(ShiftAction, ETriggerEvent::Started, this, &AAuraPlayerController::ShiftPressed);
+	AuraInputComponent->BindAction(ShiftAction, ETriggerEvent::Completed, this, &AAuraPlayerController::ShiftReleased);
 	AuraInputComponent->BindAbilityActions(InputConfig, this, &ThisClass::AbilityInputTagPressed, &ThisClass::AbilityInputKeyReleased, &ThisClass::AbilityInputKeyHeld);
 }
 
@@ -150,7 +152,8 @@ void AAuraPlayerController::AbilityInputKeyReleased(FGameplayTag Tag)
 {
 	// If the button is not LBM || if we weren't hovering something during the press,
 	// We call GAS function
-	if (!Tag.MatchesTagExact(FAuraGameplayTags::Get().InputTag_LMB) || bTargeting)
+	if (!Tag.MatchesTagExact(FAuraGameplayTags::Get().InputTag_LMB)
+		|| (bTargeting || bShiftPressed))
 	{
 		if (GetAuraAbilitySystemComponent() != nullptr)
 		{
@@ -202,7 +205,8 @@ void AAuraPlayerController::AbilityInputKeyHeld(FGameplayTag Tag)
 	
 	// If the button is not LBM || if we weren't hovering something during the press,
 	// We call GAS function
-	if (!Tag.MatchesTagExact(FAuraGameplayTags::Get().InputTag_LMB) || bTargeting)
+	if (!Tag.MatchesTagExact(FAuraGameplayTags::Get().InputTag_LMB)
+		|| (bTargeting || bShiftPressed))
 	{
 		if (GetAuraAbilitySystemComponent() != nullptr)
 		{

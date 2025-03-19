@@ -15,7 +15,7 @@ void UAuraProjectileSpell::ActivateAbility(const FGameplayAbilitySpecHandle Hand
 }
 
 
-void UAuraProjectileSpell::SpawnProjectile()
+void UAuraProjectileSpell::SpawnProjectile(const FVector& ProjectileTargetLocation)
 {
 	check(ProjectileClass);
 	
@@ -26,11 +26,14 @@ void UAuraProjectileSpell::SpawnProjectile()
 		if (CombatInterface)
 		{
 			const FVector SocketLocation = CombatInterface->GetCombatSocketLocation();
+			 FRotator ProjectileRotation = (ProjectileTargetLocation - SocketLocation).Rotation();
+			// Enemies are shorter than Aura, so there will be a little incline.
+			// Setting this to 0 will do the trick
+			ProjectileRotation.Pitch = 0.f;
 			
 			FTransform SpawnTransform;
 			SpawnTransform.SetLocation(SocketLocation);
-
-			//TODO: Set the Projectile Rotation
+			SpawnTransform.SetRotation(ProjectileRotation.Quaternion());
 			
 			AAuraProjectile* Projectile = GetWorld()->SpawnActorDeferred<AAuraProjectile>(
 				ProjectileClass,

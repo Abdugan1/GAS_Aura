@@ -16,6 +16,7 @@ UTargetDataUnderMouse* UTargetDataUnderMouse::CreateTargetDataUnderMouse(UGamepl
 
 void UTargetDataUnderMouse::Activate()
 {
+	// If we are on the client, we send 
 	if (Ability->GetCurrentActorInfo()->IsLocallyControlled())
 	{
 		SendMouseCursorData();
@@ -68,7 +69,6 @@ void UTargetDataUnderMouse::SendMouseCursorData()
 void UTargetDataUnderMouse::OnTargetDataReplicatedCallback(const FGameplayAbilityTargetDataHandle& DataHandle,
 	FGameplayTag ActivationTag)
 {
-	// We received TargetData, tell GAS we don't need to cache that data, after that, broadcast the Data
 	AbilitySystemComponent->ConsumeClientReplicatedTargetData(GetAbilitySpecHandle(), GetActivationPredictionKey());
 	if (ShouldBroadcastAbilityTaskDelegates())
 	{
