@@ -8,6 +8,7 @@
 
 class UProjectileMovementComponent;
 class USphereComponent;
+class UNiagaraSystem;
 
 UCLASS()
 class AURA_API AAuraProjectile : public AActor
@@ -28,6 +29,18 @@ public:
 	TObjectPtr<UProjectileMovementComponent> MovementComponent;
 	
 private:
+	UPROPERTY(EditDefaultsOnly)
+	float LifeSpan = 8.f;
+	
 	UPROPERTY(VisibleAnywhere)
 	TObjectPtr<USphereComponent> SphereComponent;
+
+	UPROPERTY(EditAnywhere, Category = "Projectile|Impact")
+	TObjectPtr<UNiagaraSystem> ImpactEffect;
+
+	UPROPERTY(EditAnywhere, Category = "Projectile|Impact")
+	TObjectPtr<USoundBase> ImpactSound;
+	
+	UPROPERTY(VisibleAnywhere, Category = "Components")
+	UAudioComponent* LoopAudioComponent;
 };

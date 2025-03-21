@@ -25,4 +25,7 @@ public:
 	virtual int32 GetPlayerLevel();
 
 	virtual FVector GetCombatSocketLocation();
+
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
+	void SetFacingTarget(const FVector& FacingTarget);
 };

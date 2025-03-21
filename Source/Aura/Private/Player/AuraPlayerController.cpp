@@ -150,7 +150,7 @@ void AAuraPlayerController::AbilityInputTagPressed(FGameplayTag Tag)
 
 void AAuraPlayerController::AbilityInputKeyReleased(FGameplayTag Tag)
 {
-	// If the button is not LBM || if we weren't hovering something during the press,
+	// If the button is not LBM || if we weren't hovering something during the press || Shift was not pressed,
 	// We call GAS function
 	if (!Tag.MatchesTagExact(FAuraGameplayTags::Get().InputTag_LMB)
 		|| (bTargeting || bShiftPressed))
@@ -204,7 +204,7 @@ void AAuraPlayerController::AbilityInputKeyHeld(FGameplayTag Tag)
 	// NOTE: Includes code both for click-to-move and activation of GAs
 	
 	// If the button is not LBM || if we weren't hovering something during the press,
-	// We call GAS function
+	// We call GAS function || Shift was not pressed
 	if (!Tag.MatchesTagExact(FAuraGameplayTags::Get().InputTag_LMB)
 		|| (bTargeting || bShiftPressed))
 	{
