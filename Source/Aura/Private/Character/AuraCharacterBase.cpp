@@ -14,6 +14,10 @@ AAuraCharacterBase::AAuraCharacterBase()
 	PrimaryActorTick.bCanEverTick = false;
 
 	GetCapsuleComponent()->SetCollisionResponseToChannel(ECC_Camera, ECR_Ignore);
+	// GE_FireArea is applying the effect twice because it's overlapping both with the capsule and the mesh
+	// Turning overlap events on the capsule does the trick
+	GetCapsuleComponent()->SetGenerateOverlapEvents(false);
+	
 	GetMesh()->SetCollisionResponseToChannel(ECC_Camera, ECR_Ignore);
 	GetMesh()->SetCollisionResponseToChannel(ECC_Projectile, ECR_Overlap);
 	GetMesh()->SetGenerateOverlapEvents(true);

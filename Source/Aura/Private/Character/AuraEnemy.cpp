@@ -60,4 +60,6 @@ void AAuraEnemy::InitAbilityActorInfo()
 
 	// We must call this to broadcast effects applied
 	Cast<UAuraAbilitySystemComponent>(AbilitySystemComponent)->AbilityActorInfoSet();
+
+	InitializeDefaultAttributes();
 }
