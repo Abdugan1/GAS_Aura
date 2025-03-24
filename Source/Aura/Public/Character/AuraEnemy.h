@@ -32,6 +32,9 @@ public:
 	virtual int32 GetPlayerLevel() override;
 	/* end Combat Interface*/
 
+	UFUNCTION()
+	void HitReactTagChanced(const FGameplayTag CallbackTag, int32 NewCount);
+	
 	UPROPERTY(BlueprintAssignable, Category = "GAS|Attributes")
 	FOnHealthChangedSignature OnHealthChanged;
 
@@ -45,11 +48,17 @@ protected:
 	virtual void InitAbilityActorInfo() override;
 
 	virtual void InitializeDefaultAttributes() const override;
-	
 	/* end AuraCharacterBase interface */
-
+	
 private:
 	void InitUi();
+
+public:
+	UPROPERTY(BlueprintReadOnly, Category= "Combat")
+	bool bHitReacting = false;
+
+	UPROPERTY(BlueprintReadOnly, Category = "Combat")
+	float BaseWalkSpeed = 250.f;
 	
 protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Character Class Defaults")
