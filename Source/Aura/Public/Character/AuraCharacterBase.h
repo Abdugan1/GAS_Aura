@@ -27,7 +27,11 @@ public:
 
 	/** ICombatInterface */
 	virtual UAnimMontage* GetHitReactMontage_Implementation() override;
+	virtual void Die() override;
 	/** end ICombatInterface */
+
+	UFUNCTION(NetMulticast, Reliable)
+	virtual void MulticastHandleDeath();
 	
 protected:
 	virtual void InitAbilityActorInfo();
@@ -41,6 +45,15 @@ protected:
 	/** ICombatInterface */
 	virtual FVector GetCombatSocketLocation() override;
 	/** end ICombatInterface */
+
+	void Dissolve();
+
+	UFUNCTION(BlueprintImplementableEvent)
+	void StartMeshDissolveTimeline(UMaterialInstanceDynamic* DynamicMaterialInstance);
+
+	UFUNCTION(BlueprintImplementableEvent)
+	void StartWeaponDissolveTimeline(UMaterialInstanceDynamic* DynamicMaterialInstance);
+	
 protected:
 	UPROPERTY(EditAnywhere, Category = "Combat")
 	TObjectPtr<USkeletalMeshComponent> Weapon;
@@ -63,6 +76,13 @@ protected:
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Attributes")
 	TSubclassOf<UGameplayEffect> DefaultVitalAttributes;
 
+	/* Dissolve effects */
+	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Materials")
+	TObjectPtr<UMaterialInstance> MeshDissolveMaterialInstanceClass;
+
+	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Materials")
+	TObjectPtr<UMaterialInstance> WeaponDissolveMaterialInstanceClass;
+	
 private:
 	UPROPERTY(EditAnywhere, Category = "Abilities")
 	TArray<TSubclassOf<UGameplayAbility>> StartupAbilities;
