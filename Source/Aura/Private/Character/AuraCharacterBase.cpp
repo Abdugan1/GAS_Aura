@@ -115,6 +115,8 @@ FVector AAuraCharacterBase::GetCombatSocketLocation()
 
 void AAuraCharacterBase::Dissolve()
 {
+	// Dissolving is made setting the material of the mesh to the dissolving one.
+	// Basically, we are swapping the default mesh with a special one.
 	if (IsValid(MeshDissolveMaterialInstanceClass))
 	{
 		UMaterialInstanceDynamic* DissolveMaterialInstance = UMaterialInstanceDynamic::Create(MeshDissolveMaterialInstanceClass, this);

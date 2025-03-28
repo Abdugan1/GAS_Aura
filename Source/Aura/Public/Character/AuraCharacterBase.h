@@ -34,12 +34,22 @@ public:
 	virtual void MulticastHandleDeath();
 	
 protected:
+	/**
+	 * Meant to init ASC->InitAbilityActorInfo.
+	 * Users must call and implement this function on their own
+	 * as it's not called anywhere on the base class and is empty - does nothing.
+	 */
 	virtual void InitAbilityActorInfo();
 
+	/**
+	 * A convenient function to apply gameplay effects to self 
+	 */
 	void ApplyEffectToSelf(TSubclassOf<UGameplayEffect> GameplayEffectClass, float Level) const;
 
+	/** Initializes default attributes. */
 	virtual void InitializeDefaultAttributes() const;
 
+	/** Add default abilities to self. Only the server adds them. Then the GAS replication system takes care of the rest */
 	void AddCharacterAbilities() const;
 
 	/** ICombatInterface */

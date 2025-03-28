@@ -8,7 +8,10 @@
 #include "Net/UnrealNetwork.h"
 #include "GameFramework/Character.h"
 #include "GameplayEffectExtension.h"
+#include "Aura/Aura.h"
 #include "Interaction/CombatInterface.h"
+#include "Kismet/GameplayStatics.h"
+#include "Player/AuraPlayerController.h"
 
 
 UAuraAttributeSet::UAuraAttributeSet()
@@ -19,7 +22,7 @@ UAuraAttributeSet::UAuraAttributeSet()
 void UAuraAttributeSet::PreAttributeChange(const FGameplayAttribute& Attribute, float& NewValue)
 {
 	Super::PreAttributeChange(Attribute, NewValue);
-
+	
 	// It seems it's changing the CurrentValue. So when you pick up several health potions, your Health actually exceeds the HealthMax.
 	// So when you get hurt, health does not change until the BaseValue is lower than the MaxValue.
 	// There's another function named 'PreAttributeBaseValue'. The same logic is applied there, but it clamps both values.
@@ -43,7 +46,7 @@ void UAuraAttributeSet::PreAttributeChange(const FGameplayAttribute& Attribute, 
 void UAuraAttributeSet::PostGameplayEffectExecute(const FGameplayEffectModCallbackData& Data)
 {
 	Super::PostGameplayEffectExecute(Data);
-
+	
 	FEffectProperties EffectProperties;
 	SetEffectProperties(Data, EffectProperties);
 
@@ -51,7 +54,6 @@ void UAuraAttributeSet::PostGameplayEffectExecute(const FGameplayEffectModCallba
 	if (Data.EvaluatedData.Attribute == GetHealthAttribute())
 	{
 		SetHealth(FMath::Clamp(GetHealth(), 0.0f, GetMaxHealth()));
-		UE_LOG(LogTemp, Warning, TEXT("Changed Health on %s, Health: %f"), *EffectProperties.TargetAvatarActor->GetName(), GetHealth());
 	}
 	if (Data.EvaluatedData.Attribute == GetManaAttribute())
 	{
@@ -59,6 +61,12 @@ void UAuraAttributeSet::PostGameplayEffectExecute(const FGameplayEffectModCallba
 	}
 	if (Data.EvaluatedData.Attribute == GetIncomingDamageAttribute())
 	{
+		// Damage is dealt by a meta attribute called IncomingDamage
+		// Here, we make the target die if the damage was fatal,
+		// else, we play hit react. Hit React is a common ability for all characters.
+		// We activate it by the Effect.HitReact tag. Also, we show a floating text of damage dealt.
+		// The text is only visible to the source, that is, if a client dealt the damage, only that client
+		// will see the floating text. Even the server will not see it.
 		const float LocalIncomingDamage = GetIncomingDamage();
 		SetIncomingDamage(0);
 		if (LocalIncomingDamage > 0.f)
@@ -82,6 +90,8 @@ void UAuraAttributeSet::PostGameplayEffectExecute(const FGameplayEffectModCallba
 				TagContainer.AddTag(FAuraGameplayTags::Get().Effects_HitReact);
 				EffectProperties.TargetAbilitySystemComponent->TryActivateAbilitiesByTag(TagContainer);
 			}
+
+			ShowFloatingText(EffectProperties, LocalIncomingDamage);
 		}
 	}
 }
@@ -128,6 +138,27 @@ void UAuraAttributeSet::SetEffectProperties(const FGameplayEffectModCallbackData
 		EffectProperties.TargetCharacter = Cast<ACharacter>(EffectProperties.TargetAvatarActor);
 		EffectProperties.TargetAbilitySystemComponent = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(
 			EffectProperties.TargetAvatarActor);
+	}
+}
+
+
+void UAuraAttributeSet::ShowFloatingText(const FEffectProperties& EffectProperties, float Damage) const
+{
+	if (EffectProperties.SourceCharacter != EffectProperties.TargetCharacter)
+	{
+		/** NOTE: This returns the server's player controller if the index is 0. */
+		
+		// if (AAuraPlayerController* PC = Cast<AAuraPlayerController>(
+		// 	UGameplayStatics::GetPlayerController(EffectProperties.SourceCharacter, 0)))
+		// {
+		// 	PC->ShowDamageNumber(Damage, EffectProperties.TargetCharacter);
+		// }
+
+		/** The correct way to do it? */
+		if (AAuraPlayerController* PC = Cast<AAuraPlayerController>(EffectProperties.SourceCharacter->Controller))
+		{
+			PC->ShowDamageNumber(Damage, EffectProperties.TargetCharacter);
+		}
 	}
 }
 

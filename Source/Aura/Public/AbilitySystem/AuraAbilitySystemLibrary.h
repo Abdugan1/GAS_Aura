@@ -33,10 +33,11 @@ public:
 	UFUNCTION(BlueprintPure, Category = "AuraAbilitySystemLibrary|WidgetController")
 	static UAttributeMenuWidgetController* GetAttributeMenuWidgetController(const UObject* WorldContextObject);
 
-
+	/** Initializes a given ASC's (character's) default attributes using a special DataAsset */
 	UFUNCTION(BlueprintCallable, Category = "AuraAbilitySystemLibrary|WidgetController")
 	static void InitializeDefaultAttributes(const UObject* WorldContextObject, ECharacterClass CharacterClass, float Level, UAbilitySystemComponent* AbilitySystemComponent);
 
+	/** Initializes a given ASC's (character's) default abilities using a special DataAsset */
 	UFUNCTION(BlueprintCallable, Category = "AuraAbilitySystemLibrary|WidgetController")
 	static void GiveStartupAbilities(const UObject* WorldContextObject, UAbilitySystemComponent* AbilitySystemComponent);
 	
