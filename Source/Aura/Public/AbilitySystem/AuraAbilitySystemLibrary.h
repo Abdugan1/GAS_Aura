@@ -6,6 +6,7 @@
 #include "Kismet/BlueprintFunctionLibrary.h"
 #include "AuraAbilitySystemLibrary.generated.h"
 
+class UCharacterClassInfo;
 class UGameplayEffect;
 class UAttributeMenuWidgetController;
 class UOverlayWidgetController;
@@ -40,6 +41,10 @@ public:
 	/** Initializes a given ASC's (character's) default abilities using a special DataAsset */
 	UFUNCTION(BlueprintCallable, Category = "AuraAbilitySystemLibrary|WidgetController")
 	static void GiveStartupAbilities(const UObject* WorldContextObject, UAbilitySystemComponent* AbilitySystemComponent);
+
+	/** A convinient function to return the singleton UCharacterClassInfo from the GameMode class */
+	UFUNCTION(BlueprintCallable, Category = "AuraAbilitySystemLibrary|WidgetController")
+	static UCharacterClassInfo* GetCharacterClassInfo(const UObject* WorldContextObject);
 	
 private:
 	static void ApplyEffectToASC(UAbilitySystemComponent* AbilitySystemComponent, TSubclassOf<UGameplayEffect> GameplayEffectClass, float Level);
