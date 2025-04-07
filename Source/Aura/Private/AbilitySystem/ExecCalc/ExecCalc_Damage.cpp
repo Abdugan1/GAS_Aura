@@ -6,6 +6,7 @@
 #include <ThirdParty/ShaderConductor/ShaderConductor/External/DirectXShaderCompiler/include/dxc/DXIL/DxilConstants.h>
 
 #include "AbilitySystemComponent.h"
+#include "AuraAbilityTypes.h"
 #include "AuraGameplayTags.h"
 #include "AbilitySystem/AuraAbilitySystemLibrary.h"
 #include "AbilitySystem/AuraAttributeSet.h"
@@ -72,6 +73,8 @@ void UExecCalc_Damage::Execute_Implementation(const FGameplayEffectCustomExecuti
 	EvaluateParams.SourceTags = Spec.CapturedSourceTags.GetAggregatedTags();
 	EvaluateParams.TargetTags = Spec.CapturedTargetTags.GetAggregatedTags();
 
+	FGameplayEffectContextHandle EffectContextHandle = Spec.GetContext();
+	
 	// Getting the damage from SetByCaller
 	float Damage = Spec.GetSetByCallerMagnitude(FAuraGameplayTags::Get().Damage);
 
@@ -96,6 +99,7 @@ void UExecCalc_Damage::Execute_Implementation(const FGameplayEffectCustomExecuti
 	if (CurrentCriticalRandom < EffectiveCriticalHitChance)
 	{
 		// Critical Hit is a double-damage + CriticalHitDamage
+		UAuraAbilitySystemLibrary::SetIsCriticalHit(EffectContextHandle, true);
 		Damage = Damage * 2 + SourceCriticalHitDamage;
 	}
 
@@ -109,6 +113,7 @@ void UExecCalc_Damage::Execute_Implementation(const FGameplayEffectCustomExecuti
 	if (CurrentBlockRandom < BlockChance)
 	{
 		// Successful block! Halve the damage
+		UAuraAbilitySystemLibrary::SetIsBlockedHit(EffectContextHandle, true);
 		Damage /= 2.0f;
 	}
 

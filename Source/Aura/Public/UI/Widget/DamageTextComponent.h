@@ -16,5 +16,5 @@ class AURA_API UDamageTextComponent : public UWidgetComponent
 public:
 	/** This is a component - not the widget itself. In Blueprint, just add this event and set the text to this value */
 	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
-	void SetDamageText(float DamageText);
+	void SetDamageText(float DamageText, bool bBlockedHit, bool bCriticalHit);
 };

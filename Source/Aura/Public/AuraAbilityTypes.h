@@ -25,8 +25,8 @@ public:
 	bool IsCriticalHit() const { return bIsCriticalHit; }
 	bool IsBlockedHit() const { return bIsBlockedHit; }
 
-	void SetIsCriticalHit() { bIsCriticalHit = true; }
-	void SetIsBlockedHit() { bIsBlockedHit = false; }
+	void SetIsCriticalHit(bool bNewCriticalHit) { bIsCriticalHit = bNewCriticalHit; }
+	void SetIsBlockedHit(bool bNewBlockedHit) { bIsBlockedHit = bNewBlockedHit; }
 	
 protected:
 	UPROPERTY()
