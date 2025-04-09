@@ -36,6 +36,14 @@ public:
 	FGameplayTag Attributes_Secondary_MaxMana;
 	// ** end Secondary Attributes */
 
+	/** Resistances */
+	/** Look the damage types comment before adding anything here! */
+	FGameplayTag Attributes_Resistance_Fire;
+	FGameplayTag Attributes_Resistance_Lightning;
+	FGameplayTag Attributes_Resistance_Arcane;
+	FGameplayTag Attributes_Resistance_Physical;
+	/** end Resistances */
+	
 	//** Input */
 	FGameplayTag InputTag_LMB;
 	FGameplayTag InputTag_RMB;
@@ -46,7 +54,21 @@ public:
 	//** end Input */
 
 	//** Damage */
+	/**
+	 * If you want to add a damage type, do these:
+	 * 1. Add a correspond Gameplay Tag
+	 * 2. Add a corresponding RESISTANCE Gameplay Tag for the DamageType Gameplay Tag
+	 * 3. Initialize both GameplayTags InitializeNativeGameplayTags
+	 * 4. Add both GameplayTags to DamageTypesToResistances
+	 */
 	FGameplayTag Damage;
+	FGameplayTag Damage_Fire;
+	FGameplayTag Damage_Lightning;
+	FGameplayTag Damage_Arcane;
+	FGameplayTag Damage_Physical;
+
+	// DamageType Gameplay Tag -> Resistance GameplayTag to that Damage Type  
+	TMap<FGameplayTag, FGameplayTag> DamageTypesToResistances;
 	//** end Damage */
 
 	//** Effects */
