@@ -32,7 +32,8 @@ void UAuraProjectileSpell::SpawnProjectile(const FVector& ProjectileTargetLocati
 			 FRotator ProjectileRotation = (ProjectileTargetLocation - SocketLocation).Rotation();
 			// Enemies are shorter than Aura, so there will be a little incline.
 			// Setting this to 0 will do the trick
-			ProjectileRotation.Pitch = 0.f;
+			// UPDATE: It doesn't work for some reason when it's on a dedicated server.
+			// ProjectileRotation.Pitch = 0.f;
 			
 			FTransform SpawnTransform;
 			SpawnTransform.SetLocation(SocketLocation);

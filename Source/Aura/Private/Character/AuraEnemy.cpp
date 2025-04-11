@@ -74,7 +74,10 @@ void AAuraEnemy::BeginPlay()
 		EGameplayTagEventType::NewOrRemoved)
 	.AddUObject(this, &AAuraEnemy::HitReactTagChanced);
 
-	UAuraAbilitySystemLibrary::GiveStartupAbilities(this, AbilitySystemComponent);
+	if (HasAuthority())
+	{
+		UAuraAbilitySystemLibrary::GiveStartupAbilities(this, AbilitySystemComponent);
+	}
 	
 	InitUi();
 }
@@ -94,8 +97,11 @@ void AAuraEnemy::InitAbilityActorInfo()
 
 	// We must call this to broadcast effects applied
 	Cast<UAuraAbilitySystemComponent>(AbilitySystemComponent)->AbilityActorInfoSet();
-	
-	InitializeDefaultAttributes();
+
+	if (HasAuthority())
+	{
+		InitializeDefaultAttributes();
+	}
 }
 
 
