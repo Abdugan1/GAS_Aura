@@ -30,6 +30,9 @@ public:
 	/* Enemy interface */
 	virtual void HighlightActor() override;
 	virtual void UnHighlightActor() override;
+
+	virtual void SetCombatTarget_Implementation(AActor* NewCombatActor) override;
+	virtual AActor* GetCombatTarget_Implementation() override;
 	/* end Enemy interface */
 
 	/* Combat Interface */
@@ -78,6 +81,9 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
 	UWidgetComponent* HealthBarWidget;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
+	TObjectPtr<AActor> CombatTarget;
+	
 	UPROPERTY(EditAnywhere, Category = "AI")
 	TObjectPtr<UBehaviorTree> BehaviorTree;
 
