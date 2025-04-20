@@ -119,7 +119,7 @@ void UAuraAttributeSet::SetEffectProperties(const FGameplayEffectModCallbackData
 		EffectProperties.SourceController = EffectProperties.SourceAbilitySystemComponent->AbilityActorInfo.Get()->PlayerController.Get();
 
 		// Try to obtain the PlayerController from the Avatar anyway.
-		if (EffectProperties.SourceController == nullptr && EffectProperties.SourceController != nullptr)
+		if (EffectProperties.SourceController == nullptr && EffectProperties.SourceAvatarActor != nullptr)
 		{
 			if (const APawn* Pawn = Cast<APawn>(EffectProperties.SourceAvatarActor))
 			{
@@ -129,7 +129,8 @@ void UAuraAttributeSet::SetEffectProperties(const FGameplayEffectModCallbackData
 
 		if (EffectProperties.SourceController != nullptr)
 		{
-			EffectProperties.SourceCharacter = EffectProperties.SourceController->GetCharacter();
+			// EffectProperties.SourceCharacter = EffectProperties.SourceController->GetCharacter(); // For some reason, this doesn't work for enemies
+			EffectProperties.SourceCharacter = Cast<ACharacter>(EffectProperties.SourceController->GetPawn());
 		}
 	}
 
@@ -159,7 +160,15 @@ void UAuraAttributeSet::ShowFloatingText(const FEffectProperties& EffectProperti
 		// }
 
 		/** The correct way to do it? */
+
+		// If Aura causing damage
 		if (AAuraPlayerController* PC = Cast<AAuraPlayerController>(EffectProperties.SourceCharacter->Controller))
+		{
+			PC->ShowDamageNumber(Damage, EffectProperties.TargetCharacter, bBlockedHit, bCriticalHit);
+			return; // I need this because for some reason if I use "else if", it conflicts with this PC...
+		}
+		// If enemies causing damage
+		if (AAuraPlayerController* PC = Cast<AAuraPlayerController>(EffectProperties.TargetCharacter->Controller))
 		{
 			PC->ShowDamageNumber(Damage, EffectProperties.TargetCharacter, bBlockedHit, bCriticalHit);
 		}

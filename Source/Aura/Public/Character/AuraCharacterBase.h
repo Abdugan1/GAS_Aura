@@ -27,7 +27,12 @@ public:
 
 	/** ICombatInterface */
 	virtual UAnimMontage* GetHitReactMontage_Implementation() override;
+	
 	virtual void Die() override;
+
+	virtual bool IsDead_Implementation() const override;
+	
+	virtual AActor* GetAvatar_Implementation() override;
 	/** end ICombatInterface */
 
 	UFUNCTION(NetMulticast, Reliable)
@@ -53,7 +58,7 @@ protected:
 	void AddCharacterAbilities() const;
 
 	/** ICombatInterface */
-	virtual FVector GetCombatSocketLocation() override;
+	virtual FVector GetCombatSocketLocation_Implementation() override;
 	/** end ICombatInterface */
 
 	void Dissolve();
@@ -76,6 +81,9 @@ protected:
 
 	UPROPERTY()
 	TObjectPtr<UAttributeSet> AttributeSet;
+
+	UPROPERTY()
+	bool bIsDead = false;
 
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Attributes")
 	TSubclassOf<UGameplayEffect> DefaultPrimaryAttributes;

@@ -47,6 +47,18 @@ void AAuraCharacterBase::Die()
 }
 
 
+bool AAuraCharacterBase::IsDead_Implementation() const
+{
+	return bIsDead;
+}
+
+
+AActor* AAuraCharacterBase::GetAvatar_Implementation()
+{
+	return this;
+}
+
+
 void AAuraCharacterBase::MulticastHandleDeath_Implementation()
 {
 	Weapon->SetSimulatePhysics(true);
@@ -60,6 +72,8 @@ void AAuraCharacterBase::MulticastHandleDeath_Implementation()
 	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 
 	Dissolve();
+
+	bIsDead = true;
 }
 
 
@@ -106,7 +120,7 @@ void AAuraCharacterBase::AddCharacterAbilities() const
 }
 
 
-FVector AAuraCharacterBase::GetCombatSocketLocation()
+FVector AAuraCharacterBase::GetCombatSocketLocation_Implementation()
 {
 	check(Weapon);
 	return Weapon->GetSocketLocation(WeaponTipSocketName);
