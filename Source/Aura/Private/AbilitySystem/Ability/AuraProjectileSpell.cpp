@@ -10,6 +10,12 @@
 #include "Interaction/CombatInterface.h"
 #include "LevelInstance/LevelInstanceTypes.h"
 
+
+UAuraProjectileSpell::UAuraProjectileSpell()
+{
+	CombatSocketLocationTag = FAuraGameplayTags::Get().Montage_Attack_Weapon;
+}
+
 void UAuraProjectileSpell::ActivateAbility(const FGameplayAbilitySpecHandle Handle,
                                            const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo,
                                            const FGameplayEventData* TriggerEventData)
@@ -21,11 +27,15 @@ void UAuraProjectileSpell::ActivateAbility(const FGameplayAbilitySpecHandle Hand
 void UAuraProjectileSpell::SpawnProjectile(const FVector& ProjectileTargetLocation)
 {
 	check(ProjectileClass);
+	check(CombatSocketLocationTag.IsValid());
 	
 	// Spawn projectiles only on the server. Projectiles MUST be replicated so it also appears on clients.
 	if (GetAvatarActorFromActorInfo()->HasAuthority())
 	{
-		const FVector SocketLocation = ICombatInterface::Execute_GetCombatSocketLocation(GetAvatarActorFromActorInfo());
+		const FVector SocketLocation = ICombatInterface::Execute_GetCombatSocketLocation(
+			GetAvatarActorFromActorInfo(),
+			CombatSocketLocationTag
+			);
 		FRotator ProjectileRotation = (ProjectileTargetLocation - SocketLocation).Rotation();
 		// Enemies are shorter than Aura, so there will be a little incline.
 		// Setting this to 0 will do the trick

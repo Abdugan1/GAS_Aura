@@ -114,7 +114,7 @@ void AAuraEnemy::BeginPlay()
 	AbilitySystemComponent->RegisterGameplayTagEvent(
 		FAuraGameplayTags::Get().Effects_HitReact,
 		EGameplayTagEventType::NewOrRemoved)
-	.AddUObject(this, &AAuraEnemy::HitReactTagChanced);
+	.AddUObject(this, &AAuraEnemy::HitReactTagChanged);
 
 	if (HasAuthority())
 	{
@@ -125,7 +125,7 @@ void AAuraEnemy::BeginPlay()
 }
 
 
-void AAuraEnemy::HitReactTagChanced(const FGameplayTag Callbacktag, int32 NewCount)
+void AAuraEnemy::HitReactTagChanged(const FGameplayTag Callbacktag, int32 NewCount)
 {
 	bHitReacting = NewCount > 0;
 	GetCharacterMovement()->MaxWalkSpeed = bHitReacting ? 0.f : BaseWalkSpeed;

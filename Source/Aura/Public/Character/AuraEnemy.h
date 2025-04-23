@@ -41,7 +41,7 @@ public:
 	/* end Combat Interface*/
 
 	UFUNCTION()
-	void HitReactTagChanced(const FGameplayTag CallbackTag, int32 NewCount);
+	void HitReactTagChanged(const FGameplayTag CallbackTag, int32 NewCount);
 	
 	UPROPERTY(BlueprintAssignable, Category = "GAS|Attributes")
 	FOnHealthChangedSignature OnHealthChanged;
@@ -65,7 +65,7 @@ public:
 	UPROPERTY(BlueprintReadOnly, Category= "Combat")
 	bool bHitReacting = false;
 
-	UPROPERTY(BlueprintReadOnly, Category = "Combat")
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Combat")
 	float BaseWalkSpeed = 250.f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Combat")
