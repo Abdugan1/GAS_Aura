@@ -19,3 +19,16 @@ void UAuraDamageGameplayAbility::CauseDamage(AActor* TargetActor)
 
 	GetAbilitySystemComponentFromActorInfo()->ApplyGameplayEffectSpecToTarget(*SpecHandle.Data.Get(), UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(TargetActor));
 }
+
+
+FTaggedMontage UAuraDamageGameplayAbility::GetRandomTaggedMontageFromArray(const TArray<FTaggedMontage>& MontageArray) const
+{
+	if (MontageArray.Num() == 0)
+	{
+		UE_LOG(LogTemp, Error, TEXT("MontageArray is empty. Did forget to assign attack animations for %s?"), *GetAvatarActorFromActorInfo()->GetName());
+		return FTaggedMontage{};
+	}
+
+	const auto Selection = FMath::RandRange(0, MontageArray.Num() - 1);
+	return MontageArray[Selection];
+}

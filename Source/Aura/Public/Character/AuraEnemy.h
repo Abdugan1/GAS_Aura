@@ -91,8 +91,8 @@ protected:
 	TObjectPtr<AAuraAIController> AuraAIController;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "AI|BlackBoard")
-	FName HitReactingKey;
+	FName IsHitReactingKey;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "AI|BlackBoard")
-	FName RangedAttackerKey;
+	FName IsRangedAttackerKey;
 };

@@ -38,8 +38,8 @@ AAuraEnemy::AAuraEnemy()
 
 	GetCharacterMovement()->bUseControllerDesiredRotation = true;
 
-	HitReactingKey = "HitReacting";
-	RangedAttackerKey = "RangedAttacker";
+	IsHitReactingKey = "HitReacting";
+	IsRangedAttackerKey = "RangedAttacker";
 }
 
 
@@ -56,8 +56,8 @@ void AAuraEnemy::PossessedBy(AController* NewController)
 
 	AuraAIController->GetBlackboardComponent()->InitializeBlackboard(*BehaviorTree->BlackboardAsset);
 	AuraAIController->RunBehaviorTree(BehaviorTree);
-	AuraAIController->GetBlackboardComponent()->SetValueAsBool(HitReactingKey, false);
-	AuraAIController->GetBlackboardComponent()->SetValueAsBool(RangedAttackerKey, CharacterClass != ECharacterClass::Warrior);
+	AuraAIController->GetBlackboardComponent()->SetValueAsBool(IsHitReactingKey, false);
+	AuraAIController->GetBlackboardComponent()->SetValueAsBool(IsRangedAttackerKey, CharacterClass != ECharacterClass::Warrior);
 }
 
 
@@ -98,7 +98,9 @@ int32 AAuraEnemy::GetPlayerLevel()
 
 void AAuraEnemy::Die()
 {
+	AuraAIController->GetBrainComponent()->StopLogic(TEXT("Died"));
 	SetLifeSpan(LifeSpan);
+	
 	Super::Die();
 }
 
@@ -133,7 +135,7 @@ void AAuraEnemy::HitReactTagChanged(const FGameplayTag Callbacktag, int32 NewCou
 	if (HasAuthority())
 	{
 		// AI controller exists only on the Server
-		AuraAIController->GetBlackboardComponent()->SetValueAsBool(HitReactingKey, bHitReacting);
+		AuraAIController->GetBlackboardComponent()->SetValueAsBool(IsHitReactingKey, bHitReacting);
 	}
 }
 
