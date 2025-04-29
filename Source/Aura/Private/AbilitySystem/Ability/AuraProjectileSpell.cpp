@@ -13,7 +13,7 @@
 
 UAuraProjectileSpell::UAuraProjectileSpell()
 {
-	CombatSocketLocationTag = FAuraGameplayTags::Get().Montage_Attack_Weapon;
+	CombatSocketLocationTag = FAuraGameplayTags::Get().CombatSocket_Weapon;
 }
 
 void UAuraProjectileSpell::ActivateAbility(const FGameplayAbilitySpecHandle Handle,
