@@ -180,18 +180,23 @@ FVector AAuraCharacterBase::GetCombatSocketLocation_Implementation(const FGamepl
 	if (SocketTag.MatchesTagExact(GameplayTags.CombatSocket_Weapon))
 	{
 		check(Weapon);
-		check(WeaponTipSocketName.IsValid());
+		check(!WeaponTipSocketName.IsNone());
 		return Weapon->GetSocketLocation(WeaponTipSocketName); 
 	}
 	if (SocketTag.MatchesTagExact(GameplayTags.CombatSocket_LeftHand))
 	{
-		check(LeftHandSocketName.IsValid());
+		check(!LeftHandSocketName.IsNone());
 		return GetMesh()->GetSocketLocation(LeftHandSocketName);
 	}
 	if (SocketTag.MatchesTagExact(GameplayTags.CombatSocket_RightHand))
 	{
-		check(RightHandSocketName.IsValid());
+		check(!RightHandSocketName.IsNone());
 		return GetMesh()->GetSocketLocation(RightHandSocketName);
+	}
+	if (SocketTag.MatchesTagExact(GameplayTags.CombatSocket_Tail))
+	{
+		check(!TailSocketName.IsNone());
+		return GetMesh()->GetSocketLocation(TailSocketName);
 	}
 
 	UE_LOG(LogTemp, Warning, TEXT("GetCombatSocketLocation reached the end without any matches! Did you forget to set MontageTag?"));

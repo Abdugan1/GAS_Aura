@@ -13,7 +13,7 @@
 
 UAuraProjectileSpell::UAuraProjectileSpell()
 {
-	CombatSocketLocationTag = FAuraGameplayTags::Get().CombatSocket_Weapon;
+
 }
 
 void UAuraProjectileSpell::ActivateAbility(const FGameplayAbilitySpecHandle Handle,
@@ -24,26 +24,26 @@ void UAuraProjectileSpell::ActivateAbility(const FGameplayAbilitySpecHandle Hand
 }
 
 
-void UAuraProjectileSpell::SpawnProjectile(const FVector& ProjectileTargetLocation)
+void UAuraProjectileSpell::SpawnProjectile(const FVector& ProjectileTargetLocation,
+	const FGameplayTag& ProjectileSpawnSocketTag)
 {
 	check(ProjectileClass);
-	check(CombatSocketLocationTag.IsValid());
 	
 	// Spawn projectiles only on the server. Projectiles MUST be replicated so it also appears on clients.
 	if (GetAvatarActorFromActorInfo()->HasAuthority())
 	{
-		const FVector SocketLocation = ICombatInterface::Execute_GetCombatSocketLocation(
+		const FVector ProjectileSpawnLocation = ICombatInterface::Execute_GetCombatSocketLocation(
 			GetAvatarActorFromActorInfo(),
-			CombatSocketLocationTag
+			ProjectileSpawnSocketTag
 			);
-		FRotator ProjectileRotation = (ProjectileTargetLocation - SocketLocation).Rotation();
+		FRotator ProjectileRotation = (ProjectileTargetLocation - ProjectileSpawnLocation).Rotation();
 		// Enemies are shorter than Aura, so there will be a little incline.
 		// Setting this to 0 will do the trick
 		// UPDATE: It doesn't work for some reason when it's on a dedicated server.
 		// ProjectileRotation.Pitch = 0.f;
 			
 		FTransform SpawnTransform;
-		SpawnTransform.SetLocation(SocketLocation);
+		SpawnTransform.SetLocation(ProjectileSpawnLocation);
 		SpawnTransform.SetRotation(ProjectileRotation.Quaternion());
 			
 		AAuraProjectile* Projectile = GetWorld()->SpawnActorDeferred<AAuraProjectile>(
