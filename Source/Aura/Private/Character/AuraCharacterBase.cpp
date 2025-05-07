@@ -8,6 +8,7 @@
 #include "AbilitySystem/AuraAbilitySystemComponent.h"
 #include "Aura/Aura.h"
 #include "Components/CapsuleComponent.h"
+#include "Kismet/GameplayStatics.h"
 
 
 AAuraCharacterBase::AAuraCharacterBase()
@@ -26,6 +27,12 @@ AAuraCharacterBase::AAuraCharacterBase()
 	Weapon = CreateDefaultSubobject<USkeletalMeshComponent>("Weapon");
 	Weapon->SetupAttachment(GetMesh(), FName("WeaponHandSocket"));
 	Weapon->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+
+	// Magic Trick to use on Dedicated Servers
+	// https://forums.unrealengine.com/t/run-on-dedicated-server-cause-problems-with-socket-location/361012
+	// https://forums.unrealengine.com/t/cost-of-always-tick-pose-and-refresh-bones-on-dedicated-server/123973/2
+	// https://discordapp.com/channels/807733033192390676/1089687554070155364/1178232997900714054
+	GetMesh()->VisibilityBasedAnimTickOption = EVisibilityBasedAnimTickOption::AlwaysTickPoseAndRefreshBones;
 }
 
 
@@ -86,6 +93,8 @@ FTaggedMontage AAuraCharacterBase::GetTaggedMontageByTag_Implementation(const FG
 
 void AAuraCharacterBase::MulticastHandleDeath_Implementation()
 {
+	UGameplayStatics::PlaySoundAtLocation(this, DeathSound, GetActorLocation());
+	
 	Weapon->SetSimulatePhysics(true);
 	Weapon->SetEnableGravity(true);
 	Weapon->SetCollisionEnabled(ECollisionEnabled::PhysicsOnly);
@@ -101,6 +110,26 @@ void AAuraCharacterBase::MulticastHandleDeath_Implementation()
 	bIsDead = true;
 }
 
+
+void AAuraCharacterBase::Tick(float DeltaSeconds)
+{
+	Super::Tick(DeltaSeconds);
+	// if (IsValid(Weapon))
+	// {
+	// 	auto Location = Execute_GetCombatSocketLocation(this, FAuraGameplayTags::Get().CombatSocket_Weapon);
+	// 	DrawDebugSphere(GetWorld(), Location, 20, 32, FColor::Red);
+	// }
+	// if (!LeftHandSocketName.IsNone())
+	// {
+	// 	auto Location = Execute_GetCombatSocketLocation(this, FAuraGameplayTags::Get().CombatSocket_LeftHand);
+	// 	DrawDebugSphere(GetWorld(), Location, 20, 32, FColor::Yellow);
+	// }
+	// if (!RightHandSocketName.IsNone())
+	// {
+	// 	auto Location = Execute_GetCombatSocketLocation(this, FAuraGameplayTags::Get().CombatSocket_RightHand);
+	// 	DrawDebugSphere(GetWorld(), Location, 20, 32, FColor::Green);
+	// }
+}
 
 void AAuraCharacterBase::InitAbilityActorInfo()
 {

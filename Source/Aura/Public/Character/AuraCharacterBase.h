@@ -46,6 +46,8 @@ public:
 	virtual void MulticastHandleDeath();
 	
 protected:
+	virtual void Tick(float DeltaSeconds) override;
+	
 	/**
 	 * Meant to init ASC->InitAbilityActorInfo.
 	 * Users must call and implement this function on their own
@@ -91,6 +93,12 @@ protected:
 
 	UPROPERTY(EditAnywhere, Category = "Combat")
 	FName RightHandSocketName;
+
+	UPROPERTY(EditAnywhere, Category = "Combat")
+	USoundBase* DeathSound;
+
+	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Combat")
+	UNiagaraSystem* BloodEffect;
 	
 	UPROPERTY()
 	TObjectPtr<UAbilitySystemComponent> AbilitySystemComponent;
@@ -116,9 +124,6 @@ protected:
 
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Materials")
 	TObjectPtr<UMaterialInstance> WeaponDissolveMaterialInstanceClass;
-
-	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Combat")
-	UNiagaraSystem* BloodEffect;
 	
 private:
 	UPROPERTY(EditAnywhere, Category = "Abilities")

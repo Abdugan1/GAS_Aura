@@ -24,7 +24,7 @@ struct FTaggedMontage
 	FGameplayTag SocketTag;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-	USoundBase* Sound = nullptr;
+	USoundBase* ImpactSound = nullptr;
 	
 };
 
@@ -47,7 +47,7 @@ public:
 	virtual int32 GetPlayerLevel();
 
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
-	FVector GetCombatSocketLocation(const FGameplayTag& MontageTag);
+	FVector GetCombatSocketLocation(const FGameplayTag& SocketTag);
 
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
 	void SetFacingTarget(const FVector& FacingTarget);
