@@ -24,18 +24,18 @@ TArray<FVector> UAuraSummonAbility::GetSpawnLocations()
 
 		FHitResult Hit;
 		GetWorld()->LineTraceSingleByChannel(Hit, ChosenSpawnLocation + FVector{0.f, 0.f, 400.f}, ChosenSpawnLocation - FVector{0.f, 0.f, 400.f}, ECC_Visibility);
-		UKismetSystemLibrary::DrawDebugArrow(GetAvatarActorFromActorInfo(), ChosenSpawnLocation + FVector{0.f, 0.f, 400.f}, ChosenSpawnLocation - FVector{0.f, 0.f, 400.f}, 4.f, FColor::Black, 3);
 		if (Hit.bBlockingHit)
 		{
 			ChosenSpawnLocation = Hit.ImpactPoint;
 		}
 		
 		SpawnLocations.Add(ChosenSpawnLocation);
-		
-		DrawDebugSphere(GetWorld(), ChosenSpawnLocation, 18.f, 12, FColor::Cyan, false, 3.f);
-		UKismetSystemLibrary::DrawDebugArrow(GetAvatarActorFromActorInfo(), AvatarLocation, AvatarLocation + Direction * MaxSpawnDistance, 4.f, FColor::Green, 3);
-		DrawDebugSphere(GetWorld(), AvatarLocation + Direction * MaxSpawnDistance, 5.f, 12, FColor::Red, false, 3.f);
-		DrawDebugSphere(GetWorld(), AvatarLocation + Direction * MinSpawnDistance, 5.f, 12, FColor::Red, false, 3.f);
+
+		// UKismetSystemLibrary::DrawDebugArrow(GetAvatarActorFromActorInfo(), ChosenSpawnLocation + FVector{0.f, 0.f, 400.f}, ChosenSpawnLocation - FVector{0.f, 0.f, 400.f}, 4.f, FColor::Black, 3);
+		// DrawDebugSphere(GetWorld(), ChosenSpawnLocation, 18.f, 12, FColor::Cyan, false, 3.f);
+		// UKismetSystemLibrary::DrawDebugArrow(GetAvatarActorFromActorInfo(), AvatarLocation, AvatarLocation + Direction * MaxSpawnDistance, 4.f, FColor::Green, 3);
+		// DrawDebugSphere(GetWorld(), AvatarLocation + Direction * MaxSpawnDistance, 5.f, 12, FColor::Red, false, 3.f);
+		// DrawDebugSphere(GetWorld(), AvatarLocation + Direction * MinSpawnDistance, 5.f, 12, FColor::Red, false, 3.f);
 	}
 	
 	return SpawnLocations;

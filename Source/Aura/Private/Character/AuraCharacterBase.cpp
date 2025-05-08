@@ -97,6 +97,12 @@ int32 AAuraCharacterBase::GetMinionCount_Implementation()
 }
 
 
+void AAuraCharacterBase::IncrementMinionCount_Implementation(int32 Amount)
+{
+	MinionCount += Amount;
+}
+
+
 void AAuraCharacterBase::MulticastHandleDeath_Implementation()
 {
 	UGameplayStatics::PlaySoundAtLocation(this, DeathSound, GetActorLocation());
