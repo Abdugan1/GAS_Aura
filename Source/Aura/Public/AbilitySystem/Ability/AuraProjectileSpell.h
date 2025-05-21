@@ -18,8 +18,13 @@ public:
 	UAuraProjectileSpell();
 	
 protected:
-	virtual void ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData) override;
+	/** For now does nothing */
+	// virtual void ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData) override;
 
+	/**
+	 * Spawns a projectile of the ProjectileClass instance.
+	 * Applies DamageEffectClass to the projectile
+	 */
 	UFUNCTION(BlueprintCallable, Category = "Ability")
 	void SpawnProjectile(const FVector& ProjectileTargetLocation, const FGameplayTag& ProjectileSpawnSocketTag);
 		

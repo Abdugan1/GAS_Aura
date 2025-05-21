@@ -14,9 +14,14 @@ class AURA_API UAuraSummonAbility : public UAuraGameplayAbility
 {
 	GENERATED_BODY()
 protected:
+	/**
+	 * Returns spawn locations for Minions.
+	 * Could've used a EQS, but that will also do
+	 */
 	UFUNCTION(BlueprintCallable, Category = "Ability")
 	TArray<FVector> GetSpawnLocations();
 
+	/** Get Random Minion classes */
 	UFUNCTION(BlueprintPure, Category = "Ability")
 	TSubclassOf<APawn> GetRandomMinionClass();
 	

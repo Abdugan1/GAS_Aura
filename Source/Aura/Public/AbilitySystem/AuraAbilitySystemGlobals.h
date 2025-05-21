@@ -7,7 +7,7 @@
 #include "AuraAbilitySystemGlobals.generated.h"
 
 /**
- * 
+ * This is used to use my own FAuraGameplayEffectContext in the entire project. We also must use it in the editor.
  */
 UCLASS()
 class AURA_API UAuraAbilitySystemGlobals : public UAbilitySystemGlobals

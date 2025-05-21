@@ -22,7 +22,10 @@ public:
 	virtual bool NetSerialize(FArchive& Ar, class UPackageMap* Map, bool& bOutSuccess) override;
 	//** end BOILERPLATE */
 
+	/** Is it a critical hit?  */
 	bool IsCriticalHit() const { return bIsCriticalHit; }
+
+	/** Was it blocked? */
 	bool IsBlockedHit() const { return bIsBlockedHit; }
 
 	void SetIsCriticalHit(bool bNewCriticalHit) { bIsCriticalHit = bNewCriticalHit; }

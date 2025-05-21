@@ -22,6 +22,9 @@ TArray<FVector> UAuraSummonAbility::GetSpawnLocations()
 		const FVector Direction = LeftOfSpread.RotateAngleAxis(DeltaSpread * i, FVector::UpVector);
 		FVector ChosenSpawnLocation = AvatarLocation + Direction * FMath::FRandRange(MinSpawnDistance, MaxSpawnDistance);
 
+		/**
+		 * Since we're not using an EQS, we must make do with linetracing to prevent spawning inside walls
+		 */
 		FHitResult Hit;
 		GetWorld()->LineTraceSingleByChannel(Hit, ChosenSpawnLocation + FVector{0.f, 0.f, 400.f}, ChosenSpawnLocation - FVector{0.f, 0.f, 400.f}, ECC_Visibility);
 		if (Hit.bBlockingHit)
@@ -31,6 +34,7 @@ TArray<FVector> UAuraSummonAbility::GetSpawnLocations()
 		
 		SpawnLocations.Add(ChosenSpawnLocation);
 
+		/** Debug drawings */
 		// UKismetSystemLibrary::DrawDebugArrow(GetAvatarActorFromActorInfo(), ChosenSpawnLocation + FVector{0.f, 0.f, 400.f}, ChosenSpawnLocation - FVector{0.f, 0.f, 400.f}, 4.f, FColor::Black, 3);
 		// DrawDebugSphere(GetWorld(), ChosenSpawnLocation, 18.f, 12, FColor::Cyan, false, 3.f);
 		// UKismetSystemLibrary::DrawDebugArrow(GetAvatarActorFromActorInfo(), AvatarLocation, AvatarLocation + Direction * MaxSpawnDistance, 4.f, FColor::Green, 3);

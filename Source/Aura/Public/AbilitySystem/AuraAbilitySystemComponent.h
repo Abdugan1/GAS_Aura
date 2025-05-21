@@ -8,6 +8,19 @@
 
 // TODO: Must rename the name of it.
 DECLARE_MULTICAST_DELEGATE_OneParam(FEffectAssetTags, const FGameplayTagContainer& /* AssetTags */)
+DECLARE_MULTICAST_DELEGATE_OneParam(FAbilitiesGiven, UAuraAbilitySystemComponent* /* AuraASC */);
+
+/**
+ * Ugly name. But all it does is execute the function this delegate was bound to. Like a fancy callback passed to for_each
+* 	FForEachAbility Delegate;
+	Delegate.BindLambda([this, AuraASC](const FGameplayAbilitySpec& AbilitySpec)
+	{
+		// Do something here...
+	});
+
+	This will be called for every item
+ */
+DECLARE_DELEGATE_OneParam(FForEachAbility, const FGameplayAbilitySpec&);
 
 /**
  * 
@@ -27,7 +40,16 @@ public:
 	 * Broadcasts the effect's AssetTags whenever it's applied to self.
 	 */
 	FEffectAssetTags EffectAssetTags;
+	
+	FAbilitiesGiven AbilitiesGivenDelegate;
 
+	bool bStartupAbilitiesGiven = false;
+
+	/**
+	 * Give startup abilities. Must be called server only
+	 * NOTE: Abilities given must be AuraGameplayAbility only!
+	 * Automatically adds AuraGameplayAbility::StartupInputTag to DynamicAbilityTags
+	 */
 	void AddCharacterAbilities(const TArray<TSubclassOf<UGameplayAbility>>& StartupAbilities);
 
 	// void AbilityInputTagPressed(FGameplayTag InputTag);
@@ -37,6 +59,14 @@ public:
 
 	/** Calls AbilitySpecInputPressed. TRYies to enable the ability. Does NOT enable if already enabled */
 	void AbilityInputKeyHeld(FGameplayTag InputTag);
+
+	/** Loop through GetActivatableAbilities and execute the delegate's functor */
+	void ForEachAbility(const FForEachAbility& Delegate);
+
+	/** Return GameplayTag -> Abilities.* from AbilityTags; Returns an emtpy GameplayTag if failed to find any */
+	static FGameplayTag GetAbilityTagFromSpec(const FGameplayAbilitySpec& AbilitySpec);
+	/** Return GameplayTag -> InputTag.* from DynamicAbilityTags; Returns an emtpy GameplayTag if failed to find any */
+	static FGameplayTag GetInputTagFromSpec(const FGameplayAbilitySpec& AbilitySpec);
 	
 protected:
 	/**
