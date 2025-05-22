@@ -75,4 +75,10 @@ protected:
 	 */
 	 UFUNCTION(Client, Reliable)
 	void ClientOnEffectAppliedToSelf(UAbilitySystemComponent* AbilitySystemComponent, const FGameplayEffectSpec& EffectSpec, FActiveGameplayEffectHandle ActiveGameplayEffectHandle);
+
+	/**
+	 * Since AddCharacterAbilities is called on the server, clients cannot init their overlay properly.
+	 * So we are broadcasting AbilitiesGivenDelegate when all the abilities were given
+	 */
+	virtual void OnRep_ActivateAbilities() override;
 };

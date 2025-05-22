@@ -107,12 +107,24 @@ FGameplayTag UAuraAbilitySystemComponent::GetInputTagFromSpec(const FGameplayAbi
 {
 	for (auto Tag : AbilitySpec.DynamicAbilityTags)
 	{
-		if (Tag.MatchesTag(FGameplayTag::RequestGameplayTag(FName{"InputTag"})))
+		if (Tag.MatchesTag(FGameplayTag::RequestGameplayTag(FName{"Input"})))
 		{
 			return Tag;
 		}
 	}
 	return FGameplayTag{};
+}
+
+void UAuraAbilitySystemComponent::OnRep_ActivateAbilities()
+{
+	Super::OnRep_ActivateAbilities();
+
+	/** Since this is not a replicated variable, it's still false on the client. */
+	if (!bStartupAbilitiesGiven)
+	{
+		bStartupAbilitiesGiven = true;
+		AbilitiesGivenDelegate.Broadcast(this);
+	}
 }
 
 
