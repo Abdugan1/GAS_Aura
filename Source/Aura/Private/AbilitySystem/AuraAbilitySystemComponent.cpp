@@ -135,5 +135,5 @@ void UAuraAbilitySystemComponent::ClientOnEffectAppliedToSelf_Implementation(UAb
 	FGameplayTagContainer AssetTags;
 	EffectSpec.GetAllAssetTags(AssetTags);
 
-	EffectAssetTags.Broadcast(AssetTags);
+	EffectAppliedToSelf.Broadcast(AssetTags);
 }

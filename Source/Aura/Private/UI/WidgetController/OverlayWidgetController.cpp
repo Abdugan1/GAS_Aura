@@ -7,8 +7,6 @@
 #include "AbilitySystem/AuraAttributeSet.h"
 #include "AbilitySystem/Data/AbilityInfo.h"
 #include "Aura/AuraLogChannels.h"
-#include "Player/AuraPlayerState.h"
-
 
 void UOverlayWidgetController::BroadcastInitialValues()
 {
@@ -24,7 +22,46 @@ void UOverlayWidgetController::BroadcastInitialValues()
 void UOverlayWidgetController::BindCallbacksToDependencies()
 {
 	const UAuraAttributeSet *AuraAttributeSet = CastChecked<UAuraAttributeSet>(AttributeSet);
+	UAuraAbilitySystemComponent* AuraASC = CastChecked<UAuraAbilitySystemComponent>(AbilitySystemComponent);
 
+	BindAttributeChangesToDelegates(AuraAttributeSet);
+	
+	if (AuraASC->bStartupAbilitiesGiven)
+	{
+		BroadcastInitialAbilitiesInfo(AuraASC);
+	}
+	else
+	{
+		AuraASC->AbilitiesGivenDelegate.AddUObject(this, &UOverlayWidgetController::BroadcastInitialAbilitiesInfo);
+	}
+
+	BindToEffectApplicationToShowMessageOnScreen(AuraASC);
+}
+
+
+void UOverlayWidgetController::BroadcastInitialAbilitiesInfo(UAuraAbilitySystemComponent* AuraASC) const
+{
+	if (!AuraASC->bStartupAbilitiesGiven)
+	{
+		UE_LOG(LogAura, Error, TEXT("OnInitializeStartupAbilities called but their were not given!"));
+		return;
+	}
+
+	FForEachAbility BroadcastDelegate;
+	BroadcastDelegate.BindLambda([this, AuraASC](const FGameplayAbilitySpec& AbilitySpec)
+	{
+		auto AbilityTag = AuraASC->GetAbilityTagFromSpec(AbilitySpec);
+		auto AbilityInfo = AbilitiesInfo->FindAbilityInfoFromTag(AbilityTag);
+		
+		AbilityInfo.InputTag = AuraASC->GetInputTagFromSpec(AbilitySpec);
+		AbilityInfoDelegate.Broadcast(AbilityInfo);
+	});
+	AuraASC->ForEachAbility(BroadcastDelegate);
+}
+
+
+void UOverlayWidgetController::BindAttributeChangesToDelegates(const UAuraAttributeSet *AuraAttributeSet)
+{
 	/** Health **/
 	AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(
 		AuraAttributeSet->GetHealthAttribute()).AddLambda(
@@ -53,21 +90,13 @@ void UOverlayWidgetController::BindCallbacksToDependencies()
 			{
 				OnMaxManaChanged.Broadcast(Data.NewValue);
 			});
+}
 
 
-	UAuraAbilitySystemComponent* AuraASC = CastChecked<UAuraAbilitySystemComponent>(AbilitySystemComponent);
-
-	if (AuraASC->bStartupAbilitiesGiven)
-	{
-		OnInitializeStartupAbilities(AuraASC);
-	}
-	else
-	{
-		AuraASC->AbilitiesGivenDelegate.AddUObject(this, &UOverlayWidgetController::OnInitializeStartupAbilities);
-	}
-
+void UOverlayWidgetController::BindToEffectApplicationToShowMessageOnScreen(UAuraAbilitySystemComponent* AuraASC)
+{
 	// Broadcast the row with the info about the effect applied
-	AuraASC->EffectAssetTags.AddLambda(
+	AuraASC->EffectAppliedToSelf.AddLambda(
 		[this](const FGameplayTagContainer& AssetTags)
 		{
 			for (const FGameplayTag& Tag : AssetTags)
@@ -86,24 +115,4 @@ void UOverlayWidgetController::BindCallbacksToDependencies()
 		);
 }
 
-
-void UOverlayWidgetController::OnInitializeStartupAbilities(UAuraAbilitySystemComponent* AuraASC) const
-{
-	if (!AuraASC->bStartupAbilitiesGiven)
-	{
-		UE_LOG(LogAura, Error, TEXT("OnInitializeStartupAbilities called but their were not given!"));
-		return;
-	}
-
-	FForEachAbility BroadcastDelegate;
-	BroadcastDelegate.BindLambda([this, AuraASC](const FGameplayAbilitySpec& AbilitySpec)
-	{
-		auto AbilityTag = AuraASC->GetAbilityTagFromSpec(AbilitySpec);
-		auto AbilityInfo = AbilitiesInfo->FindAbilityInfoFromTag(AbilityTag);
-		
-		AbilityInfo.InputTag = AuraASC->GetInputTagFromSpec(AbilitySpec);
-		AbilityInfoDelegate.Broadcast(AbilityInfo);
-	});
-	AuraASC->ForEachAbility(BroadcastDelegate);
-}
 

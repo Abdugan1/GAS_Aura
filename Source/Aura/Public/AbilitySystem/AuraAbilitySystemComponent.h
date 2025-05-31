@@ -39,7 +39,7 @@ public:
 	/*
 	 * Broadcasts the effect's AssetTags whenever it's applied to self.
 	 */
-	FEffectAssetTags EffectAssetTags;
+	FEffectAssetTags EffectAppliedToSelf;
 	
 	FAbilitiesGiven AbilitiesGivenDelegate;
 

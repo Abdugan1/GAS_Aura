@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameplayTagContainer.h"
+#include "AbilitySystem/AuraAbilitySystemComponent.h"
 #include "UI/WidgetController/AuraWidgetController.h"
 #include "OverlayWidgetController.generated.h"
 
@@ -63,8 +64,20 @@ protected:
 	template<typename T>
 	T* GetDataTableRowByTag(UDataTable* DataTable, const FGameplayTag& Tag);
 
+	/**
+	 * Broadcast Initial Abilities' Info to init Overlay's Skill Globes, i.e., what slot, what icon and background.
+	 */
 	UFUNCTION()
-	void OnInitializeStartupAbilities(UAuraAbilitySystemComponent* AuraASC) const;
+	void BroadcastInitialAbilitiesInfo(UAuraAbilitySystemComponent* AuraASC) const;
+
+private:
+	void BindAttributeChangesToDelegates(const UAuraAttributeSet *AuraAttributeSet);
+
+	/**
+	 * Binds To Effect Applied To Self and checks to see if a Message Tag is among the Asset Tags.
+	 * If yes, broadcasts MessageWidgetRowDelegate
+	 */
+	void BindToEffectApplicationToShowMessageOnScreen(UAuraAbilitySystemComponent* AuraASC);
 	
 public:
 	/** Delegates for Attributes change**/
@@ -95,7 +108,6 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Widget Data")
 	TObjectPtr<UAbilityInfo> AbilitiesInfo;
 };
-
 
 template <typename T>
 T* UOverlayWidgetController::GetDataTableRowByTag(UDataTable* DataTable, const FGameplayTag& Tag)
