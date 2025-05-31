@@ -7,6 +7,7 @@
 #include "AbilitySystem/AuraAttributeSet.h"
 #include "AbilitySystem/Data/AbilityInfo.h"
 #include "Aura/AuraLogChannels.h"
+#include "Player/AuraPlayerState.h"
 
 
 void UOverlayWidgetController::BroadcastInitialValues()
@@ -64,7 +65,7 @@ void UOverlayWidgetController::BindCallbacksToDependencies()
 	{
 		AuraASC->AbilitiesGivenDelegate.AddUObject(this, &UOverlayWidgetController::OnInitializeStartupAbilities);
 	}
-	
+
 	// Broadcast the row with the info about the effect applied
 	AuraASC->EffectAssetTags.AddLambda(
 		[this](const FGameplayTagContainer& AssetTags)
