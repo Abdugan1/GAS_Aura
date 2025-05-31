@@ -70,6 +70,9 @@ protected:
 	UFUNCTION()
 	void BroadcastInitialAbilitiesInfo(UAuraAbilitySystemComponent* AuraASC) const;
 
+	UFUNCTION()
+	void OnXPChanged(int32 NewXP) const;
+	
 private:
 	void BindAttributeChangesToDelegates(const UAuraAttributeSet *AuraAttributeSet);
 
@@ -94,6 +97,9 @@ public:
 	FOnAttributeChangedSignature OnMaxManaChanged;
 	/** end Delegates for Attributes change**/
 
+	/** TODO: Should I rename the signature definition name? */
+	FOnAttributeChangedSignature OnXPPercentChanged;
+	
 	UPROPERTY(BlueprintAssignable, Category = "GAS|Messages")
 	FMessageWidgetRowSignature MessageWidgetRowDelegate;
 

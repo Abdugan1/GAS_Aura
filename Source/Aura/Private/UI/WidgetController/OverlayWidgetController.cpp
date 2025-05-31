@@ -7,6 +7,8 @@
 #include "AbilitySystem/AuraAttributeSet.h"
 #include "AbilitySystem/Data/AbilityInfo.h"
 #include "Aura/AuraLogChannels.h"
+#include "Player/AuraPlayerState.h"
+#include "AbilitySystem/Data/LevelUpInfo.h"
 
 void UOverlayWidgetController::BroadcastInitialValues()
 {
@@ -22,9 +24,11 @@ void UOverlayWidgetController::BroadcastInitialValues()
 void UOverlayWidgetController::BindCallbacksToDependencies()
 {
 	const UAuraAttributeSet *AuraAttributeSet = CastChecked<UAuraAttributeSet>(AttributeSet);
-	UAuraAbilitySystemComponent* AuraASC = CastChecked<UAuraAbilitySystemComponent>(AbilitySystemComponent);
 
 	BindAttributeChangesToDelegates(AuraAttributeSet);
+
+	
+	UAuraAbilitySystemComponent* AuraASC = CastChecked<UAuraAbilitySystemComponent>(AbilitySystemComponent);
 	
 	if (AuraASC->bStartupAbilitiesGiven)
 	{
@@ -36,6 +40,9 @@ void UOverlayWidgetController::BindCallbacksToDependencies()
 	}
 
 	BindToEffectApplicationToShowMessageOnScreen(AuraASC);
+
+	auto AuraPS = CastChecked<AAuraPlayerState>(PlayerState);
+	AuraPS->OnXPChanged.AddUObject(this, &UOverlayWidgetController::OnXPChanged);
 }
 
 
@@ -116,3 +123,26 @@ void UOverlayWidgetController::BindToEffectApplicationToShowMessageOnScreen(UAur
 }
 
 
+void UOverlayWidgetController::OnXPChanged(int32 NewXP) const
+{
+	const AAuraPlayerState* AuraPS = CastChecked<AAuraPlayerState>(PlayerState);
+	const TObjectPtr<ULevelUpInfo> LevelUpInfo = AuraPS->LevelUpInfo;
+
+	checkf(LevelUpInfo, TEXT("Unabled to find LevelUpInfo. Please fill out AuraPlayerState Blueprint"));
+
+	const int32 Level = LevelUpInfo->FindLevelForXP(NewXP);
+	const int32 MaxLevel = LevelUpInfo->LevelUpInfos.Num();
+
+	if (Level <= MaxLevel && Level > 0)
+	{
+		const int32 LevelUpRequirement = LevelUpInfo->LevelUpInfos[Level].LevelUpRequirement;
+		const int32 PreviousLevelUpRequirement = LevelUpInfo->LevelUpInfos[Level - 1].LevelUpRequirement;
+
+		const int32 DeltaLevelRequirement = LevelUpRequirement - PreviousLevelUpRequirement;
+		const int32 XPForThisLevel = NewXP - PreviousLevelUpRequirement;
+
+		const float XPBarPercent = static_cast<float>(XPForThisLevel) / static_cast<float>(DeltaLevelRequirement);
+
+		OnXPPercentChanged.Broadcast(XPBarPercent);
+	}
+}
