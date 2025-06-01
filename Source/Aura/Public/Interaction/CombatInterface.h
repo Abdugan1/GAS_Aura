@@ -100,4 +100,7 @@ public:
 	/** Modify minion count. If the amount is negative, it decrements */
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
 	void IncrementMinionCount(int32 Amount);
+
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
+	ECharacterClass GetCharacterClass() const;
 };
