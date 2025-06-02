@@ -36,6 +36,19 @@ void UAuraAbilitySystemComponent::AddCharacterAbilities(const TArray<TSubclassOf
 }
 
 
+void UAuraAbilitySystemComponent::AddCharacterPassiveAbilities(
+	const TArray<TSubclassOf<UGameplayAbility>>& StartupPassiveAbilities)
+{
+	check(GetAvatarActor()->HasAuthority());
+
+	for (const TSubclassOf<UGameplayAbility> AbilityClass : StartupPassiveAbilities)
+	{
+		FGameplayAbilitySpec AbilitySpec = FGameplayAbilitySpec(AbilityClass, 1.f);
+		GiveAbilityAndActivateOnce(AbilitySpec);
+	}
+}
+
+
 void UAuraAbilitySystemComponent::AbilityInputKeyReleased(FGameplayTag InputTag)
 {
 	if (!InputTag.IsValid())

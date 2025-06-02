@@ -71,7 +71,10 @@ protected:
 	/** Initializes default attributes. */
 	virtual void InitializeDefaultAttributes() const;
 
-	/** Add default abilities to self. Only the server adds them. Then the GAS replication system takes care of the rest */
+	/**
+	 * Add default abilities to self. Only the server adds them. Then the GAS replication system takes care of the rest
+	 * NOTE: Adds both plain Startup Abilities and PASSIVE Startup Abilities
+	 */
 	void AddCharacterAbilities() const;
 
 	/** ICombatInterface */
@@ -146,6 +149,9 @@ private:
 	UPROPERTY(EditAnywhere, Category = "Abilities")
 	TArray<TSubclassOf<UGameplayAbility>> StartupAbilities;
 
+	UPROPERTY(EditAnywhere, Category = "Abilities")
+	TArray<TSubclassOf<UGameplayAbility>> StartupPassiveAbilities;
+	
 	UPROPERTY(EditAnywhere, Category = "Combat")
 	TObjectPtr<UAnimMontage> HitReactMontage;
 };

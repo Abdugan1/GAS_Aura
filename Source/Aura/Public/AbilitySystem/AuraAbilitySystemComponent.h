@@ -51,6 +51,7 @@ public:
 	 * Automatically adds AuraGameplayAbility::StartupInputTag to DynamicAbilityTags
 	 */
 	void AddCharacterAbilities(const TArray<TSubclassOf<UGameplayAbility>>& StartupAbilities);
+	void AddCharacterPassiveAbilities(const TArray<TSubclassOf<UGameplayAbility>>& StartupPassiveAbilities);
 
 	// void AbilityInputTagPressed(FGameplayTag InputTag);
 

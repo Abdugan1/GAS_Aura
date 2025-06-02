@@ -183,11 +183,13 @@ void AAuraCharacterBase::AddCharacterAbilities() const
 {
 	if (!HasAuthority())
 	{
+		UE_LOG(LogTemp, Error, TEXT("CharacterAbilities: Not Authority"));
 		return;
 	}
 
 	UAuraAbilitySystemComponent* ASC = Cast<UAuraAbilitySystemComponent>(GetAbilitySystemComponent());
-	ASC->AddCharacterAbilities(StartupAbilities);	
+	ASC->AddCharacterAbilities(StartupAbilities);
+	ASC->AddCharacterPassiveAbilities(StartupPassiveAbilities);
 }
 
 

@@ -6,6 +6,7 @@
 #include "AbilitySystemComponent.h"
 #include "AuraAbilityTypes.h"
 #include "AbilitySystem/Data/CharacterClassInfo.h"
+#include "Aura/AuraLogChannels.h"
 #include "Game/AuraGameModeBase.h"
 #include "Interaction/CombatInterface.h"
 #include "Kismet/GameplayStatics.h"
@@ -106,7 +107,7 @@ int32 UAuraAbilitySystemLibrary::GetXPRewardForClassAndLevel(const UObject* Worl
 	UCharacterClassInfo* CharacterClassInfo = GetCharacterClassInfo(WorldContextObject);
 	if (CharacterClassInfo == nullptr)
 	{
-		UE_LOG(LogTemp, Error, TEXT("CharacterClassInfo is null in GetXPRewardForClassAndLevel(). Called on a Client?"));
+		UE_LOG(LogAura, Error, TEXT("CharacterClassInfo is null in GetXPRewardForClassAndLevel(). Called on a Client?"));
 		return 0;
 	}
 	const FCharacterClassDefaultInfo Info = CharacterClassInfo->GetClassDefaultInfo(CharacterClass);

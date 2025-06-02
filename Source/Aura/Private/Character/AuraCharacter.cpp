@@ -72,6 +72,14 @@ int32 AAuraCharacter::GetPlayerLevel()
 }
 
 
+void AAuraCharacter::AddToXp_Implementation(int32 InXP)
+{
+	AAuraPlayerState* AuraPlayerState = GetPlayerState<AAuraPlayerState>();
+	check(AuraPlayerState);
+	AuraPlayerState->AddToXp(InXP);
+}
+
+
 /**
  * This is basically called in both the client and sever.
  * No need to worry about PlayerState and PlayerController whether we received it.

@@ -98,6 +98,7 @@ public:
 	/** end Delegates for Attributes change**/
 
 	/** TODO: Should I rename the signature definition name? */
+	UPROPERTY(BlueprintAssignable, Category = "GAS|XP")
 	FOnAttributeChangedSignature OnXPPercentChanged;
 	
 	UPROPERTY(BlueprintAssignable, Category = "GAS|Messages")

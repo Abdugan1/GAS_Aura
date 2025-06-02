@@ -36,6 +36,10 @@ public:
 	FGameplayTag Attributes_Secondary_MaxMana;
 	// ** end Secondary Attributes */
 
+	/** Meta Attributes */
+	FGameplayTag Attributes_Meta_IncomingXP;
+	/** end Meta Attributes */
+	
 	/** Resistances */
 	/** Look the damage types comment before adding anything here! */
 	FGameplayTag Attributes_Resistance_Fire;

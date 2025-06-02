@@ -50,6 +50,7 @@ private:
 
 	/** public VARIABLES */
 public:
+	UPROPERTY(EditDefaultsOnly)
 	TObjectPtr<ULevelUpInfo> LevelUpInfo;
 	
 	/** protected VARIABLES */

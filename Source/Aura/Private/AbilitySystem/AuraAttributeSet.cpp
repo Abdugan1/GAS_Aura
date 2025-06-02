@@ -10,7 +10,9 @@
 #include "GameplayEffectExtension.h"
 #include "AbilitySystem/AuraAbilitySystemLibrary.h"
 #include "Aura/Aura.h"
+#include "Aura/AuraLogChannels.h"
 #include "Interaction/CombatInterface.h"
+#include "Interaction/PlayerInterface.h"
 #include "Kismet/GameplayStatics.h"
 #include "Player/AuraPlayerController.h"
 
@@ -60,6 +62,15 @@ void UAuraAttributeSet::PostGameplayEffectExecute(const FGameplayEffectModCallba
 	{
 		SetMana(FMath::Clamp(GetMana(), 0.0f, GetMaxMana()));
 	}
+	if (Data.EvaluatedData.Attribute == GetIncomingXpAttribute())
+	{
+		const float LocalIncomingXp = GetIncomingXp();
+		SetIncomingXp(0.f);
+
+		// TODO: See if we should level up
+		checkf(EffectProperties.SourceCharacter->Implements<UPlayerInterface>(), TEXT("Source Character doesn't implement UPlayerInterface. Fix that."));
+		IPlayerInterface::Execute_AddToXp(EffectProperties.SourceCharacter, LocalIncomingXp);
+	}
 	if (Data.EvaluatedData.Attribute == GetIncomingDamageAttribute())
 	{
 		// Damage is dealt by a meta attribute called IncomingDamage
@@ -83,6 +94,7 @@ void UAuraAttributeSet::PostGameplayEffectExecute(const FGameplayEffectModCallba
 				if (CombatInterface)
 				{
 					CombatInterface->Die();
+					SendXPEvent(EffectProperties);
 				}
 			}
 			else
@@ -173,6 +185,23 @@ void UAuraAttributeSet::ShowFloatingText(const FEffectProperties& EffectProperti
 			PC->ShowDamageNumber(Damage, EffectProperties.TargetCharacter, bBlockedHit, bCriticalHit);
 		}
 	}
+}
+
+
+void UAuraAttributeSet::SendXPEvent(const FEffectProperties& EffectProperties)
+{
+	ICombatInterface* CombatInterface = CastChecked<ICombatInterface>(EffectProperties.TargetCharacter);
+
+	const int32 TargetLevel = CombatInterface->GetPlayerLevel();
+	const ECharacterClass TargetClass = ICombatInterface::Execute_GetCharacterClass(EffectProperties.TargetCharacter);
+	
+	const int32 XPReward = UAuraAbilitySystemLibrary::GetXPRewardForClassAndLevel(EffectProperties.TargetCharacter, TargetClass, TargetLevel);
+
+	const FGameplayTag IncomingXPTag = FAuraGameplayTags::Get().Attributes_Meta_IncomingXP;
+	FGameplayEventData IncomingXPData;
+	IncomingXPData.EventTag = IncomingXPTag;
+	IncomingXPData.EventMagnitude = static_cast<float>(XPReward);
+	UAbilitySystemBlueprintLibrary::SendGameplayEventToActor(EffectProperties.SourceCharacter, IncomingXPTag, IncomingXPData);	
 }
 
 
