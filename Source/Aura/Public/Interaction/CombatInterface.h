@@ -53,8 +53,9 @@ public:
 	/**
 	 * Used to get actors level. No matter enemy or player.
 	 * NOTE: Could not name this since GAS already has GetActorLevel function
-	 * */
-	virtual int32 GetPlayerLevel();
+	 */
+	UFUNCTION(BlueprintNativeEvent)
+	int32 GetPlayerLevel();
 
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
 	FVector GetCombatSocketLocation(const FGameplayTag& SocketTag);

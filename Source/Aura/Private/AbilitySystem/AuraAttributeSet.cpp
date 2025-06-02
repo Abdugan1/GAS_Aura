@@ -190,18 +190,19 @@ void UAuraAttributeSet::ShowFloatingText(const FEffectProperties& EffectProperti
 
 void UAuraAttributeSet::SendXPEvent(const FEffectProperties& EffectProperties)
 {
-	ICombatInterface* CombatInterface = CastChecked<ICombatInterface>(EffectProperties.TargetCharacter);
-
-	const int32 TargetLevel = CombatInterface->GetPlayerLevel();
-	const ECharacterClass TargetClass = ICombatInterface::Execute_GetCharacterClass(EffectProperties.TargetCharacter);
+	if (EffectProperties.TargetCharacter->Implements<UCombatInterface>())
+	{
+		const int32 TargetLevel = ICombatInterface::Execute_GetPlayerLevel(EffectProperties.TargetCharacter);
+		const ECharacterClass TargetClass = ICombatInterface::Execute_GetCharacterClass(EffectProperties.TargetCharacter);
 	
-	const int32 XPReward = UAuraAbilitySystemLibrary::GetXPRewardForClassAndLevel(EffectProperties.TargetCharacter, TargetClass, TargetLevel);
+		const int32 XPReward = UAuraAbilitySystemLibrary::GetXPRewardForClassAndLevel(EffectProperties.TargetCharacter, TargetClass, TargetLevel);
 
-	const FGameplayTag IncomingXPTag = FAuraGameplayTags::Get().Attributes_Meta_IncomingXP;
-	FGameplayEventData IncomingXPData;
-	IncomingXPData.EventTag = IncomingXPTag;
-	IncomingXPData.EventMagnitude = static_cast<float>(XPReward);
-	UAbilitySystemBlueprintLibrary::SendGameplayEventToActor(EffectProperties.SourceCharacter, IncomingXPTag, IncomingXPData);	
+		const FGameplayTag IncomingXPTag = FAuraGameplayTags::Get().Attributes_Meta_IncomingXP;
+		FGameplayEventData IncomingXPData;
+		IncomingXPData.EventTag = IncomingXPTag;
+		IncomingXPData.EventMagnitude = static_cast<float>(XPReward);
+		UAbilitySystemBlueprintLibrary::SendGameplayEventToActor(EffectProperties.SourceCharacter, IncomingXPTag, IncomingXPData);	
+	}
 }
 
 
