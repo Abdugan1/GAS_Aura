@@ -43,6 +43,11 @@ void UOverlayWidgetController::BindCallbacksToDependencies()
 
 	auto AuraPS = CastChecked<AAuraPlayerState>(PlayerState);
 	AuraPS->OnXPChanged.AddUObject(this, &UOverlayWidgetController::OnXPChanged);
+	AuraPS->OnLevelChanged.AddLambda(
+		[this](int32 NewLevel)
+	{
+		OnPlayerLevelChanged.Broadcast(NewLevel);
+	});
 }
 
 
