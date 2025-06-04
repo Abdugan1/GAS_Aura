@@ -12,7 +12,8 @@
 #include "Player/AuraPlayerController.h"
 #include "Player/AuraPlayerState.h"
 #include "UI/HUD/AuraHUD.h"
-
+#include "NiagaraComponent.h"
+#include "GameFramework/InputSettings.h"
 
 AAuraCharacter::AAuraCharacter()
 {
@@ -22,8 +23,11 @@ AAuraCharacter::AAuraCharacter()
 
 	CameraComp = CreateDefaultSubobject<UCameraComponent>("CameraComp");
 	CameraComp->SetupAttachment(SpringArmComp);
-	
 
+	LevelUpNiagaraComponent = CreateDefaultSubobject<UNiagaraComponent>("LevelUpNiagara");
+	LevelUpNiagaraComponent->SetupAttachment(GetRootComponent());
+	LevelUpNiagaraComponent->bAutoActivate = false;
+	
 	GetCharacterMovement()->bOrientRotationToMovement = true;
 	GetCharacterMovement()->RotationRate = FRotator(0, 400, 0);
 	GetCharacterMovement()->bConstrainToPlane = true;
@@ -121,7 +125,7 @@ int32 AAuraCharacter::GetSpellPointsReward_Implementation(int32 Level) const
 
 void AAuraCharacter::LevelUp_Implementation()
 {
-	
+	MulticastLevelUpParticles();
 }
 
 int32 AAuraCharacter::FindLevelForXp_Implementation(int32 InXP)
@@ -162,6 +166,22 @@ void AAuraCharacter::InitAbilityActorInfo()
 	}
 
 	InitializeDefaultAttributes();
+}
+
+
+void AAuraCharacter::MulticastLevelUpParticles_Implementation()
+{
+	if (IsValid(LevelUpNiagaraComponent))
+	{
+		const FVector CameraLocation = CameraComp->GetComponentLocation();
+		const FVector NiagaraLocation = LevelUpNiagaraComponent->GetComponentLocation();
+
+		const FRotator ToCameraRotation = (CameraLocation - NiagaraLocation).Rotation();
+
+		LevelUpNiagaraComponent->SetWorldRotation(ToCameraRotation);
+		
+		LevelUpNiagaraComponent->Activate(true);
+	}
 }
 
 

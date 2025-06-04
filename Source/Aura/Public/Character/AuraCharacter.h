@@ -9,6 +9,7 @@
 
 class USpringArmComponent;
 class UCameraComponent;
+class UNiagaraComponent;
 /**
  * 
  */
@@ -43,12 +44,19 @@ public:
 	
 protected:
 	virtual void InitAbilityActorInfo() override;
+
+private:
+	UFUNCTION(NetMulticast, Unreliable)
+	void MulticastLevelUpParticles();
 	
 protected:
 	UPROPERTY(VisibleAnywhere, Category="Components")
-	USpringArmComponent* SpringArmComp;
+	TObjectPtr<USpringArmComponent> SpringArmComp;
 
 	UPROPERTY(VisibleAnywhere, Category="Components")
-	UCameraComponent* CameraComp;
+	TObjectPtr<UCameraComponent> CameraComp;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Components")
+	TObjectPtr<UNiagaraComponent> LevelUpNiagaraComponent;
 	
 };
