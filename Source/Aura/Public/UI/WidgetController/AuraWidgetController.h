@@ -10,6 +10,8 @@ class UAuraAttributeSet;
 class UAbilitySystemComponent;
 class UAttributeSet;
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnPlayerStatChangedSignature, int32, NewValue);
+
 /**
  * 
  */

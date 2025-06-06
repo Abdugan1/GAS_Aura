@@ -8,6 +8,8 @@
 
 class UAttributeInfo;
 struct FAuraAttributeInfo;
+struct FGameplayTag;
+
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FAttributeInfoSignature, const FAuraAttributeInfo&, Info);
 
 /**
@@ -22,9 +24,18 @@ public:
 	
 	virtual void BindCallbacksToDependencies() override;
 
+	UFUNCTION(BlueprintCallable)
+	void UpgradeAttribute(const FGameplayTag& AttributeTag);
+	
 	UPROPERTY(BlueprintAssignable)
 	FAttributeInfoSignature OnAttributeInfoChanged;
 
+	UPROPERTY(BlueprintAssignable)
+	FOnPlayerStatChangedSignature OnPlayerAttributePointsChanged;
+	
+	UPROPERTY(BlueprintAssignable)
+	FOnPlayerStatChangedSignature OnPlayerSpellPointsChanged;
+	
 private:
 	void BroadCastAttributeInfoChanged(FAuraAttributeInfo& Info) const;
 	
@@ -32,3 +43,4 @@ protected:
 	UPROPERTY(EditDefaultsOnly)
 	TObjectPtr<UAttributeInfo> AttributeInfo;
 };
+

@@ -52,8 +52,8 @@ public:
 	 */
 	void AddCharacterAbilities(const TArray<TSubclassOf<UGameplayAbility>>& StartupAbilities);
 	void AddCharacterPassiveAbilities(const TArray<TSubclassOf<UGameplayAbility>>& StartupPassiveAbilities);
-
-	// void AbilityInputTagPressed(FGameplayTag InputTag);
+	
+	void UpgradeAttribute(const FGameplayTag& AttributeTag); 
 
 	/** Calls AbilitySpecInputReleased. Does NOT cancel the ability. */
 	void AbilityInputKeyReleased(FGameplayTag InputTag);
@@ -70,6 +70,9 @@ public:
 	static FGameplayTag GetInputTagFromSpec(const FGameplayAbilitySpec& AbilitySpec);
 	
 protected:
+	UFUNCTION(Server, Reliable)
+	void ServerUpgradeAttribute(const FGameplayTag& AttributeTag);
+	
 	/**
 	 * This gets called whenever an effect is applied to self.
 	 * NOTE: To get this callback to work, users MUST call AbilityActorInfoSet. See the definition for more.
