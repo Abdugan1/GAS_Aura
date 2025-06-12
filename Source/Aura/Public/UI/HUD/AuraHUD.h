@@ -6,6 +6,7 @@
 #include "GameFramework/HUD.h"
 #include "AuraHUD.generated.h"
 
+class USpellMenuWidgetController;
 class UAttributeMenuWidgetController;
 struct FWidgetControllerParams;
 class UOverlayWidgetController;
@@ -34,12 +35,19 @@ public:
 	UAttributeMenuWidgetController* GetAttributeMenuController(const FWidgetControllerParams &WidgetControllerParams);
 
 	/**
+	 * Singleton. Is used in our BlueprintLibrary. Set the params and calls BindCallbacksToDependencies immediately.
+	 * If already exists, just returns existing object.
+	 */
+	USpellMenuWidgetController* GetSpellMenuWidgetController(const FWidgetControllerParams &WidgetControllerParams);
+	
+	
+	/**
 	 * Inits the overlay(HUD). We need these params to pass them into the controller.
 	 */
 	void InitOverlay(APlayerController *PC, APlayerState* PS, UAbilitySystemComponent *ASC, UAttributeSet *AS);
 	
 private:
-	//** Overlay Widget's */
+	/** Overlay Widget's */
 	UPROPERTY()
 	TObjectPtr<UAuraUserWidget> OverlayWidget;
 	
@@ -51,14 +59,22 @@ private:
 
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<UOverlayWidgetController> OverlayWidgetControllerClass;
-	//** end Overlay Widget's */
+	/** end Overlay Widget's */
 
-	//** Attribute Menu's *
+	/** Attribute Menu's */
 	UPROPERTY()
 	TObjectPtr<UAttributeMenuWidgetController> AttributeMenuController;
 
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<UAttributeMenuWidgetController> AttributeMenuControllerClass;
-	//** end Attribute Menu's *
+	/** end Attribute Menu's */
+
+	/** Attribute Menu's */
+	UPROPERTY()
+	TObjectPtr<USpellMenuWidgetController> SpellMenuController;
+
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<USpellMenuWidgetController> SpellMenuControllerClass;
+	/** end Attribute Menu's */
 	
 };

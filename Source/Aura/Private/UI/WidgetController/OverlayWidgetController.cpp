@@ -32,7 +32,7 @@ void UOverlayWidgetController::BindCallbacksToDependencies()
 	
 	if (AuraASC->bStartupAbilitiesGiven)
 	{
-		BroadcastInitialAbilitiesInfo(AuraASC);
+		BroadcastInitialAbilitiesInfo();
 	}
 	else
 	{
@@ -48,27 +48,6 @@ void UOverlayWidgetController::BindCallbacksToDependencies()
 	{
 		OnPlayerLevelChanged.Broadcast(NewLevel);
 	});
-}
-
-
-void UOverlayWidgetController::BroadcastInitialAbilitiesInfo(UAuraAbilitySystemComponent* AuraASC) const
-{
-	if (!AuraASC->bStartupAbilitiesGiven)
-	{
-		UE_LOG(LogAura, Error, TEXT("OnInitializeStartupAbilities called but their were not given!"));
-		return;
-	}
-
-	FForEachAbility BroadcastDelegate;
-	BroadcastDelegate.BindLambda([this, AuraASC](const FGameplayAbilitySpec& AbilitySpec)
-	{
-		auto AbilityTag = AuraASC->GetAbilityTagFromSpec(AbilitySpec);
-		auto AbilityInfo = AbilitiesInfo->FindAbilityInfoFromTag(AbilityTag);
-		
-		AbilityInfo.InputTag = AuraASC->GetInputTagFromSpec(AbilitySpec);
-		AbilityInfoDelegate.Broadcast(AbilityInfo);
-	});
-	AuraASC->ForEachAbility(BroadcastDelegate);
 }
 
 

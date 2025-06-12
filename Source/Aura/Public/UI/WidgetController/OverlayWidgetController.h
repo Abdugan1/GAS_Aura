@@ -45,9 +45,6 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnAttributeChangedSignature, float,
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FMessageWidgetRowSignature, FUIWidgetRow, Row);
 
-struct FAuraAbilityInfo;
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FAbilityInfoSignature, const FAuraAbilityInfo&, Info);
-
 /**
  * Main UI overlay
  */
@@ -63,12 +60,6 @@ public:
 protected:
 	template<typename T>
 	T* GetDataTableRowByTag(UDataTable* DataTable, const FGameplayTag& Tag);
-
-	/**
-	 * Broadcast Initial Abilities' Info to init Overlay's Skill Globes, i.e., what slot, what icon and background.
-	 */
-	UFUNCTION()
-	void BroadcastInitialAbilitiesInfo(UAuraAbilitySystemComponent* AuraASC) const;
 
 	UFUNCTION()
 	void OnXPChanged(int32 NewXP) const;
@@ -106,17 +97,11 @@ public:
 	
 	UPROPERTY(BlueprintAssignable, Category = "GAS|Messages")
 	FMessageWidgetRowSignature MessageWidgetRowDelegate;
-
-	UPROPERTY(BlueprintAssignable, Category = "GAS|Messages")
-	FAbilityInfoSignature AbilityInfoDelegate;
 	
 protected:
 	/** All the possible pickup messages to show on the screen about the world **/
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Widget Data")
 	TObjectPtr<UDataTable> MessageWidgetDataTable;
-
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Widget Data")
-	TObjectPtr<UAbilityInfo> AbilitiesInfo;
 };
 
 template <typename T>

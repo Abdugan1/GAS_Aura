@@ -8,7 +8,7 @@
 
 // TODO: Must rename the name of it.
 DECLARE_MULTICAST_DELEGATE_OneParam(FEffectAssetTags, const FGameplayTagContainer& /* AssetTags */)
-DECLARE_MULTICAST_DELEGATE_OneParam(FAbilitiesGiven, UAuraAbilitySystemComponent* /* AuraASC */);
+DECLARE_MULTICAST_DELEGATE(FAbilitiesGiven);
 
 /**
  * Ugly name. But all it does is execute the function this delegate was bound to. Like a fancy callback passed to for_each

@@ -13,24 +13,19 @@
 #include "Player/AuraPlayerState.h"
 #include "UI/HUD/AuraHUD.h"
 #include "UI/WidgetController/AuraWidgetController.h"
+#include "UI/WidgetController/SpellMenuWidgetController.h"
 
 
 UOverlayWidgetController* UAuraAbilitySystemLibrary::GetOverlayWidgetController(const UObject* WorldContextObject)
 {
 	// TODO: PlayerController index is 0. Multiplayer issues?
-	if (APlayerController *PlayerController = UGameplayStatics::GetPlayerController(WorldContextObject, 0))
-	{
-		if (AAuraHUD* AuraHUD = Cast<AAuraHUD>(PlayerController->GetHUD()))
-		{
-			AAuraPlayerState *PlayerState = PlayerController->GetPlayerState<AAuraPlayerState>();
-			UAbilitySystemComponent *AbilitySystemComponent = PlayerState->GetAbilitySystemComponent();
-			UAttributeSet *AttributeSet = PlayerState->GetAttributeSet();
-			
-			const FWidgetControllerParams WidgetControllerParams(PlayerController, PlayerState, AbilitySystemComponent, AttributeSet);
-			return AuraHUD->GetOverlayWidgetController(WidgetControllerParams);
-		}
-	}
-	return nullptr;
+	APlayerController *PlayerController = UGameplayStatics::GetPlayerController(WorldContextObject, 0);
+	check(PlayerController);
+	AAuraHUD* AuraHUD = Cast<AAuraHUD>(PlayerController->GetHUD());
+	check(AuraHUD);
+	
+	const FWidgetControllerParams WidgetControllerParams = GetWidgetControllerParams(WorldContextObject, PlayerController);
+	return AuraHUD->GetOverlayWidgetController(WidgetControllerParams);
 }
 
 
@@ -38,24 +33,31 @@ UAttributeMenuWidgetController* UAuraAbilitySystemLibrary::GetAttributeMenuWidge
 	const UObject* WorldContextObject)
 {
 	// TODO: PlayerController index is 0. Multiplayer issues?
-	if (APlayerController *PlayerController = UGameplayStatics::GetPlayerController(WorldContextObject, 0))
-	{
-		if (AAuraHUD *AuraHUD = Cast<AAuraHUD>(PlayerController->GetHUD()))
-		{
-			AAuraPlayerState *PlayerState = PlayerController->GetPlayerState<AAuraPlayerState>();
-			UAbilitySystemComponent *AbilitySystemComponent = PlayerState->GetAbilitySystemComponent();
-			UAttributeSet *AttributeSet = PlayerState->GetAttributeSet();
+	APlayerController *PlayerController = UGameplayStatics::GetPlayerController(WorldContextObject, 0);
+	check(PlayerController);
+	AAuraHUD* AuraHUD = Cast<AAuraHUD>(PlayerController->GetHUD());
+	check(AuraHUD);
+	
+	const FWidgetControllerParams WidgetControllerParams = GetWidgetControllerParams(WorldContextObject, PlayerController);
+	return AuraHUD->GetAttributeMenuController(WidgetControllerParams);
+}
 
-			const FWidgetControllerParams WidgetControllerParams(PlayerController, PlayerState, AbilitySystemComponent, AttributeSet);
-			return AuraHUD->GetAttributeMenuController(WidgetControllerParams);
-		}
-	}
-	return nullptr;
+USpellMenuWidgetController* UAuraAbilitySystemLibrary::GetSpellMenuWidgetController(
+	const UObject* WorldContextObject)
+{
+	// TODO: PlayerController index is 0. Multiplayer issues?
+	APlayerController *PlayerController = UGameplayStatics::GetPlayerController(WorldContextObject, 0);
+	check(PlayerController);
+	AAuraHUD* AuraHUD = Cast<AAuraHUD>(PlayerController->GetHUD());
+	check(AuraHUD);
+	
+	const FWidgetControllerParams WidgetControllerParams = GetWidgetControllerParams(WorldContextObject, PlayerController);
+	return AuraHUD->GetSpellMenuWidgetController(WidgetControllerParams);
 }
 
 
 void UAuraAbilitySystemLibrary::InitializeDefaultAttributes(const UObject* WorldContextObject,
-	ECharacterClass CharacterClass, float Level, UAbilitySystemComponent* AbilitySystemComponent)
+                                                            ECharacterClass CharacterClass, float Level, UAbilitySystemComponent* AbilitySystemComponent)
 {
 	UCharacterClassInfo* CharacterClassInfo = GetCharacterClassInfo(WorldContextObject);
 
@@ -211,4 +213,14 @@ void UAuraAbilitySystemLibrary::ApplyEffectToASC(UAbilitySystemComponent* Abilit
 	EffectContextHandle.AddSourceObject(AbilitySystemComponent->GetAvatarActor());
 	FGameplayEffectSpecHandle SpecHandle = AbilitySystemComponent->MakeOutgoingSpec(GameplayEffectClass, Level, EffectContextHandle);
 	AbilitySystemComponent->ApplyGameplayEffectSpecToSelf(*SpecHandle.Data.Get());
+}
+
+
+FWidgetControllerParams UAuraAbilitySystemLibrary::GetWidgetControllerParams(const UObject* WorldContextObject, APlayerController *PlayerController)
+{
+	AAuraPlayerState *PlayerState = PlayerController->GetPlayerState<AAuraPlayerState>();
+	UAbilitySystemComponent *AbilitySystemComponent = PlayerState->GetAbilitySystemComponent();
+	UAttributeSet *AttributeSet = PlayerState->GetAttributeSet();
+	
+	return FWidgetControllerParams (PlayerController, PlayerState, AbilitySystemComponent, AttributeSet);
 }

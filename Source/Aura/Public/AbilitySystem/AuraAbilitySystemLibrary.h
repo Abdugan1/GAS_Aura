@@ -4,6 +4,8 @@
 
 #include "CoreMinimal.h"
 #include "Kismet/BlueprintFunctionLibrary.h"
+#include "UI/HUD/AuraHUD.h"
+#include "UI/WidgetController/SpellMenuWidgetController.h"
 #include "AuraAbilitySystemLibrary.generated.h"
 
 class UCharacterClassInfo;
@@ -23,17 +25,25 @@ public:
 	 * Once created, then returns the same object every time
 	 * Return from HUD.
 	 */
-	UFUNCTION(BlueprintPure, Category = "AuraAbilitySystemLibrary|WidgetController")
+	UFUNCTION(BlueprintPure, Category = "AuraAbilitySystemLibrary|WidgetController", meta = (DefaultToSelf = "WorldContextObject"))
 	static UOverlayWidgetController* GetOverlayWidgetController(const UObject* WorldContextObject);
 
 	/**
-	 * Returns Overlay Widget Controller. It's basically a Singleton.
+	 * Returns Attribute Menu Widget Controller. It's basically a Singleton.
 	 * Once created, then returns the same object every time
 	 * Return from HUD.
 	 */
-	UFUNCTION(BlueprintPure, Category = "AuraAbilitySystemLibrary|WidgetController")
+	UFUNCTION(BlueprintPure, Category = "AuraAbilitySystemLibrary|WidgetController", meta = (DefaultToSelf = "WorldContextObject"))
 	static UAttributeMenuWidgetController* GetAttributeMenuWidgetController(const UObject* WorldContextObject);
 
+	/**
+	 * Returns Spell Menu Widget Controller. It's basically a Singleton.
+     * Once created, then returns the same object every time
+	 * Return from HUD.
+	 */
+	UFUNCTION(BlueprintPure, Category = "AuraAbilitySystemLibrary|WidgetController", meta = (DefaultToSelf = "WorldContextObject"))
+	static USpellMenuWidgetController* GetSpellMenuWidgetController(const UObject* WorldContextObject);
+	
 	/** Initializes a given ASC's (character's) default attributes using a special DataAsset */
 	UFUNCTION(BlueprintCallable, Category = "AuraAbilitySystemLibrary|WidgetController")
 	static void InitializeDefaultAttributes(const UObject* WorldContextObject, ECharacterClass CharacterClass, float Level, UAbilitySystemComponent* AbilitySystemComponent);
@@ -68,4 +78,5 @@ public:
 	
 private:
 	static void ApplyEffectToASC(UAbilitySystemComponent* AbilitySystemComponent, TSubclassOf<UGameplayEffect> GameplayEffectClass, float Level);
+	static FWidgetControllerParams GetWidgetControllerParams(const UObject* WorldContextObject, APlayerController* PlayerController);
 };
