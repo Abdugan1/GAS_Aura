@@ -69,6 +69,12 @@ public:
 	/** Loop through GetActivatableAbilities and execute the delegate's functor */
 	void ForEachAbility(const FForEachAbility& Delegate);
 
+	/** Updates Abilities' Statuses based on Level provided. For example, making an Ability Eligible */
+	void UpdateAbilityStatuses(int32 Level);
+
+	/** Returns Spec if Ability exists on ASC, otherwise return nullptr */
+	FGameplayAbilitySpec* GetSpecFromAbilityTag(const FGameplayTag& AbilityTag);
+	
 	/** Return GameplayTag -> Abilities.* from AbilityTags; Returns an empty GameplayTag if failed to find any */
 	static FGameplayTag GetAbilityTagFromSpec(const FGameplayAbilitySpec& AbilitySpec);
 	/** Return GameplayTag -> InputTag.* from DynamicAbilityTags; Returns an empty GameplayTag if failed to find any */
