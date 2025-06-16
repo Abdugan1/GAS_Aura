@@ -78,16 +78,16 @@ protected:
 
 	/** private VARIABLES */
 private:
-	UPROPERTY(VisibleAnywhere, Replicated=OnRep_Level)
+	UPROPERTY(VisibleAnywhere, ReplicatedUsing=OnRep_Level)
 	int32 Level = 1;
 
-	UPROPERTY(VisibleAnywhere, Replicated=OnRep_XP)
+	UPROPERTY(VisibleAnywhere, ReplicatedUsing=OnRep_XP)
 	int32 XP = 0;
 
-	UPROPERTY(VisibleAnywhere, Replicated=OnRep_AttributePoints)
+	UPROPERTY(VisibleAnywhere, ReplicatedUsing=OnRep_AttributePoints)
 	int32 AttributePoints = 0;
 
-	UPROPERTY(VisibleAnywhere, Replicated=OnRep_SpellPoints)
+	UPROPERTY(VisibleAnywhere, ReplicatedUsing=OnRep_SpellPoints)
 	int32 SpellPoints = 0;
 };
 

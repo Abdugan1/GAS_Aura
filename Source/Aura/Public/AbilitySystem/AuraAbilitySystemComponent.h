@@ -9,6 +9,7 @@
 // TODO: Must rename the name of it.
 DECLARE_MULTICAST_DELEGATE_OneParam(FEffectAssetTags, const FGameplayTagContainer& /* AssetTags */)
 DECLARE_MULTICAST_DELEGATE(FAbilitiesGiven);
+DECLARE_MULTICAST_DELEGATE_TwoParams(FAbilityStatusChanged,  const FGameplayTag& /* AbilityTag */, const FGameplayTag& /* StatusTag */);
 
 /**
  * Ugly name. But all it does is execute the function this delegate was bound to. Like a fancy callback passed to for_each
@@ -44,6 +45,9 @@ public:
 	/** Broadcasts when Initial Abilities were given */
 	FAbilitiesGiven AbilitiesGivenDelegate;
 
+	/** Broadcasts whenever Ability Status changes */
+	FAbilityStatusChanged AbilityStatusChangedDelegate; 
+	
 	/** Sometimes, it's hard to know the timelapse, so this is set along with AbilitiesGivenDelegate broadcast */
 	bool bStartupAbilitiesGiven = false;
 
@@ -92,6 +96,9 @@ protected:
 	 */
 	 UFUNCTION(Client, Reliable)
 	void ClientOnEffectAppliedToSelf(UAbilitySystemComponent* AbilitySystemComponent, const FGameplayEffectSpec& EffectSpec, FActiveGameplayEffectHandle ActiveGameplayEffectHandle);
+
+	UFUNCTION(Client, Reliable)
+	void ClientUpdateAbilityStatus(const FGameplayTag& AbilityTag, const FGameplayTag& StatusTag);
 
 	/**
 	 * Since AddCharacterAbilities is called on the server, clients cannot init their overlay properly.

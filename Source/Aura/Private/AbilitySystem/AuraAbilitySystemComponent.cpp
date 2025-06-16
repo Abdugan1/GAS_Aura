@@ -137,7 +137,7 @@ void UAuraAbilitySystemComponent::ForEachAbility(const FForEachAbility& Delegate
 void UAuraAbilitySystemComponent::UpdateAbilityStatuses(int32 Level)
 {
 	UAbilityInfo* AbilityInfo = UAuraAbilitySystemLibrary::GetAbilityInfo(GetAvatarActor());
-	for (FAuraAbilityInfo& Info : AbilityInfo)
+	for (FAuraAbilityInfo& Info : AbilityInfo->AbilityInformation)
 	{
 		if (!Info.AbilityTag.IsValid())
 		{
@@ -159,6 +159,11 @@ void UAuraAbilitySystemComponent::UpdateAbilityStatuses(int32 Level)
 
 			// Forcing to Replicate
 			MarkAbilitySpecDirty(AbilitySpec);
+
+			// NOTE: Stephen is not changing it here. He's changing it inside SpellMenuWidgetController
+			Info.StatusTag = FAuraGameplayTags::Get().Abilities_Status_Eligible;
+			
+			ClientUpdateAbilityStatus(Info.AbilityTag, Info.StatusTag);
 		}
 	}
 }
@@ -224,7 +229,6 @@ FGameplayTag UAuraAbilitySystemComponent::GetStatusFromSpec(const FGameplayAbili
 	return FGameplayTag{};
 }
 
-
 void UAuraAbilitySystemComponent::OnRep_ActivateAbilities()
 {
 	Super::OnRep_ActivateAbilities();
@@ -246,4 +250,11 @@ void UAuraAbilitySystemComponent::ClientOnEffectAppliedToSelf_Implementation(UAb
 	EffectSpec.GetAllAssetTags(AssetTags);
 
 	EffectAppliedToSelf.Broadcast(AssetTags);
+}
+
+
+void UAuraAbilitySystemComponent::ClientUpdateAbilityStatus_Implementation(const FGameplayTag& AbilityTag,
+	const FGameplayTag& StatusTag)
+{
+	AbilityStatusChangedDelegate.Broadcast(AbilityTag, StatusTag);
 }

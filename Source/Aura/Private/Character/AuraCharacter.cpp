@@ -77,32 +77,36 @@ int32 AAuraCharacter::GetPlayerLevel_Implementation()
 }
 
 
-void AAuraCharacter::AddToXp_Implementation(int32 InXP)
+void AAuraCharacter::AddToXp_Implementation(int32 InAdditionalXP)
 {
 	AAuraPlayerState* AuraPlayerState = GetPlayerState<AAuraPlayerState>();
 	check(AuraPlayerState);
-	AuraPlayerState->AddToXp(InXP);
+	AuraPlayerState->AddToXp(InAdditionalXP);
 }
 
-void AAuraCharacter::AddToPlayerLevel_Implementation(int32 InPlayerLevel)
+void AAuraCharacter::AddToPlayerLevel_Implementation(int32 InAdditionalPlayerLevel)
 {
 	AAuraPlayerState* AuraPlayerState = GetPlayerState<AAuraPlayerState>();
 	check(AuraPlayerState);
-	AuraPlayerState->AddToLevel(InPlayerLevel);
+	AuraPlayerState->AddToLevel(InAdditionalPlayerLevel);
+
+	// This MAY be a more reliable approach. Since Broadcasts are usually for cosmetics.
+	UAuraAbilitySystemComponent* AuraASC = CastChecked<UAuraAbilitySystemComponent>(GetAbilitySystemComponent());
+	AuraASC->UpdateAbilityStatuses(AuraPlayerState->GetPlayerLevel());
 }
 
-void AAuraCharacter::AddToAttributePoints_Implementation(int32 InAttributePoints)
+void AAuraCharacter::AddToAttributePoints_Implementation(int32 InAdditionalAttributePoints)
 {
 	AAuraPlayerState* AuraPlayerState = GetPlayerState<AAuraPlayerState>();
 	check(AuraPlayerState);
-	AuraPlayerState->AddToAttributePoints(InAttributePoints);
+	AuraPlayerState->AddToAttributePoints(InAdditionalAttributePoints);
 }
 
-void AAuraCharacter::AddToSpellPoints_Implementation(int32 InSpellPoints)
+void AAuraCharacter::AddToSpellPoints_Implementation(int32 InAdditionalSpellPoints)
 {
 	AAuraPlayerState* AuraPlayerState = GetPlayerState<AAuraPlayerState>();
 	check(AuraPlayerState);
-	AuraPlayerState->AddToSpellPoints(InSpellPoints);
+	AuraPlayerState->AddToSpellPoints(InAdditionalSpellPoints);
 }
 
 int32 AAuraCharacter::GetXP_Implementation() const

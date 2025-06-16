@@ -38,16 +38,16 @@ public:
 	int32 GetSpellPoints() const;
 	
 	UFUNCTION(BlueprintNativeEvent)
-	void AddToXp(int32 InXP);
+	void AddToXp(int32 InAdditionalXP);
 	
 	UFUNCTION(BlueprintNativeEvent)
-	void AddToPlayerLevel(int32 InPlayerLevel);
+	void AddToPlayerLevel(int32 InAdditionalPlayerLevel);
 
 	UFUNCTION(BlueprintNativeEvent)
-	void AddToAttributePoints(int32 InAttributePoints);
+	void AddToAttributePoints(int32 InAdditionalAttributePoints);
 
 	UFUNCTION(BlueprintNativeEvent)
-	void AddToSpellPoints(int32 InSpellPoints);
+	void AddToSpellPoints(int32 InAdditionalSpellPoints);
 	
 	UFUNCTION(BlueprintNativeEvent)
 	int32 FindLevelForXp(int32 InXP);
