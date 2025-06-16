@@ -27,13 +27,6 @@ public:
 	UPROPERTY(EditDefaultsOnly, Category = "Input")
 	FGameplayTag StartupInputTag;
 
-	/**
-	 * @brief Optional: A blueprint implementable event that gets called when the ability is given.
-	 * This can be used for any setup logic specific to when the ability is granted to a character.
-	 */
-	UFUNCTION(BlueprintImplementableEvent, Category = "Ability")
-	void OnAbilityGiven();
-
 	// You might also want to override virtual functions from UGameplayAbility here,
 	// e.g., ActivateAbility, CanActivateAbility, etc.
 };
