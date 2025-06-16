@@ -1,12 +1,10 @@
-// AuraGameplayAbility.h
-// This header defines the base class for all gameplay abilities in the Aura project.
+// Copyright Abdu Inc.
 
 #pragma once
 
-#include "CoreMinimal.h" // Essential for all Unreal Engine C++ classes
-#include "Abilities/GameplayAbility.h" // Base class for UGameplayAbility
-#include "GameplayTagContainer.h" // For FGameplayTag and FGameplayTagContainer
-#include "AuraGameplayAbility.generated.h" // This MUST be the last include in your header file
+#include "CoreMinimal.h"
+#include "Abilities/GameplayAbility.h"
+#include "AuraGameplayAbility.generated.h"
 
 /**
  * @class UAuraGameplayAbility
@@ -21,9 +19,6 @@ class AURA_API UAuraGameplayAbility : public UGameplayAbility
 	GENERATED_BODY() // This macro MUST be the first thing inside the class body.
 
 public:
-	// Default constructor.
-	UAuraGameplayAbility();
-
 	/**
 	 * @brief The InputTag this Ability is starts with.
 	 * In this project, action buttons are bound with GameplayTags.
