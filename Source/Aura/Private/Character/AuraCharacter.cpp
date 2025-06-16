@@ -184,6 +184,8 @@ void AAuraCharacter::InitAbilityActorInfo()
 	}
 
 	InitializeDefaultAttributes();
+
+	// If you're looking where Abilities are given, check PossessedBy. Only Server must give abilities
 }
 
 
