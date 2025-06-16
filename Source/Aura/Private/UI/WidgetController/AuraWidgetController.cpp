@@ -34,17 +34,19 @@ void UAuraWidgetController::BroadcastInitialAbilitiesInfo()
 	UAuraAbilitySystemComponent *AuraASC = CastChecked<UAuraAbilitySystemComponent>(AbilitySystemComponent);
 	if (!AuraASC->bStartupAbilitiesGiven)
 	{
-		UE_LOG(LogAura, Error, TEXT("OnInitializeStartupAbilities called but their were not given!"));
+		UE_LOG(LogAura, Error, TEXT("BroadcastInitialAbilitiesInfo called but their were not given!"));
 		return;
 	}
 
 	FForEachAbility BroadcastDelegate;
 	BroadcastDelegate.BindLambda([this, AuraASC](const FGameplayAbilitySpec& AbilitySpec)
 	{
-		auto AbilityTag = AuraASC->GetAbilityTagFromSpec(AbilitySpec);
-		auto AbilityInfo = AbilitiesInfo->FindAbilityInfoFromTag(AbilityTag);
+		FGameplayTag AbilityTag = AuraASC->GetAbilityTagFromSpec(AbilitySpec);
+		FAuraAbilityInfo AbilityInfo = AbilitiesInfo->FindAbilityInfoFromTag(AbilityTag);
+		FGameplayTag StatusTag = AuraASC->GetStatusFromSpec(AbilitySpec);
 		
 		AbilityInfo.InputTag = AuraASC->GetInputTagFromSpec(AbilitySpec);
+		AbilityInfo.StatusTag = StatusTag;
 		AbilityInfoDelegate.Broadcast(AbilityInfo);
 	});
 	AuraASC->ForEachAbility(BroadcastDelegate);

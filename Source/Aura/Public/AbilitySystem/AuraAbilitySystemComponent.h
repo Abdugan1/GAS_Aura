@@ -40,9 +40,11 @@ public:
 	 * Broadcasts the effect's AssetTags whenever it's applied to self.
 	 */
 	FEffectAssetTags EffectAppliedToSelf;
-	
+
+	/** Broadcasts when Initial Abilities were given */
 	FAbilitiesGiven AbilitiesGivenDelegate;
 
+	/** Sometimes, it's hard to know the timelapse, so this is set along with AbilitiesGivenDelegate broadcast */
 	bool bStartupAbilitiesGiven = false;
 
 	/**
@@ -52,7 +54,10 @@ public:
 	 */
 	void AddCharacterAbilities(const TArray<TSubclassOf<UGameplayAbility>>& StartupAbilities);
 	void AddCharacterPassiveAbilities(const TArray<TSubclassOf<UGameplayAbility>>& StartupPassiveAbilities);
-	
+
+	/**
+	 * Increments the Attribute's value. In this game, these are Primary Attributes
+	 */
 	void UpgradeAttribute(const FGameplayTag& AttributeTag); 
 
 	/** Calls AbilitySpecInputReleased. Does NOT cancel the ability. */
@@ -64,10 +69,12 @@ public:
 	/** Loop through GetActivatableAbilities and execute the delegate's functor */
 	void ForEachAbility(const FForEachAbility& Delegate);
 
-	/** Return GameplayTag -> Abilities.* from AbilityTags; Returns an emtpy GameplayTag if failed to find any */
+	/** Return GameplayTag -> Abilities.* from AbilityTags; Returns an empty GameplayTag if failed to find any */
 	static FGameplayTag GetAbilityTagFromSpec(const FGameplayAbilitySpec& AbilitySpec);
-	/** Return GameplayTag -> InputTag.* from DynamicAbilityTags; Returns an emtpy GameplayTag if failed to find any */
+	/** Return GameplayTag -> InputTag.* from DynamicAbilityTags; Returns an empty GameplayTag if failed to find any */
 	static FGameplayTag GetInputTagFromSpec(const FGameplayAbilitySpec& AbilitySpec);
+	/** Returns GameplayTag -> Abilities.Status.* from DynamicAbilityTags. Returns an empty GameplayTag if failed to find any */
+	static FGameplayTag GetStatusFromSpec(const FGameplayAbilitySpec& AbilitySpec);
 	
 protected:
 	UFUNCTION(Server, Reliable)

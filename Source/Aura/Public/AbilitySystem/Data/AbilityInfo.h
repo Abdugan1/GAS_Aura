@@ -7,6 +7,8 @@
 #include "Engine/DataAsset.h"
 #include "AbilityInfo.generated.h"
 
+class UGameplayAbility;
+
 /**
  * A struct to in the main overlay. To show the icon and the background material.
  * Users must specify AbilityTag, Icon, and BackgroundMaterial in the editor.
@@ -25,12 +27,21 @@ struct FAuraAbilityInfo
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
 	FGameplayTag CooldownTag;
+	
+	UPROPERTY(BlueprintReadOnly)
+	FGameplayTag StatusTag;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
 	TObjectPtr<const UTexture2D> Icon = nullptr;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
 	TObjectPtr<const UMaterialInterface> BackgroundMaterial = nullptr;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
+	int32 LevelUpRequirement = 1;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
+	TSubclassOf<UGameplayAbility> AbilityClass;
 };
 
 /**
