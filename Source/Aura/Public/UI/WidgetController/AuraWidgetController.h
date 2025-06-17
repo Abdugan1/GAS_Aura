@@ -79,23 +79,62 @@ public:
 	 * Broadcast Initial Abilities' Info to init Overlay's Skill Globes, i.e., what slot, what icon and background.
 	 */
 	void BroadcastInitialAbilitiesInfo();
+
+	UFUNCTION(BlueprintPure)
+	APlayerController *GetPlayerController();
+	
+	const APlayerController *GetPlayerController() const;
+	
+	UFUNCTION(BlueprintPure)
+	APlayerState *GetPlayerState();
+
+	const APlayerState *GetPlayerState() const;
+
+	UFUNCTION(BlueprintPure)
+	UAbilitySystemComponent *GetAbilitySystemComponent();
+
+	const UAbilitySystemComponent *GetAbilitySystemComponent() const;
+
+	UFUNCTION(BlueprintPure)
+	UAttributeSet *GetAttributeSet();
+
+	const UAttributeSet *GetAttributeSet() const;
+	
+	AAuraPlayerController *GetAuraPlayerController();
+	AAuraPlayerState *GetAuraPlayerState();
+	UAuraAbilitySystemComponent *GetAuraAbilitySystemComponent();
+	UAuraAttributeSet *GetAuraAttributeSet();
+	
 	
 protected:
-	UPROPERTY(BlueprintReadOnly, Category="WidgetController")
-	TObjectPtr<APlayerController> PlayerController;
-
-	UPROPERTY(BlueprintReadOnly, Category="WidgetController")
-	TObjectPtr<APlayerState> PlayerState;
-
-	UPROPERTY(BlueprintReadOnly, Category="WidgetController")
-	TObjectPtr<UAbilitySystemComponent> AbilitySystemComponent;
-
-	UPROPERTY(BlueprintReadOnly, Category="WidgetController")
-	TObjectPtr<UAttributeSet> AttributeSet;
-	
 	UPROPERTY(BlueprintAssignable, Category = "GAS|Messages")
 	FAbilityInfoSignature AbilityInfoDelegate;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Widget Data")
 	TObjectPtr<UAbilityInfo> AbilitiesInfo;
+
+private:
+   	UPROPERTY()
+   	TObjectPtr<APlayerController> PlayerController;
+   
+   	UPROPERTY()
+   	TObjectPtr<APlayerState> PlayerState;
+   
+   	UPROPERTY()
+   	TObjectPtr<UAbilitySystemComponent> AbilitySystemComponent;
+   
+   	UPROPERTY()
+   	TObjectPtr<UAttributeSet> AttributeSet;
+   
+   	UPROPERTY()
+   	TObjectPtr<AAuraPlayerController> AuraPlayerController;
+   
+   	UPROPERTY()
+   	TObjectPtr<AAuraPlayerState> AuraPlayerState;
+   
+   	UPROPERTY()
+   	TObjectPtr<UAuraAbilitySystemComponent> AuraAbilitySystemComponent;
+   
+   	UPROPERTY()
+   	TObjectPtr<UAuraAttributeSet> AuraAttributeSet;
 };

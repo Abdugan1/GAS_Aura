@@ -51,3 +51,79 @@ void UAuraWidgetController::BroadcastInitialAbilitiesInfo()
 	});
 	AuraASC->ForEachAbility(BroadcastDelegate);
 }
+
+APlayerController* UAuraWidgetController::GetPlayerController()
+{
+	return PlayerController;
+}
+
+const APlayerController* UAuraWidgetController::GetPlayerController() const
+{
+	return PlayerController;
+}
+
+const APlayerState* UAuraWidgetController::GetPlayerState() const
+{
+	return PlayerState;
+}
+
+const UAbilitySystemComponent* UAuraWidgetController::GetAbilitySystemComponent() const
+{
+	return AbilitySystemComponent;
+}
+
+const UAttributeSet* UAuraWidgetController::GetAttributeSet() const
+{
+	return AttributeSet;
+}
+
+APlayerState* UAuraWidgetController::GetPlayerState()
+{
+	return PlayerState;
+}
+
+UAbilitySystemComponent* UAuraWidgetController::GetAbilitySystemComponent()
+{
+	return AbilitySystemComponent;
+}
+
+UAttributeSet* UAuraWidgetController::GetAttributeSet()
+{
+	return AttributeSet;
+}
+
+AAuraPlayerController* UAuraWidgetController::GetAuraPlayerController()
+{
+	if (AuraPlayerController == nullptr)
+	{
+		AuraPlayerController = CastChecked<AAuraPlayerController>(PlayerController);
+	}
+	return AuraPlayerController;
+}
+
+AAuraPlayerState* UAuraWidgetController::GetAuraPlayerState()
+{
+	if (AuraPlayerState == nullptr)
+	{
+		AuraPlayerState = CastChecked<AAuraPlayerState>(PlayerState);
+	}
+	return AuraPlayerState;
+}
+
+UAuraAbilitySystemComponent* UAuraWidgetController::GetAuraAbilitySystemComponent()
+{
+	if (AuraAbilitySystemComponent == nullptr)
+	{
+		AuraAbilitySystemComponent = CastChecked<UAuraAbilitySystemComponent>(AbilitySystemComponent);
+	}
+	return AuraAbilitySystemComponent;
+}
+
+UAuraAttributeSet* UAuraWidgetController::GetAuraAttributeSet()
+{
+	if (AuraAttributeSet == nullptr)
+	{
+		AuraAttributeSet = CastChecked<UAuraAttributeSet>(AttributeSet);
+	}
+	return AuraAttributeSet;
+}

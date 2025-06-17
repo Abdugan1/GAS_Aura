@@ -12,38 +12,30 @@
 
 void UOverlayWidgetController::BroadcastInitialValues()
 {
-	const UAuraAttributeSet *AuraAttributeSet = CastChecked<UAuraAttributeSet>(AttributeSet);
-		
-	OnHealthChanged.Broadcast(AuraAttributeSet->GetHealth());
-	OnMaxHealthChanged.Broadcast(AuraAttributeSet->GetMaxHealth());
-	OnManaChanged.Broadcast(AuraAttributeSet->GetMana());
-	OnMaxManaChanged.Broadcast(AuraAttributeSet->GetMaxMana());
+	OnHealthChanged.Broadcast(GetAuraAttributeSet()->GetHealth());
+	OnMaxHealthChanged.Broadcast(GetAuraAttributeSet()->GetMaxHealth());
+	OnManaChanged.Broadcast(GetAuraAttributeSet()->GetMana());
+	OnMaxManaChanged.Broadcast(GetAuraAttributeSet()->GetMaxMana());
 }
 
 
 void UOverlayWidgetController::BindCallbacksToDependencies()
 {
-	const UAuraAttributeSet *AuraAttributeSet = CastChecked<UAuraAttributeSet>(AttributeSet);
-
-	BindAttributeChangesToDelegates(AuraAttributeSet);
-
+	BindAttributeChangesToDelegates();
 	
-	UAuraAbilitySystemComponent* AuraASC = CastChecked<UAuraAbilitySystemComponent>(AbilitySystemComponent);
-	
-	if (AuraASC->bStartupAbilitiesGiven)
+	if (GetAuraAbilitySystemComponent()->bStartupAbilitiesGiven)
 	{
 		BroadcastInitialAbilitiesInfo();
 	}
 	else
 	{
-		AuraASC->AbilitiesGivenDelegate.AddUObject(this, &UOverlayWidgetController::BroadcastInitialAbilitiesInfo);
+		GetAuraAbilitySystemComponent()->AbilitiesGivenDelegate.AddUObject(this, &UOverlayWidgetController::BroadcastInitialAbilitiesInfo);
 	}
 
-	BindToEffectApplicationToShowMessageOnScreen(AuraASC);
+	BindToEffectApplicationToShowMessageOnScreen();
 
-	auto AuraPS = CastChecked<AAuraPlayerState>(PlayerState);
-	AuraPS->OnXPChanged.AddUObject(this, &UOverlayWidgetController::OnXPChanged);
-	AuraPS->OnLevelChanged.AddLambda(
+	GetAuraPlayerState()->OnXPChanged.AddUObject(this, &UOverlayWidgetController::OnXPChanged);
+	GetAuraPlayerState()->OnLevelChanged.AddLambda(
 		[this](int32 NewLevel)
 	{
 		OnPlayerLevelChanged.Broadcast(NewLevel);
@@ -51,32 +43,32 @@ void UOverlayWidgetController::BindCallbacksToDependencies()
 }
 
 
-void UOverlayWidgetController::BindAttributeChangesToDelegates(const UAuraAttributeSet *AuraAttributeSet)
+void UOverlayWidgetController::BindAttributeChangesToDelegates()
 {
 	/** Health **/
-	AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(
-		AuraAttributeSet->GetHealthAttribute()).AddLambda(
+	GetAbilitySystemComponent()->GetGameplayAttributeValueChangeDelegate(
+		GetAuraAttributeSet()->GetHealthAttribute()).AddLambda(
 			[this](const FOnAttributeChangeData& Data)
 			{
 				OnHealthChanged.Broadcast(Data.NewValue);
 			});
 	/** MaxHealth **/
-	AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(
-	AuraAttributeSet->GetMaxHealthAttribute()).AddLambda(
+	GetAbilitySystemComponent()->GetGameplayAttributeValueChangeDelegate(
+	GetAuraAttributeSet()->GetMaxHealthAttribute()).AddLambda(
 		[this](const FOnAttributeChangeData& Data)
 		{
 			OnMaxHealthChanged.Broadcast(Data.NewValue);
 		});
 	/** Mana **/
-	AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(
-	AuraAttributeSet->GetManaAttribute()).AddLambda(
+	GetAbilitySystemComponent()->GetGameplayAttributeValueChangeDelegate(
+	GetAuraAttributeSet()->GetManaAttribute()).AddLambda(
 			[this](const FOnAttributeChangeData& Data)
 			{
 				OnManaChanged.Broadcast(Data.NewValue);
 			});
 	/** MaxMana **/
-	AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(
-	AuraAttributeSet->GetMaxManaAttribute()).AddLambda(
+	GetAbilitySystemComponent()->GetGameplayAttributeValueChangeDelegate(
+	GetAuraAttributeSet()->GetMaxManaAttribute()).AddLambda(
 			[this](const FOnAttributeChangeData& Data)
 			{
 				OnMaxManaChanged.Broadcast(Data.NewValue);
@@ -84,10 +76,10 @@ void UOverlayWidgetController::BindAttributeChangesToDelegates(const UAuraAttrib
 }
 
 
-void UOverlayWidgetController::BindToEffectApplicationToShowMessageOnScreen(UAuraAbilitySystemComponent* AuraASC)
+void UOverlayWidgetController::BindToEffectApplicationToShowMessageOnScreen()
 {
 	// Broadcast the row with the info about the effect applied
-	AuraASC->EffectAppliedToSelf.AddLambda(
+	GetAuraAbilitySystemComponent()->EffectAppliedToSelf.AddLambda(
 		[this](const FGameplayTagContainer& AssetTags)
 		{
 			for (const FGameplayTag& Tag : AssetTags)
@@ -109,7 +101,8 @@ void UOverlayWidgetController::BindToEffectApplicationToShowMessageOnScreen(UAur
 
 void UOverlayWidgetController::OnXPChanged(int32 NewXP) const
 {
-	const AAuraPlayerState* AuraPS = CastChecked<AAuraPlayerState>(PlayerState);
+	// TODO: Can't use the function version, GetAuraPlayerState since this we are inside a const function.
+	const AAuraPlayerState* AuraPS = CastChecked<AAuraPlayerState>(GetPlayerState());
 	const TObjectPtr<ULevelUpInfo> LevelUpInfo = AuraPS->LevelUpInfo;
 
 	checkf(LevelUpInfo, TEXT("Unabled to find LevelUpInfo. Please fill out AuraPlayerState Blueprint"));

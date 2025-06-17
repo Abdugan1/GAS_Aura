@@ -65,13 +65,13 @@ protected:
 	void OnXPChanged(int32 NewXP) const;
 	
 private:
-	void BindAttributeChangesToDelegates(const UAuraAttributeSet *AuraAttributeSet);
+	void BindAttributeChangesToDelegates();
 
 	/**
 	 * Binds To Effect Applied To Self and checks to see if a Message Tag is among the Asset Tags.
 	 * If yes, broadcasts MessageWidgetRowDelegate
 	 */
-	void BindToEffectApplicationToShowMessageOnScreen(UAuraAbilitySystemComponent* AuraASC);
+	void BindToEffectApplicationToShowMessageOnScreen();
 	
 public:
 	/** Delegates for Attributes change**/

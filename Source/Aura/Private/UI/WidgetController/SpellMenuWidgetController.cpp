@@ -11,15 +11,13 @@ void USpellMenuWidgetController::BroadcastInitialValues()
 {
 	BroadcastInitialAbilitiesInfo();
 
-	AAuraPlayerState* AuraPS = CastChecked<AAuraPlayerState>(PlayerState);
-	OnPlayerSpellPointsChanged.Broadcast(AuraPS->GetSpellPoints());
+	OnPlayerSpellPointsChanged.Broadcast(GetAuraPlayerState()->GetSpellPoints());
 }
 
 void USpellMenuWidgetController::BindCallbacksToDependencies()
 {
-	UAuraAbilitySystemComponent* AuraASC = Cast<UAuraAbilitySystemComponent>(AbilitySystemComponent);
-
-	AuraASC->AbilityStatusChangedDelegate.AddLambda([this](const FGameplayTag& AbilityTag, const FGameplayTag& StatusTag)
+	GetAuraAbilitySystemComponent()->AbilityStatusChangedDelegate.AddLambda(
+		[this](const FGameplayTag& AbilityTag, const FGameplayTag& StatusTag)
 	{
 		if (AbilitiesInfo)
 		{
@@ -30,9 +28,7 @@ void USpellMenuWidgetController::BindCallbacksToDependencies()
 		}
 	});
 
-	AAuraPlayerState* AuraPS = CastChecked<AAuraPlayerState>(PlayerState);
-
-	AuraPS->OnSpellPointsChanged.AddLambda(
+	GetAuraPlayerState()->OnSpellPointsChanged.AddLambda(
 	[this](int32 NewSpellPoints)
 		{
 			OnPlayerSpellPointsChanged.Broadcast(NewSpellPoints);

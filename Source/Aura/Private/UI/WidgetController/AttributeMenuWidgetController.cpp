@@ -19,10 +19,8 @@ void UAttributeMenuWidgetController::BroadcastInitialValues()
 		BroadCastAttributeInfoChanged(Info);
 	}
 
-
-	AAuraPlayerState* AuraPS = CastChecked<AAuraPlayerState>(PlayerState);
-	OnPlayerAttributePointsChanged.Broadcast(AuraPS->GetAttributePoints());
-	OnPlayerSpellPointsChanged.Broadcast(AuraPS->GetSpellPoints());
+	OnPlayerAttributePointsChanged.Broadcast(GetAuraPlayerState()->GetAttributePoints());
+	OnPlayerSpellPointsChanged.Broadcast(GetAuraPlayerState()->GetSpellPoints());
 }
 
 
@@ -34,7 +32,7 @@ void UAttributeMenuWidgetController::BindCallbacksToDependencies()
 	// Should RETHINK THIS!
 	for (FAuraAttributeInfo& Info : AttributeInfo->AttributeInfos)
 	{
-		AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(
+		GetAbilitySystemComponent()->GetGameplayAttributeValueChangeDelegate(
 			Info.Attribute).AddLambda(
 			[this, &Info](const FOnAttributeChangeData& Data)
 			{
@@ -42,13 +40,12 @@ void UAttributeMenuWidgetController::BindCallbacksToDependencies()
 			});
 	}
 
-	AAuraPlayerState* AuraPs = CastChecked<AAuraPlayerState>(PlayerState);
-	AuraPs->OnAttributePointsChanged.AddLambda(
+	GetAuraPlayerState()->OnAttributePointsChanged.AddLambda(
 		[this](int32 NewAttributePoints)
 		{
 			OnPlayerAttributePointsChanged.Broadcast(NewAttributePoints);
 		});
-	AuraPs->OnSpellPointsChanged.AddLambda(
+	GetAuraPlayerState()->OnSpellPointsChanged.AddLambda(
 	[this](int32 NewSpellPoints)
 	{
 		OnPlayerSpellPointsChanged.Broadcast(NewSpellPoints);
@@ -58,14 +55,12 @@ void UAttributeMenuWidgetController::BindCallbacksToDependencies()
 
 void UAttributeMenuWidgetController::UpgradeAttribute(const FGameplayTag& AttributeTag)
 {
-	UAuraAbilitySystemComponent* AuraASC = CastChecked<UAuraAbilitySystemComponent>(AbilitySystemComponent);
-	AuraASC->UpgradeAttribute(AttributeTag);
+	GetAuraAbilitySystemComponent()->UpgradeAttribute(AttributeTag);
 }
 
 
 void UAttributeMenuWidgetController::BroadCastAttributeInfoChanged(FAuraAttributeInfo& Info) const
 {
-	UE_LOG(LogTemp, Display, TEXT("Broadcasting... %f"), Info.Attribute.GetNumericValue(AttributeSet));
-	Info.AttributeValue = Info.Attribute.GetNumericValue(AttributeSet);
+	Info.AttributeValue = Info.Attribute.GetNumericValue(GetAttributeSet());
 	OnAttributeInfoChanged.Broadcast(Info);
 }
