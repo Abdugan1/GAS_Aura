@@ -101,6 +101,8 @@ public:
 	
 	AAuraPlayerController *GetAuraPlayerController();
 	AAuraPlayerState *GetAuraPlayerState();
+
+	UFUNCTION(BlueprintPure)
 	UAuraAbilitySystemComponent *GetAuraAbilitySystemComponent();
 	UAuraAttributeSet *GetAuraAttributeSet();
 	

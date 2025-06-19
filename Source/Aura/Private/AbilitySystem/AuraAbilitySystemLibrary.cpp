@@ -5,6 +5,7 @@
 
 #include "AbilitySystemComponent.h"
 #include "AuraAbilityTypes.h"
+#include "AbilitySystem/AuraAbilitySystemComponent.h"
 #include "AbilitySystem/Data/CharacterClassInfo.h"
 #include "Aura/AuraLogChannels.h"
 #include "Game/AuraGameModeBase.h"
@@ -141,6 +142,18 @@ UAbilityInfo* UAuraAbilitySystemLibrary::GetAbilityInfo(const UObject* WorldCont
 	}
 
 	return AuraGameMode->AbilityInfo;
+}
+
+
+FGameplayTag UAuraAbilitySystemLibrary::GetAbilityStatusFromAbilityTag(UAuraAbilitySystemComponent* AuraASC,
+	const FGameplayTag& AbilityTag)
+{
+	if (FGameplayAbilitySpec* Spec = AuraASC->GetSpecFromAbilityTag(AbilityTag))
+	{
+		return AuraASC->GetStatusFromSpec(*Spec);
+	}
+	
+	return FGameplayTag();
 }
 
 
