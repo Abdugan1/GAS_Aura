@@ -85,6 +85,9 @@ public:
 	static FGameplayTag GetInputTagFromSpec(const FGameplayAbilitySpec& AbilitySpec);
 	/** Returns GameplayTag -> Abilities.Status.* from DynamicAbilityTags. Returns an empty GameplayTag if failed to find any */
 	static FGameplayTag GetStatusFromSpec(const FGameplayAbilitySpec& AbilitySpec);
+
+	UFUNCTION(Server, Reliable)
+	void ServerSpendSpellPoint(const FGameplayTag& AbilityTag);
 	
 protected:
 	UFUNCTION(Server, Reliable)

@@ -159,10 +159,7 @@ void UAuraAbilitySystemComponent::UpdateAbilityStatuses(int32 Level)
 
 			// Forcing to Replicate
 			MarkAbilitySpecDirty(AbilitySpec);
-
-			// NOTE: Stephen is not changing it here. He's changing it inside SpellMenuWidgetController
-			Info.StatusTag = FAuraGameplayTags::Get().Abilities_Status_Eligible;
-			
+	
 			ClientUpdateAbilityStatus(Info.AbilityTag, Info.StatusTag);
 		}
 	}
@@ -228,6 +225,42 @@ FGameplayTag UAuraAbilitySystemComponent::GetStatusFromSpec(const FGameplayAbili
 	}
 	return FGameplayTag{};
 }
+
+
+void UAuraAbilitySystemComponent::ServerSpendSpellPoint_Implementation(const FGameplayTag& AbilityTag)
+{
+	FGameplayAbilitySpec* AbilitySpec = GetSpecFromAbilityTag(AbilityTag);
+	FGameplayTag AbilityStatus = GetStatusFromSpec(*AbilitySpec);
+	
+	/* Fool-proofing */
+	check(AbilitySpec != nullptr); // The Ability MUST be in the ASC's GetActivatableAbilities
+	check(GetAvatarActor()->Implements<UPlayerInterface>()); 
+	check(IPlayerInterface::Execute_GetSpellPoints(GetAvatarActor()) > 0); // Cannot do anything if not enough SpellPoints
+	check(AbilityStatus.MatchesTag(FAuraGameplayTags::Get().Abilities_Status_Locked) == false); // If the Ability is Locked, not possible to do anything
+
+	IPlayerInterface::Execute_AddToSpellPoints(GetAvatarActor(), -1);
+	
+	if (AbilityStatus == FAuraGameplayTags::Get().Abilities_Status_Eligible)
+	{
+		// If I didn't remove the initial Eligible status, the Ability would have two Status GameplayTags...
+		AbilitySpec->GetDynamicSpecSourceTags().RemoveTag(FAuraGameplayTags::Get().Abilities_Status_Eligible);
+		AbilitySpec->GetDynamicSpecSourceTags().AddTag(FAuraGameplayTags::Get().Abilities_Status_Unlocked);
+
+		AbilityStatus = FAuraGameplayTags::Get().Abilities_Status_Unlocked;
+	}
+	else if (AbilityStatus == FAuraGameplayTags::Get().Abilities_Status_Unlocked
+		|| AbilityStatus == FAuraGameplayTags::Get().Abilities_Status_Equipped)
+	{
+		// It's a Replicated var
+		AbilitySpec->Level += 1;
+	}
+
+	ClientUpdateAbilityStatus(AbilityTag, AbilityStatus);
+
+	// Force Replication
+	MarkAbilitySpecDirty(*AbilitySpec);
+}
+
 
 void UAuraAbilitySystemComponent::OnRep_ActivateAbilities()
 {

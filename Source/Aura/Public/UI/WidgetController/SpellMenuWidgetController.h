@@ -17,6 +17,9 @@ public:
 	virtual void BroadcastInitialValues() override;
 	virtual void BindCallbacksToDependencies() override;
 
+	UFUNCTION(BlueprintCallable)
+	void SpendPointButtonPressed(const FGameplayTag& AbilityTag);
+	
 	UPROPERTY(BlueprintAssignable)
 	FOnPlayerStatChangedSignature OnPlayerSpellPointsChanged;
 };

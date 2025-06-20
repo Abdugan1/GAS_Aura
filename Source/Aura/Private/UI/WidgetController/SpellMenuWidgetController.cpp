@@ -3,6 +3,7 @@
 
 #include "UI/WidgetController/SpellMenuWidgetController.h"
 
+#include "AuraGameplayTags.h"
 #include "AbilitySystem/AuraAbilitySystemComponent.h"
 #include "AbilitySystem/Data/AbilityInfo.h"
 #include "Player/AuraPlayerState.h"
@@ -23,7 +24,7 @@ void USpellMenuWidgetController::BindCallbacksToDependencies()
 		{
 			FAuraAbilityInfo Info = AbilitiesInfo->FindAbilityInfoFromTag(AbilityTag);
 
-			// NOTE: For some reason, Stephen changes Info.StatusTag = StatusTag here. But I'm changing it inside ASC's UpdateAbilityStatuses
+			Info.StatusTag = StatusTag;
 			AbilityInfoDelegate.Broadcast(Info);
 		}
 	});
@@ -34,3 +35,11 @@ void USpellMenuWidgetController::BindCallbacksToDependencies()
 			OnPlayerSpellPointsChanged.Broadcast(NewSpellPoints);
 		});
 }
+
+
+void USpellMenuWidgetController::SpendPointButtonPressed(const FGameplayTag& AbilityTag)
+{
+	GetAuraAbilitySystemComponent()->ServerSpendSpellPoint(AbilityTag);
+}
+
+
