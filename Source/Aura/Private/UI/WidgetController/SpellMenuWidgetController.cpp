@@ -41,6 +41,7 @@ void USpellMenuWidgetController::BindCallbacksToDependencies()
 	[this](int32 NewSpellPoints)
 		{
 			OnPlayerSpellPointsChanged.Broadcast(NewSpellPoints);
+		
 			CheckAndBroadcastOnSpellGlobeSelected();
 		});
 }
@@ -102,21 +103,27 @@ void USpellMenuWidgetController::CheckAndBroadcastOnSpellGlobeSelected()
 
 	FString DescriptionText;
 	FString NextLevelDescriptionText;
-	
-	if (FGameplayAbilitySpec* AbilitySpec = GetAuraAbilitySystemComponent()->GetSpecFromAbilityTag(SelectedAbility.AbilityTag))
-	{
-		UAuraGameplayAbility* AuraAbility = Cast<UAuraGameplayAbility>(AbilitySpec->Ability);
 
-		DescriptionText = AuraAbility->GetDescription(AbilitySpec->Level);
-		NextLevelDescriptionText = AuraAbility->GetNextLevelDescription(AbilitySpec->Level + 1);
-	}
-	else
-	{
-		const UAbilityInfo* Abilities = UAuraAbilitySystemLibrary::GetAbilityInfo(GetAbilitySystemComponent()->GetAvatarActor());
-		const FAuraAbilityInfo AbilityInfo = Abilities->FindAbilityInfoFromTag(SelectedAbility.AbilityTag);
-		
-		DescriptionText= UAuraGameplayAbility::GetLockedDescription(AbilityInfo.LevelUpRequirement);
-	}
+	GetAuraAbilitySystemComponent()->GetDescriptionsByAbilityTag(
+		SelectedAbility.AbilityTag,
+		DescriptionText,
+		NextLevelDescriptionText
+		);
+	
+	// if (FGameplayAbilitySpec* AbilitySpec = GetAuraAbilitySystemComponent()->GetSpecFromAbilityTag(SelectedAbility.AbilityTag))
+	// {
+	// 	UAuraGameplayAbility* AuraAbility = Cast<UAuraGameplayAbility>(AbilitySpec->Ability);
+	//
+	// 	DescriptionText = AuraAbility->GetDescription(AbilitySpec->Level);
+	// 	NextLevelDescriptionText = AuraAbility->GetNextLevelDescription(AbilitySpec->Level + 1);
+	// }
+	// else
+	// {
+	// 	const UAbilityInfo* Abilities = UAuraAbilitySystemLibrary::GetAbilityInfo(GetAbilitySystemComponent()->GetAvatarActor());
+	// 	const FAuraAbilityInfo AbilityInfo = Abilities->FindAbilityInfoFromTag(SelectedAbility.AbilityTag);
+	// 	
+	// 	DescriptionText= UAuraGameplayAbility::GetLockedDescription(AbilityInfo.LevelUpRequirement);
+	// }
 	
 	
 	OnSpellGlobeSelected.Broadcast(bSpendPointsButtonEnabled, bEquipButtonEnabled, DescriptionText, NextLevelDescriptionText);

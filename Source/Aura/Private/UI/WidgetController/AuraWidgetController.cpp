@@ -47,6 +47,7 @@ void UAuraWidgetController::BroadcastInitialAbilitiesInfo()
 		
 		AbilityInfo.InputTag = AuraASC->GetInputTagFromSpec(AbilitySpec);
 		AbilityInfo.StatusTag = StatusTag;
+		
 		AbilityInfoDelegate.Broadcast(AbilityInfo);
 	});
 	AuraASC->ForEachAbility(BroadcastDelegate);

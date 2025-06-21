@@ -157,10 +157,20 @@ void UAuraAbilitySystemComponent::UpdateAbilityStatuses(int32 Level)
 			AbilitySpec.GetDynamicSpecSourceTags().AddTag(FAuraGameplayTags::Get().Abilities_Status_Eligible);
 			GiveAbility(AbilitySpec);
 
-			// Forcing to Replicate
-			MarkAbilitySpecDirty(AbilitySpec);
+
+			/**
+			 * Sidenote: I think we can also remove MarkAbilitySpecDirty()
+			 * as it is already being called for the spec inside OnGiveAbility(), after successfully giving the ability.
+			 */
+			// MarkAbilitySpecDirty(AbilitySpec); 		// Forcing to Replicate
 	
-			ClientUpdateAbilityStatus(Info.AbilityTag, FAuraGameplayTags::Get().Abilities_Status_Eligible);
+			/**
+			 * Issue using ClientUpdateAbilityStatus here:
+			 * - AbilityScopeLockCount is not null here after GiveAbility(AbilitySpec) so when wanting to enable Spell Buttons,
+			 *   GetActivatableAbilities doesn't contain the AbilitySpec!
+			 * Solution: https://www.udemy.com/course/unreal-engine-5-gas-top-down-rpg/learn/lecture/39869210#questions/22525277
+			*/
+			// ClientUpdateAbilityStatus(Info.AbilityTag, FAuraGameplayTags::Get().Abilities_Status_Eligible);
 		}
 	}
 }
@@ -289,6 +299,23 @@ void UAuraAbilitySystemComponent::OnRep_ActivateAbilities()
 	{
 		bStartupAbilitiesGiven = true;
 		AbilitiesGivenDelegate.Broadcast();
+	}
+}
+
+void UAuraAbilitySystemComponent::OnGiveAbility(FGameplayAbilitySpec& AbilitySpec)
+{
+	Super::OnGiveAbility(AbilitySpec);
+
+	const bool bIsLocallyControlled = AbilityActorInfo->IsLocallyControlled();
+	if (!bIsLocallyControlled)
+	{
+		return;
+	}
+
+	const FGameplayTag StatusTag = GetStatusFromSpec(AbilitySpec);
+	if (StatusTag.MatchesTagExact(FAuraGameplayTags::Get().Abilities_Status_Eligible))
+	{
+		AbilityStatusChangedDelegate.Broadcast(GetAbilityTagFromSpec(AbilitySpec), StatusTag);
 	}
 }
 

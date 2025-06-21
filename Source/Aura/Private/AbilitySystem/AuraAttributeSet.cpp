@@ -122,7 +122,7 @@ void UAuraAttributeSet::PostGameplayEffectExecute(const FGameplayEffectModCallba
 			else
 			{
 				FGameplayTagContainer TagContainer;
-				TagContainer.AddTag(FAuraGameplayTags::Get().Effects_HitReact);
+				TagContainer.AddTag(FAuraGameplayTags::Get().Abilities_HitReact);
 				EffectProperties.TargetAbilitySystemComponent->TryActivateAbilitiesByTag(TagContainer);
 			}
 

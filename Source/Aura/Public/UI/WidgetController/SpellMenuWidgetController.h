@@ -11,8 +11,8 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_FourParams(FSpellGlobeSelectedSignature, bool
 
 struct FSelectedAbility
 {
-	FGameplayTag AbilityTag;
-	FGameplayTag StatusTag;
+	FGameplayTag AbilityTag = FGameplayTag();
+	FGameplayTag StatusTag = FGameplayTag();
 };
 
 /**

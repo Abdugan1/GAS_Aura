@@ -79,7 +79,10 @@ public:
 	/** Returns Spec if Ability exists on ASC, otherwise return nullptr */
 	FGameplayAbilitySpec* GetSpecFromAbilityTag(const FGameplayTag& AbilityTag);
 
-	/** Fills out both OutDescription and OutNextLevelDescription. Return FALSE if the Ability is locked */ 
+	/**
+	 * Fills out both OutDescription and OutNextLevelDescription. Return FALSE if the Ability is locked
+	 * NOTE: I'm using AbilityLevel because I use this function where AbilitySpec->Level is NOT REPLICATED!
+	 */ 
 	bool GetDescriptionsByAbilityTag(const FGameplayTag& AbilityTag, FString& OutDescription, FString& OutNextLevelDescription);
 	
 	/** Return GameplayTag -> Abilities.* from AbilityTags; Returns an empty GameplayTag if failed to find any */
@@ -111,4 +114,5 @@ protected:
 	 * So we are broadcasting AbilitiesGivenDelegate when all the abilities were given
 	 */
 	virtual void OnRep_ActivateAbilities() override;
+	virtual void OnGiveAbility(FGameplayAbilitySpec& AbilitySpec) override;
 };
