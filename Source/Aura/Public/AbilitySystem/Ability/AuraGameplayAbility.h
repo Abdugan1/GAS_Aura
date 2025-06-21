@@ -27,7 +27,8 @@ public:
 	UPROPERTY(EditDefaultsOnly, Category = "Input")
 	FGameplayTag StartupInputTag;
 
-	// You might also want to override virtual functions from UGameplayAbility here,
-	// e.g., ActivateAbility, CanActivateAbility, etc.
+	virtual FString GetDescription(int32 Level);
+	virtual FString GetNextLevelDescription(int32 Level);
+	static FString GetLockedDescription(int32 Level);
 };
 

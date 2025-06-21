@@ -160,7 +160,7 @@ void UAuraAbilitySystemComponent::UpdateAbilityStatuses(int32 Level)
 			// Forcing to Replicate
 			MarkAbilitySpecDirty(AbilitySpec);
 	
-			ClientUpdateAbilityStatus(Info.AbilityTag, Info.StatusTag);
+			ClientUpdateAbilityStatus(Info.AbilityTag, FAuraGameplayTags::Get().Abilities_Status_Eligible);
 		}
 	}
 }
@@ -182,6 +182,24 @@ FGameplayAbilitySpec* UAuraAbilitySystemComponent::GetSpecFromAbilityTag(const F
 	}
 
 	return nullptr;
+}
+
+bool UAuraAbilitySystemComponent::GetDescriptionsByAbilityTag(const FGameplayTag& AbilityTag, FString& OutDescription,
+	FString& OutNextLevelDescription)
+{
+	if (const FGameplayAbilitySpec* Spec = GetSpecFromAbilityTag(AbilityTag))
+	{
+		// Ability is NOT Locked
+		UAuraGameplayAbility *AuraAbility = CastChecked<UAuraGameplayAbility>(Spec->Ability);
+		OutDescription = AuraAbility->GetDescription(Spec->Level);
+		OutNextLevelDescription = AuraAbility->GetNextLevelDescription(Spec->Level + 1);
+		return true;
+	}
+	// Ability is Locked
+	const UAbilityInfo* AbilityInfo = UAuraAbilitySystemLibrary::GetAbilityInfo(GetAvatarActor());
+	OutDescription = UAuraGameplayAbility::GetLockedDescription(AbilityInfo->FindAbilityInfoFromTag(AbilityTag).LevelUpRequirement);
+	OutNextLevelDescription = FString();
+	return false;
 }
 
 

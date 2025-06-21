@@ -78,6 +78,9 @@ public:
 
 	/** Returns Spec if Ability exists on ASC, otherwise return nullptr */
 	FGameplayAbilitySpec* GetSpecFromAbilityTag(const FGameplayTag& AbilityTag);
+
+	/** Fills out both OutDescription and OutNextLevelDescription. Return FALSE if the Ability is locked */ 
+	bool GetDescriptionsByAbilityTag(const FGameplayTag& AbilityTag, FString& OutDescription, FString& OutNextLevelDescription);
 	
 	/** Return GameplayTag -> Abilities.* from AbilityTags; Returns an empty GameplayTag if failed to find any */
 	static FGameplayTag GetAbilityTagFromSpec(const FGameplayAbilitySpec& AbilitySpec);

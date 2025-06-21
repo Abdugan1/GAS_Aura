@@ -59,9 +59,6 @@ public:
 	/** A convinient function to return the singleton UAbilityInfo from the GameMode class */
 	UFUNCTION(BlueprintCallable, Category = "AuraAbilitySystemLibrary|WidgetController")
 	static UAbilityInfo* GetAbilityInfo(const UObject* WorldContextObject);
-
-	UFUNCTION(BlueprintCallable, Category = "AuraAbilitySystemLibrary|AbilitySystemComponent")
-	static FGameplayTag GetAbilityStatusFromAbilityTag(UAuraAbilitySystemComponent* AuraASC, const FGameplayTag& AbilityTag);
 	
 	UFUNCTION(BlueprintPure, Category = "AuraAbilitySystemLibrary|GameplayEffects")
 	static bool IsBlockedHit(const FGameplayEffectContextHandle& EffectContextHandle);

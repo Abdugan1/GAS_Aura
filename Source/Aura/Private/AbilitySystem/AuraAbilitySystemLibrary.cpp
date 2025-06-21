@@ -144,19 +144,6 @@ UAbilityInfo* UAuraAbilitySystemLibrary::GetAbilityInfo(const UObject* WorldCont
 	return AuraGameMode->AbilityInfo;
 }
 
-
-FGameplayTag UAuraAbilitySystemLibrary::GetAbilityStatusFromAbilityTag(UAuraAbilitySystemComponent* AuraASC,
-	const FGameplayTag& AbilityTag)
-{
-	if (FGameplayAbilitySpec* Spec = AuraASC->GetSpecFromAbilityTag(AbilityTag))
-	{
-		return AuraASC->GetStatusFromSpec(*Spec);
-	}
-	
-	return FGameplayTag();
-}
-
-
 bool UAuraAbilitySystemLibrary::IsBlockedHit(const FGameplayEffectContextHandle& EffectContextHandle)
 {
 	// I think no use to check to see if it's a valid pointer, since static_cast doesn't do it -- not dynamic_cast
