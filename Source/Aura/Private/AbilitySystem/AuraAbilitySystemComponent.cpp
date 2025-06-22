@@ -207,6 +207,7 @@ bool UAuraAbilitySystemComponent::GetDescriptionsByAbilityTag(const FGameplayTag
 	}
 	// Ability is Locked
 	const UAbilityInfo* AbilityInfo = UAuraAbilitySystemLibrary::GetAbilityInfo(GetAvatarActor());
+	/** ERROR: This DOES NOT WORK on CLIENTS */
 	OutDescription = UAuraGameplayAbility::GetLockedDescription(AbilityInfo->FindAbilityInfoFromTag(AbilityTag).LevelUpRequirement);
 	OutNextLevelDescription = FString();
 	return false;

@@ -21,6 +21,9 @@ protected:
 
 	UFUNCTION(BlueprintPure, Category = "Damage")
 	FTaggedMontage GetRandomTaggedMontageFromArray(const TArray<FTaggedMontage>& MontageArray) const;
+
+	float GetManaCost(float Level) const;
+	float GetCooldown(float Level) const;
 	
 protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)

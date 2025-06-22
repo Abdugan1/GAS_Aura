@@ -27,7 +27,7 @@ protected:
 	 */
 	UFUNCTION(BlueprintCallable, Category = "Ability")
 	void SpawnProjectile(const FVector& ProjectileTargetLocation, const FGameplayTag& ProjectileSpawnSocketTag);
-		
+	
 protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	TSubclassOf<AAuraProjectile> ProjectileClass;
