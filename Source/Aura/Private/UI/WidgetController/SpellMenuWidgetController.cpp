@@ -67,6 +67,23 @@ void USpellMenuWidgetController::SpellGlobeSelected(const FGameplayTag& AbilityT
 	}
 
 	CheckAndBroadcastOnSpellGlobeSelected();
+
+
+	if (bWaitingForEquipSelection)
+	{
+		bWaitingForEquipSelection = false;
+		
+		const FGameplayTag SelectedAbilityTypeTag = AbilitiesInfo->FindAbilityInfoFromTag(AbilityTag).AbilityTypeTag;
+    	StopWaitForEquipSelectionDelegate.Broadcast(SelectedAbilityTypeTag);
+	}
+}
+
+void USpellMenuWidgetController::EquipButtonPressed()
+{
+	const FGameplayTag AbilityTypeTag = AbilitiesInfo->FindAbilityInfoFromTag(SelectedAbility.AbilityTag).AbilityTypeTag;
+
+	WaitForEquipSelectionDelegate.Broadcast(AbilityTypeTag);
+	bWaitingForEquipSelection = true;
 }
 
 void USpellMenuWidgetController::CheckAndBroadcastOnSpellGlobeSelected()
