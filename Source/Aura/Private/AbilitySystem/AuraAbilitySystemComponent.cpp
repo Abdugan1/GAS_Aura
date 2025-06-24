@@ -256,6 +256,64 @@ FGameplayTag UAuraAbilitySystemComponent::GetStatusFromSpec(const FGameplayAbili
 }
 
 
+void UAuraAbilitySystemComponent::ServerEquipAbilityToSlot_Implementation(const FGameplayTag& AbilityTag,
+                                                                          const FGameplayTag& ToSlot)
+{
+	FGameplayAbilitySpec* AbilitySpec = GetSpecFromAbilityTag(AbilityTag);
+	check(AbilitySpec);
+
+	const FGameplayTag PreviousSlot = GetInputTagFromSpec(*AbilitySpec);
+	const FGameplayTag StatusTag = GetStatusFromSpec(*AbilitySpec);
+
+	// Fool-proofing - only Equipped or Unlocked abilities can be equipped
+	check(StatusTag.MatchesTagExact(FAuraGameplayTags::Get().Abilities_Status_Equipped)
+		|| StatusTag.MatchesTagExact(FAuraGameplayTags::Get().Abilities_Status_Unlocked));
+
+	// If the Slot is already occupied, clear it
+	ClearAbilitiesOfSlot(ToSlot);
+	
+	// Reassigning the slot
+	AbilitySpec->GetDynamicSpecSourceTags().RemoveTag(PreviousSlot);
+	AbilitySpec->GetDynamicSpecSourceTags().AddTag(ToSlot);
+
+	// If it wasn't equipped before, change its status to Equipped
+	if (StatusTag.MatchesTagExact(FAuraGameplayTags::Get().Abilities_Status_Unlocked))
+	{
+		AbilitySpec->GetDynamicSpecSourceTags().RemoveTag(FAuraGameplayTags::Get().Abilities_Status_Unlocked);
+		AbilitySpec->GetDynamicSpecSourceTags().AddTag(FAuraGameplayTags::Get().Abilities_Status_Equipped);
+	}
+
+	MarkAbilitySpecDirty(*AbilitySpec);
+
+	
+	ClientEquipAbilityToSlot_Implementation(AbilityTag, StatusTag, ToSlot, PreviousSlot);
+}
+
+void UAuraAbilitySystemComponent::ClearAbilitiesOfSlot(const FGameplayTag& Slot)
+{
+	FScopedAbilityListLock ActiveScopeLock(*this);
+	for (FGameplayAbilitySpec& Spec : GetActivatableAbilities())
+	{
+		if (Spec.GetDynamicSpecSourceTags().HasTagExact(Slot))
+		{
+			RemoveAbilityFromItsSlot(Spec);
+		}
+	}
+}
+
+void UAuraAbilitySystemComponent::RemoveAbilityFromItsSlot(FGameplayAbilitySpec& AbilitySpec)
+{
+	const FGameplayTag Slot = GetInputTagFromSpec(AbilitySpec);
+	AbilitySpec.GetDynamicSpecSourceTags().RemoveTag(Slot);
+}
+
+void UAuraAbilitySystemComponent::ClientEquipAbilityToSlot_Implementation(const FGameplayTag& AbilityTag,
+                                                                          const FGameplayTag& AbilityStatusTag, const FGameplayTag& ToSlot, const FGameplayTag& PreviousSlot)
+{
+	AbilityEquippedDelegate.Broadcast(AbilityTag, AbilityStatusTag, ToSlot, PreviousSlot);
+}
+
+
 void UAuraAbilitySystemComponent::ServerSpendSpellPoint_Implementation(const FGameplayTag& AbilityTag)
 {
 	FGameplayAbilitySpec* AbilitySpec = GetSpecFromAbilityTag(AbilityTag);

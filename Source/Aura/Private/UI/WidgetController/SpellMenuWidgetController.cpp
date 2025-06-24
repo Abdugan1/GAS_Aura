@@ -3,6 +3,7 @@
 
 #include "UI/WidgetController/SpellMenuWidgetController.h"
 
+#include "AssetDefinitionAssetInfo.h"
 #include "AuraGameplayTags.h"
 #include "AbilitySystem/AuraAbilitySystemComponent.h"
 #include "AbilitySystem/AuraAbilitySystemLibrary.h"
@@ -44,6 +45,8 @@ void USpellMenuWidgetController::BindCallbacksToDependencies()
 		
 			CheckAndBroadcastOnSpellGlobeSelected();
 		});
+
+	GetAuraAbilitySystemComponent()->AbilityEquippedDelegate.AddUObject(this, &USpellMenuWidgetController::OnAbilityEquippedToSlot);
 }
 
 
@@ -86,6 +89,26 @@ void USpellMenuWidgetController::EquipButtonPressed()
 	bWaitingForEquipSelection = true;
 }
 
+
+void USpellMenuWidgetController::EquippableSpellGlobePressed(const FGameplayTag& ToSlot, const FGameplayTag& AbilityTypeTag)
+{
+	// Fool-proofing - if we're not waiting for equip, don't do anything
+	if (!bWaitingForEquipSelection)
+	{
+		return;
+	}
+	
+	// Fool-proofing - if we're trying to equip an offensive ability to a passive slot, or vice versa, don't do anything
+	const FGameplayTag SelectedAbilityTypeTag = AbilitiesInfo->FindAbilityInfoFromTag(SelectedAbility.AbilityTag).AbilityTypeTag;
+	if (!SelectedAbilityTypeTag.MatchesTagExact(AbilityTypeTag))
+	{
+		return;
+	}
+
+	GetAuraAbilitySystemComponent()->ServerEquipAbilityToSlot(SelectedAbility.AbilityTag, ToSlot);
+}
+
+
 void USpellMenuWidgetController::CheckAndBroadcastOnSpellGlobeSelected()
 {
 	const int32 SpellPoints = GetAuraPlayerState()->GetSpellPoints();
@@ -127,23 +150,29 @@ void USpellMenuWidgetController::CheckAndBroadcastOnSpellGlobeSelected()
 		NextLevelDescriptionText
 		);
 	
-	// if (FGameplayAbilitySpec* AbilitySpec = GetAuraAbilitySystemComponent()->GetSpecFromAbilityTag(SelectedAbility.AbilityTag))
-	// {
-	// 	UAuraGameplayAbility* AuraAbility = Cast<UAuraGameplayAbility>(AbilitySpec->Ability);
-	//
-	// 	DescriptionText = AuraAbility->GetDescription(AbilitySpec->Level);
-	// 	NextLevelDescriptionText = AuraAbility->GetNextLevelDescription(AbilitySpec->Level + 1);
-	// }
-	// else
-	// {
-	// 	const UAbilityInfo* Abilities = UAuraAbilitySystemLibrary::GetAbilityInfo(GetAbilitySystemComponent()->GetAvatarActor());
-	// 	const FAuraAbilityInfo AbilityInfo = Abilities->FindAbilityInfoFromTag(SelectedAbility.AbilityTag);
-	// 	
-	// 	DescriptionText= UAuraGameplayAbility::GetLockedDescription(AbilityInfo.LevelUpRequirement);
-	// }
-	
-	
 	OnSpellGlobeSelected.Broadcast(bSpendPointsButtonEnabled, bEquipButtonEnabled, DescriptionText, NextLevelDescriptionText);
+}
+
+
+void USpellMenuWidgetController::OnAbilityEquippedToSlot(const FGameplayTag& AbilityTag,
+	const FGameplayTag& AbilityStatusTag, const FGameplayTag& ToSlot, const FGameplayTag& PreviousTag)
+{
+	bWaitingForEquipSelection = false;
+
+	FAuraAbilityInfo LastSlotInfo;
+	LastSlotInfo.StatusTag = FAuraGameplayTags::Get().Abilities_Status_Unlocked;
+	LastSlotInfo.InputTag = PreviousTag;
+	LastSlotInfo.AbilityTag = FAuraGameplayTags::Get().Abilities_None;
+
+	AbilityInfoDelegate.Broadcast(LastSlotInfo);
+
+	FAuraAbilityInfo CurrentSlotInfo = AbilitiesInfo->FindAbilityInfoFromTag(AbilityTag);
+	CurrentSlotInfo.StatusTag = AbilityStatusTag;
+	CurrentSlotInfo.InputTag = ToSlot;
+
+	AbilityInfoDelegate.Broadcast(CurrentSlotInfo);
+
+	StopWaitForEquipSelectionDelegate.Broadcast(CurrentSlotInfo.AbilityTypeTag);
 }
 
 

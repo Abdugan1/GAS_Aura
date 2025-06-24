@@ -35,6 +35,9 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	void EquipButtonPressed();
+
+	UFUNCTION(BlueprintCallable)
+	void EquippableSpellGlobePressed(const FGameplayTag& ToSlot, const FGameplayTag& AbilityTypeTag);
 	
 	UPROPERTY(BlueprintAssignable)
 	FOnPlayerStatChangedSignature OnPlayerSpellPointsChanged;
@@ -51,6 +54,10 @@ public:
 private:
 	/** SelectedAbility MUST be set appropriately */
 	void CheckAndBroadcastOnSpellGlobeSelected();
+
+	/** NOTE: Actually, do I need AbilityStatusTag if it's always Equipped? */
+	UFUNCTION()
+	void OnAbilityEquippedToSlot(const FGameplayTag& AbilityTag, const FGameplayTag& AbilityStatusTag, const FGameplayTag& ToSlot, const FGameplayTag& PreviousTag);
 	
 private:
 	FSelectedAbility SelectedAbility;

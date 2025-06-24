@@ -10,6 +10,7 @@
 DECLARE_MULTICAST_DELEGATE_OneParam(FEffectAssetTags, const FGameplayTagContainer& /* AssetTags */)
 DECLARE_MULTICAST_DELEGATE(FAbilitiesGiven);
 DECLARE_MULTICAST_DELEGATE_TwoParams(FAbilityStatusChanged,  const FGameplayTag& /* AbilityTag */, const FGameplayTag& /* StatusTag */);
+DECLARE_MULTICAST_DELEGATE_FourParams(FAbilityEquipped, const FGameplayTag& /*AbilityTag*/, const FGameplayTag& /* AbilityStatusTag */, const FGameplayTag& /* ToSlot */, const FGameplayTag& /* PreviousSlot */);
 
 /**
  * Ugly name. But all it does is execute the function this delegate was bound to. Like a fancy callback passed to for_each
@@ -47,6 +48,9 @@ public:
 
 	/** Broadcasts whenever Ability Status changes */
 	FAbilityStatusChanged AbilityStatusChangedDelegate; 
+
+	/** */
+	FAbilityEquipped AbilityEquippedDelegate;
 	
 	/** Sometimes, it's hard to know the timelapse, so this is set along with AbilitiesGivenDelegate broadcast */
 	bool bStartupAbilitiesGiven = false;
@@ -94,6 +98,14 @@ public:
 
 	UFUNCTION(Server, Reliable)
 	void ServerSpendSpellPoint(const FGameplayTag& AbilityTag);
+
+	/** Equips an Ability to a Slot. Sends back to client what Ability was assigned to what Slot */
+	UFUNCTION(Server, Reliable)
+	void ServerEquipAbilityToSlot(const FGameplayTag& AbilityTag, const FGameplayTag& ToSlot);
+
+	/** Broadcasts AbilityEquippedDelegate */
+	UFUNCTION(Client, Reliable)
+	void ClientEquipAbilityToSlot(const FGameplayTag& AbilityTag, const FGameplayTag& AbilityStatusTag, const FGameplayTag& ToSlot, const FGameplayTag& PreviousSlot); 
 	
 protected:
 	UFUNCTION(Server, Reliable)
@@ -115,4 +127,9 @@ protected:
 	 */
 	virtual void OnRep_ActivateAbilities() override;
 	virtual void OnGiveAbility(FGameplayAbilitySpec& AbilitySpec) override;
+
+private:
+	/** Removes all the abilities assigned to a Slot. Basically, removes only one as it's only possible for a slot to have only one ability */
+	void ClearAbilitiesOfSlot(const FGameplayTag& Slot);
+	void RemoveAbilityFromItsSlot(FGameplayAbilitySpec& AbilitySpec);
 };
