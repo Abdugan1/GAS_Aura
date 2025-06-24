@@ -207,8 +207,20 @@ bool UAuraAbilitySystemComponent::GetDescriptionsByAbilityTag(const FGameplayTag
 	}
 	// Ability is Locked
 	const UAbilityInfo* AbilityInfo = UAuraAbilitySystemLibrary::GetAbilityInfo(GetAvatarActor());
-	/** ERROR: This DOES NOT WORK on CLIENTS */
-	OutDescription = UAuraGameplayAbility::GetLockedDescription(AbilityInfo->FindAbilityInfoFromTag(AbilityTag).LevelUpRequirement);
+
+	if (GetAvatarActor()->HasAuthority())
+	{
+		/**
+		 * ERROR: This DOES NOT WORK on CLIENTS because it fetches AbilityInfo from Game Mode, which exist only on the SERVER!
+		 * Fix available on my Telegram channel
+		 */
+		OutDescription = UAuraGameplayAbility::GetLockedDescription(AbilityInfo->FindAbilityInfoFromTag(AbilityTag).LevelUpRequirement);
+	}
+	else
+	{
+		OutDescription = "ERROR: Doesn't work on CLIENTS!";
+	}
+	
 	OutNextLevelDescription = FString();
 	return false;
 }
@@ -284,9 +296,8 @@ void UAuraAbilitySystemComponent::ServerEquipAbilityToSlot_Implementation(const 
 	}
 
 	MarkAbilitySpecDirty(*AbilitySpec);
-
 	
-	ClientEquipAbilityToSlot_Implementation(AbilityTag, StatusTag, ToSlot, PreviousSlot);
+	ClientEquipAbilityToSlot(AbilityTag, StatusTag, ToSlot, PreviousSlot);
 }
 
 void UAuraAbilitySystemComponent::ClearAbilitiesOfSlot(const FGameplayTag& Slot)

@@ -19,6 +19,8 @@ class AURA_API AAuraProjectile : public AActor
 public:	
 	AAuraProjectile();
 
+	virtual void Destroyed() override;
+	
 protected:
 	virtual void BeginPlay() override;
 
@@ -35,6 +37,8 @@ public:
 private:
 	UPROPERTY(EditDefaultsOnly)
 	float LifeSpan = 8.f;
+
+	bool bHit = false;
 	
 	UPROPERTY(VisibleAnywhere)
 	TObjectPtr<USphereComponent> SphereComponent;

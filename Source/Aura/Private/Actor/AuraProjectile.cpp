@@ -38,6 +38,18 @@ AAuraProjectile::AAuraProjectile()
 	LoopAudioComponent->SetupAttachment(GetRootComponent());	
 }
 
+void AAuraProjectile::Destroyed()
+{
+	if (!bHit && !HasAuthority())
+	{
+		UGameplayStatics::PlaySoundAtLocation(this, ImpactSound, GetActorLocation(), FRotator::ZeroRotator);
+		UNiagaraFunctionLibrary::SpawnSystemAtLocation(this, ImpactEffect, GetActorLocation());
+		if (LoopAudioComponent) LoopAudioComponent->Stop();
+		bHit = true;
+	}
+	Super::Destroyed();
+}
+
 
 void AAuraProjectile::BeginPlay()
 {
@@ -55,29 +67,58 @@ void AAuraProjectile::OnSphereOverlap(UPrimitiveComponent* OverlapComponent, AAc
 	{
 		return;
 	}
-	
-	UGameplayStatics::PlaySoundAtLocation(this, ImpactSound, GetActorLocation(), FRotator::ZeroRotator);
-	UNiagaraFunctionLibrary::SpawnSystemAtLocation(this, ImpactEffect, GetActorLocation());
-	
-    SetActorHiddenInGame(true);
-	SetActorEnableCollision(false);
-	
+
+	if (!bHit)
+	{
+		UGameplayStatics::PlaySoundAtLocation(this, ImpactSound, GetActorLocation(), FRotator::ZeroRotator);
+		UNiagaraFunctionLibrary::SpawnSystemAtLocation(this, ImpactEffect, GetActorLocation());
+		if (LoopAudioComponent) LoopAudioComponent->Stop();
+		bHit = true;
+	}
+
 	if (HasAuthority())
 	{
-		SetLifeSpan(2);
-		
-		// No friendly fire allowed
-		// I think we can also use Owner instead of DamageEffectSpecHandle.GetContext().GetEffectCauser()
-		// TODO: What happens if an Enemy had shot a projectile, but then we killed that enemy? Should I use some kind of struct to store necessary data?
-		if (!UAuraAbilitySystemLibrary::IsNotFriend(DamageEffectSpecHandle.Data->GetContext().GetEffectCauser(), OtherActor))
-		{
-			return;
-		}
-		if (UAbilitySystemComponent *TargetASC = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(OtherActor))
+		if (UAbilitySystemComponent* TargetASC = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(OtherActor))
 		{
 			TargetASC->ApplyGameplayEffectSpecToSelf(*DamageEffectSpecHandle.Data.Get());
 		}
+		
+		Destroy();
 	}
+	else
+	{
+		bHit = true;
+	}
+
+
+
+	//
+	// BELOW IS MY SOLUTION. IT's IN ORDER! DO NOT CHANGE ANYTHING!!! JUST UNCOMMENT!
+	//
+	
+	
+	// UGameplayStatics::PlaySoundAtLocation(this, ImpactSound, GetActorLocation(), FRotator::ZeroRotator);
+	// UNiagaraFunctionLibrary::SpawnSystemAtLocation(this, ImpactEffect, GetActorLocation());
+	//
+ //    SetActorHiddenInGame(true);
+	// SetActorEnableCollision(false);
+	
+	// if (HasAuthority())
+	// {
+	// 	SetLifeSpan(2);
+	// 	
+	// 	// No friendly fire allowed
+	// 	// I think we can also use Owner instead of DamageEffectSpecHandle.GetContext().GetEffectCauser()
+	// 	// TODO: What happens if an Enemy had shot a projectile, but then we killed that enemy? Should I use some kind of struct to store necessary data?
+	// 	if (!UAuraAbilitySystemLibrary::IsNotFriend(DamageEffectSpecHandle.Data->GetContext().GetEffectCauser(), OtherActor))
+	// 	{
+	// 		return;
+	// 	}
+	// 	if (UAbilitySystemComponent *TargetASC = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(OtherActor))
+	// 	{
+	// 		TargetASC->ApplyGameplayEffectSpecToSelf(*DamageEffectSpecHandle.Data.Get());
+	// 	}
+	// }
 }
 
 
