@@ -88,6 +88,11 @@ public:
 	FGameplayTag Debuff_Stun;
 	FGameplayTag Debuff_Arcane;
 	FGameplayTag Debuff_Physical;
+
+	FGameplayTag Debuff_Parameter_Chance;
+	FGameplayTag Debuff_Parameter_Damage;
+	FGameplayTag Debuff_Parameter_Frequency;
+	FGameplayTag Debuff_Parameter_Duration;
 	
 	TMap<FGameplayTag, FGameplayTag> DamageTypesToDebuffs;
 	/** end Debuffs */
