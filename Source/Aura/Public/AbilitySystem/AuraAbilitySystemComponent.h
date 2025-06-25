@@ -122,7 +122,7 @@ protected:
 	void ClientUpdateAbilityStatus(const FGameplayTag& AbilityTag, const FGameplayTag& StatusTag);
 
 	/**
-	 * Since AddCharacterAbilities is called on the server, clients cannot init their overlay properly.
+	 * Since AddCharacterAbilities is called on the SERVER, clients cannot init their overlay properly.
 	 * So we are broadcasting AbilitiesGivenDelegate when all the abilities were given
 	 */
 	virtual void OnRep_ActivateAbilities() override;

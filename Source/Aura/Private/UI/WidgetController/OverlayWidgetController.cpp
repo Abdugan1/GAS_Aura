@@ -3,6 +3,7 @@
 
 #include "UI/WidgetController/OverlayWidgetController.h"
 
+#include "AuraGameplayTags.h"
 #include "AbilitySystem/AuraAbilitySystemComponent.h"
 #include "AbilitySystem/AuraAttributeSet.h"
 #include "AbilitySystem/Data/AbilityInfo.h"
@@ -33,6 +34,8 @@ void UOverlayWidgetController::BindCallbacksToDependencies()
 	}
 
 	BindToEffectApplicationToShowMessageOnScreen();
+
+	GetAuraAbilitySystemComponent()->AbilityEquippedDelegate.AddUObject(this, &UOverlayWidgetController::OnAbilityEquippedToSlot);
 
 	GetAuraPlayerState()->OnXPChanged.AddUObject(this, &UOverlayWidgetController::OnXPChanged);
 	GetAuraPlayerState()->OnLevelChanged.AddLambda(
@@ -96,6 +99,23 @@ void UOverlayWidgetController::BindToEffectApplicationToShowMessageOnScreen()
 			}
 		}
 		);
+}
+
+void UOverlayWidgetController::OnAbilityEquippedToSlot(const FGameplayTag& AbilityTag,
+	const FGameplayTag& AbilityStatusTag, const FGameplayTag& ToSlot, const FGameplayTag& PreviousTag)
+{
+	FAuraAbilityInfo LastSlotInfo;
+	LastSlotInfo.StatusTag = FAuraGameplayTags::Get().Abilities_Status_Unlocked;
+	LastSlotInfo.InputTag = PreviousTag;
+	LastSlotInfo.AbilityTag = FAuraGameplayTags::Get().Abilities_None;
+
+	AbilityInfoDelegate.Broadcast(LastSlotInfo);
+
+	FAuraAbilityInfo CurrentSlotInfo = AbilitiesInfo->FindAbilityInfoFromTag(AbilityTag);
+	CurrentSlotInfo.StatusTag = AbilityStatusTag;
+	CurrentSlotInfo.InputTag = ToSlot;
+
+	AbilityInfoDelegate.Broadcast(CurrentSlotInfo);
 }
 
 

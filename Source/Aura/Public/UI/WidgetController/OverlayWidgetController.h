@@ -72,6 +72,9 @@ private:
 	 * If yes, broadcasts MessageWidgetRowDelegate
 	 */
 	void BindToEffectApplicationToShowMessageOnScreen();
+
+	UFUNCTION()
+	void OnAbilityEquippedToSlot(const FGameplayTag& AbilityTag, const FGameplayTag& AbilityStatusTag, const FGameplayTag& ToSlot, const FGameplayTag& PreviousTag);
 	
 public:
 	/** Delegates for Attributes change**/
