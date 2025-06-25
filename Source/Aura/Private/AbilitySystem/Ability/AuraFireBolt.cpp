@@ -18,7 +18,7 @@ FString UAuraFireBolt::GetNextLevelDescription(int32 Level)
 
 FString UAuraFireBolt::GetDescriptionInternal(const FString& Title, int32 Level) const
 {
-	const int32 AbilityDamage = FMath::RoundHalfToEven(DamageTypes[FAuraGameplayTags::Get().Damage_Fire].GetValueAtLevel(Level));
+	const int32 AbilityDamage = FMath::RoundHalfToEven(DamageScalableFloat.GetValueAtLevel(Level));
 	const int32 FireBoltsAmount = Level;
 	const float ManaCost = GetManaCost(Level);
 	const float Cooldown = GetCooldown(Level);

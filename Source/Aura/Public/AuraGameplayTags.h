@@ -77,6 +77,21 @@ public:
 	TMap<FGameplayTag, FGameplayTag> DamageTypesToResistances;
 	//** end Damage */
 
+	/** Debuffs */
+	/**
+	 * If you want to add a debug type, do these:
+	 * 1. Add a correspond Gameplay Tag
+	 * 2. Make sure it has a corresponding DamageType
+	 * 3. Add both GameplayTags to DamageTypesToDebuffs
+	 */
+	FGameplayTag Debuff_Burn;
+	FGameplayTag Debuff_Stun;
+	FGameplayTag Debuff_Arcane;
+	FGameplayTag Debuff_Physical;
+	
+	TMap<FGameplayTag, FGameplayTag> DamageTypesToDebuffs;
+	/** end Debuffs */
+	
 	/** Abilities */
 	FGameplayTag Abilities_None;
 	FGameplayTag Abilities_Attack;
