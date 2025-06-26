@@ -66,6 +66,7 @@ bool FAuraGameplayEffectContext::NetSerialize(FArchive& Ar, class UPackageMap* M
 		{
 			RepBits |= 1 << 6;
 		}
+		// Below is mine
 		if (bIsCriticalHit)
 		{
 			RepBits |= 1 << 7;
@@ -74,9 +75,29 @@ bool FAuraGameplayEffectContext::NetSerialize(FArchive& Ar, class UPackageMap* M
 		{
 			RepBits |= 1 << 8;
 		}
+		if (bIsSuccessfulDebuff)
+		{
+			RepBits |= 1 << 9;
+		}
+		if (!FMath::IsNearlyZero(DebuffDamage))
+		{
+			RepBits |= 1 << 10;
+		}
+		if (!FMath::IsNearlyZero(DebuffDuration))
+		{
+			RepBits |= 1 << 11;
+		}
+		if (!FMath::IsNearlyZero(DebuffFrequency))
+		{
+			RepBits |= 1 << 12;
+		}
+		if (DamageTypeTag.IsValid())
+		{
+			RepBits |= 1 << 13;
+		}
 	}
 
-	Ar.SerializeBits(&RepBits, 9);
+	Ar.SerializeBits(&RepBits, 14);
 
 	if (RepBits & (1 << 0))
 	{
@@ -119,14 +140,45 @@ bool FAuraGameplayEffectContext::NetSerialize(FArchive& Ar, class UPackageMap* M
 		bHasWorldOrigin = false;
 	}
 
+	// Below is mine
 	if (RepBits & (1 << 7))
 	{
+		// I think I can use either Ar << or just assigning 
 		bIsCriticalHit = true;
 	}
 	if (RepBits & (1 << 8))
 	{
+		// I think I can use either Ar << or just assigning 
 		bIsBlockedHit = true;
 	}
+	if (RepBits & (1 << 9))
+	{
+		// I think I can use either Ar << or just assigning 
+		Ar << bIsSuccessfulDebuff;
+	}
+	if (RepBits & (1 << 10))
+	{
+		// I think I can use either Ar << or just assigning 
+		Ar << DebuffDamage;
+	}
+	if (RepBits & (1 << 11))
+	{
+		Ar << DebuffDuration;
+	}
+	if (RepBits & (1 << 12))
+	{
+		Ar << DebuffFrequency;
+	}
+	if (RepBits & (1 << 13))
+	{
+		/**
+		 * NOTE: Stepehen here used the same method to serizlize that was used for HitResult.
+		 * I guess, maybe, Stephen doesn't know that you can use just plain Ar << as the operator allows it.
+		 * Anyway, if any errors occur... Well...
+		 */
+		Ar << DamageTypeTag;
+	}
+	// end mine
 	
 	if (Ar.IsLoading())
 	{
