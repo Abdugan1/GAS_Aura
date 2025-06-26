@@ -142,6 +142,12 @@ private:
 	void ShowFloatingText(const FEffectProperties& EffectProperties, float Damage, bool bBlockedHit, bool bCriticalHit) const;
 
 	void SendXPEvent(const FEffectProperties& EffectProperties);
+
+	void HandleIncomingXp(const FEffectProperties& EffectProperties);
+	
+	void HandleIncomingDamage(const FEffectProperties& EffectProperties);
+	
+	void Debuff(const FEffectProperties& EffectProperties);
 	
 public:
 	/**
@@ -247,9 +253,12 @@ public:
 	UPROPERTY(BlueprintReadOnly, Category = "Meta Attributes")
 	FGameplayAttributeData IncomingXp;
 	ATTRIBUTE_ACCESSORS(UAuraAttributeSet, IncomingXp)
-
+	
+private:
 	bool bTopOffHealth = false;
 	bool bTopOffMana = false;
+
+private:
 };
 
 

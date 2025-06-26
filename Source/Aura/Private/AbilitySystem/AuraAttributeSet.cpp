@@ -64,78 +64,101 @@ void UAuraAttributeSet::PostGameplayEffectExecute(const FGameplayEffectModCallba
 	}
 	if (Data.EvaluatedData.Attribute == GetIncomingXpAttribute())
 	{
-		const float LocalIncomingXp = GetIncomingXp();
-		SetIncomingXp(0.f);
-
-		/** Source Character is the owner, since GA_ListenForEvents applies GE_EventBasedEffect, add to IncomingXP */
-		checkf(EffectProperties.SourceCharacter->Implements<UPlayerInterface>(), TEXT("Source Character doesn't implement UPlayerInterface. Fix that."));
-
-		const int32 CurrentLevel = ICombatInterface::Execute_GetPlayerLevel(EffectProperties.SourceCharacter);
-		const int32 CurrentXP = IPlayerInterface::Execute_GetXP(EffectProperties.SourceCharacter); 
-
-		const int32 NewLevel = IPlayerInterface::Execute_FindLevelForXp(EffectProperties.SourceCharacter, CurrentXP + LocalIncomingXp);
-
-		const int32 NumLevelUps = NewLevel - CurrentLevel;
-		if (NumLevelUps > 0)
-		{
-			const int32 AttributePointsReward = IPlayerInterface::Execute_GetAttributePointsReward(EffectProperties.SourceCharacter, CurrentLevel);
-			const int32 SpellPointsReward = IPlayerInterface::Execute_GetSpellPointsReward(EffectProperties.SourceCharacter, CurrentLevel);
-
-			IPlayerInterface::Execute_AddToPlayerLevel(EffectProperties.SourceCharacter, NumLevelUps);
-			IPlayerInterface::Execute_AddToAttributePoints(EffectProperties.SourceCharacter, AttributePointsReward);
-			IPlayerInterface::Execute_AddToSpellPoints(EffectProperties.SourceCharacter, SpellPointsReward);
-
-			bTopOffHealth = true;
-			bTopOffMana = true;
-			
-			IPlayerInterface::Execute_LevelUp(EffectProperties.SourceCharacter);
-		}
-		
-		IPlayerInterface::Execute_AddToXp(EffectProperties.SourceCharacter, LocalIncomingXp);
+		HandleIncomingXp(EffectProperties);
 	}
 	if (Data.EvaluatedData.Attribute == GetIncomingDamageAttribute())
 	{
-		// Damage is dealt by a meta attribute called IncomingDamage
-		// Here, we make the target die if the damage was fatal,
-		// else, we play hit react. Hit React is a common ability for all characters.
-		// We activate it by the Effect.HitReact tag. Also, we show a floating text of damage dealt.
-		// The text is only visible to the source, that is, if a client dealt the damage, only that client
-		// will see the floating text. Even the server will not see it.
-		const float LocalIncomingDamage = GetIncomingDamage();
-		SetIncomingDamage(0);
-		if (LocalIncomingDamage > 0.f)
+		HandleIncomingDamage(EffectProperties);
+	}
+}
+
+void UAuraAttributeSet::HandleIncomingXp(const FEffectProperties& EffectProperties)
+{
+	const float LocalIncomingXp = GetIncomingXp();
+	SetIncomingXp(0.f);
+
+	/** Source Character is the owner, since GA_ListenForEvents applies GE_EventBasedEffect, add to IncomingXP */
+	checkf(EffectProperties.SourceCharacter->Implements<UPlayerInterface>(), TEXT("Source Character doesn't implement UPlayerInterface. Fix that."));
+
+	const int32 CurrentLevel = ICombatInterface::Execute_GetPlayerLevel(EffectProperties.SourceCharacter);
+	const int32 CurrentXP = IPlayerInterface::Execute_GetXP(EffectProperties.SourceCharacter); 
+
+	const int32 NewLevel = IPlayerInterface::Execute_FindLevelForXp(EffectProperties.SourceCharacter, CurrentXP + LocalIncomingXp);
+
+	const int32 NumLevelUps = NewLevel - CurrentLevel;
+	if (NumLevelUps > 0)
+	{
+		const int32 AttributePointsReward = IPlayerInterface::Execute_GetAttributePointsReward(EffectProperties.SourceCharacter, CurrentLevel);
+		const int32 SpellPointsReward = IPlayerInterface::Execute_GetSpellPointsReward(EffectProperties.SourceCharacter, CurrentLevel);
+
+		IPlayerInterface::Execute_AddToPlayerLevel(EffectProperties.SourceCharacter, NumLevelUps);
+		IPlayerInterface::Execute_AddToAttributePoints(EffectProperties.SourceCharacter, AttributePointsReward);
+		IPlayerInterface::Execute_AddToSpellPoints(EffectProperties.SourceCharacter, SpellPointsReward);
+
+		bTopOffHealth = true;
+		bTopOffMana = true;
+			
+		IPlayerInterface::Execute_LevelUp(EffectProperties.SourceCharacter);
+	}
+		
+	IPlayerInterface::Execute_AddToXp(EffectProperties.SourceCharacter, LocalIncomingXp);
+}
+
+void UAuraAttributeSet::HandleIncomingDamage(const FEffectProperties& EffectProperties)
+{
+	// Damage is dealt by a meta attribute called IncomingDamage
+	// Here, we make the target die if the damage was fatal,
+	// else, we play hit react. Hit React is a common ability for all characters.
+	// We activate it by the Effect.HitReact tag. Also, we show a floating text of damage dealt.
+	// The text is only visible to the source, that is, if a client dealt the damage, only that client
+	// will see the floating text. Even the server will not see it.
+	const float LocalIncomingDamage = GetIncomingDamage();
+	SetIncomingDamage(0);
+	if (LocalIncomingDamage > 0.f)
+	{
+		const float NewHealth = GetHealth() - LocalIncomingDamage;
+		SetHealth(FMath::Clamp(NewHealth, 0.0f, GetMaxHealth()));
+
+		const bool bFatal = NewHealth <= 0.f;
+
+		if (bFatal)
 		{
-			const float NewHealth = GetHealth() - LocalIncomingDamage;
-			SetHealth(FMath::Clamp(NewHealth, 0.0f, GetMaxHealth()));
-
-			const bool bFatal = NewHealth <= 0.f;
-
-			if (bFatal)
+			ICombatInterface* CombatInterface = Cast<ICombatInterface>(EffectProperties.TargetAvatarActor);
+			if (CombatInterface)
 			{
-				ICombatInterface* CombatInterface = Cast<ICombatInterface>(EffectProperties.TargetAvatarActor);
-				if (CombatInterface)
-				{
-					CombatInterface->Die();
-					SendXPEvent(EffectProperties);
-				}
+				CombatInterface->Die();
+				SendXPEvent(EffectProperties);
 			}
-			else
-			{
-				FGameplayTagContainer TagContainer;
-				TagContainer.AddTag(FAuraGameplayTags::Get().Abilities_HitReact);
-				EffectProperties.TargetAbilitySystemComponent->TryActivateAbilitiesByTag(TagContainer);
-			}
+		}
+		else
+		{
+			FGameplayTagContainer TagContainer;
+			TagContainer.AddTag(FAuraGameplayTags::Get().Abilities_HitReact);
+			EffectProperties.TargetAbilitySystemComponent->TryActivateAbilitiesByTag(TagContainer);
+		}
 
-			const bool bBlockedHit = UAuraAbilitySystemLibrary::IsBlockedHit(EffectProperties.EffectContextHandle);
-			const bool bCriticalHit = UAuraAbilitySystemLibrary::IsCriticalHit(EffectProperties.EffectContextHandle);
-			ShowFloatingText(EffectProperties, LocalIncomingDamage, bBlockedHit, bCriticalHit);
+		const bool bBlockedHit = UAuraAbilitySystemLibrary::IsBlockedHit(EffectProperties.EffectContextHandle);
+		const bool bCriticalHit = UAuraAbilitySystemLibrary::IsCriticalHit(EffectProperties.EffectContextHandle);
+		ShowFloatingText(EffectProperties, LocalIncomingDamage, bBlockedHit, bCriticalHit);
+
+		if (UAuraAbilitySystemLibrary::IsSuccessfulDebuff(EffectProperties.EffectContextHandle))
+		{
+			Debuff(EffectProperties);
 		}
 	}
 }
 
+void UAuraAttributeSet::Debuff(const FEffectProperties& EffectProperties)
+{
+	
+}
 
 void UAuraAttributeSet::PostAttributeChange(const FGameplayAttribute& Attribute, float OldValue, float NewValue)
 {
+	/**
+	 * After we level up, our Max Health and Max Mana also gets their value updated, that is, they're bigger than before.
+	 * So, changing it after, that is, PostAttributeChange, we correctly set Health and Mana value to their maximum.
+	 */
 	Super::PostAttributeChange(Attribute, OldValue, NewValue);
 
 	if (Attribute == GetMaxHealthAttribute() && bTopOffHealth)

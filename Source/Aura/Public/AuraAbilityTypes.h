@@ -80,6 +80,7 @@ public:
 
 	FGameplayTag GetDamageTypeTag() const { return DamageTypeTag; }
 
+	void SetIsSuccessfulDebuff(bool bInIsSuccessfulDebuff) { bIsSuccessfulDebuff = bInIsSuccessfulDebuff; }
 	void SetIsCriticalHit(bool bNewCriticalHit) { bIsCriticalHit = bNewCriticalHit; }
 	void SetIsBlockedHit(bool bNewBlockedHit) { bIsBlockedHit = bNewBlockedHit; }
 	void SetDebuffDamage(float NewDamage) { DebuffDamage = NewDamage; }

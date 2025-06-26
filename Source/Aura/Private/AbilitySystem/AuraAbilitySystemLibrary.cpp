@@ -169,6 +169,12 @@ FGameplayEffectContextHandle UAuraAbilitySystemLibrary::ApplyDamageEffect(const 
 	return EffectContextHandle;
 }
 
+bool UAuraAbilitySystemLibrary::IsSuccessfulDebuff(const FGameplayEffectContextHandle& EffectContextHandle)
+{
+	const FAuraGameplayEffectContext* AuraEffectContext = static_cast<const FAuraGameplayEffectContext*>(EffectContextHandle.Get());
+	return AuraEffectContext->IsSuccessfulDebuff();
+}
+
 bool UAuraAbilitySystemLibrary::IsBlockedHit(const FGameplayEffectContextHandle& EffectContextHandle)
 {
 	// I think no use to check to see if it's a valid pointer, since static_cast doesn't do it -- not dynamic_cast
@@ -206,6 +212,13 @@ FGameplayTag UAuraAbilitySystemLibrary::GetDamageTypeTag(const FGameplayEffectCo
 {
 	const FAuraGameplayEffectContext* AuraEffectContext = static_cast<const FAuraGameplayEffectContext*>(EffectContextHandle.Get());
 	return AuraEffectContext->GetDamageTypeTag();
+}
+
+void UAuraAbilitySystemLibrary::SetIsSuccessfulDebuff(FGameplayEffectContextHandle& EffectContextHandle,
+	bool IsSuccessful)
+{
+	FAuraGameplayEffectContext* AuraEffectContext = static_cast<FAuraGameplayEffectContext*>(EffectContextHandle.Get());
+	AuraEffectContext->SetIsSuccessfulDebuff(IsSuccessful);
 }
 
 void UAuraAbilitySystemLibrary::SetIsBlockedHit(FGameplayEffectContextHandle& EffectContextHandle, bool bInIsBlockedHit)

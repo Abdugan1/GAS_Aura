@@ -3,6 +3,7 @@
 
 #include "AbilitySystem/ExecCalc/ExecCalc_Damage.h"
 
+#include <rapidjson/schema.h>
 #include <ThirdParty/ShaderConductor/ShaderConductor/External/DirectXShaderCompiler/include/dxc/DXIL/DxilConstants.h>
 
 #include "AbilitySystemComponent.h"
@@ -112,6 +113,18 @@ void UExecCalc_Damage::DetermineDebuff(const FGameplayEffectCustomExecutionParam
 			if (bDebuff)
 			{
 				// TODO: What do we do?
+				FGameplayEffectContextHandle EffectContextHandle = EffectSpec.GetContext();
+				
+				UAuraAbilitySystemLibrary::SetIsSuccessfulDebuff(EffectContextHandle, true);
+				UAuraAbilitySystemLibrary::SetDamageTypeTag(EffectContextHandle, DamageTypeTag);
+
+				const float DebuffDamage = EffectSpec.GetSetByCallerMagnitude(FAuraGameplayTags::Get().Debuff_Parameter_Damage, false, -1.f);
+				const float DebuffDuration = EffectSpec.GetSetByCallerMagnitude(FAuraGameplayTags::Get().Debuff_Parameter_Duration, false, -1);
+				const float DebuffFrequency = EffectSpec.GetSetByCallerMagnitude(FAuraGameplayTags::Get().Debuff_Parameter_Frequency, false, -1);
+
+				UAuraAbilitySystemLibrary::SetDebuffDamage(EffectContextHandle, DebuffDamage);
+				UAuraAbilitySystemLibrary::SetDebuffDuration(EffectContextHandle, DebuffDuration);
+				UAuraAbilitySystemLibrary::SetDebuffFrequency(EffectContextHandle, DebuffFrequency);
 			}
 		}
 	}

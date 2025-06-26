@@ -64,6 +64,9 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "AuraAbilitySystemLibrary|DamageEffect")
 	static FGameplayEffectContextHandle ApplyDamageEffect(const FDamageEffectParams& Params);
+
+	UFUNCTION(BlueprintCallable, Category = "AuraAbilitySystemLibrary|DamageEffect")
+	static bool IsSuccessfulDebuff(const FGameplayEffectContextHandle& EffectContextHandle);
 	
 	UFUNCTION(BlueprintPure, Category = "AuraAbilitySystemLibrary|GameplayEffects")
 	static bool IsBlockedHit(const FGameplayEffectContextHandle& EffectContextHandle);
@@ -83,6 +86,9 @@ public:
 	UFUNCTION(BlueprintPure, Category = "AuraAbilitySystemLibrary|DamageEffects")
 	static FGameplayTag GetDamageTypeTag(const FGameplayEffectContextHandle& EffectContextHandle);
 
+	UFUNCTION(BlueprintPure, Category = "AuraAbilitySystemLibrary|DamageEffects")
+	static void SetIsSuccessfulDebuff(UPARAM(ref) FGameplayEffectContextHandle& EffectContextHandle, bool IsSuccessful);
+	
 	UFUNCTION(BlueprintCallable, Category = "AuraAbilitySystemLibrary|GameplayEffects")
 	static void SetIsBlockedHit(UPARAM(ref) FGameplayEffectContextHandle& EffectContextHandle, bool bInIsBlockedHit);
 
@@ -99,7 +105,7 @@ public:
 	static void SetDebuffFrequency(UPARAM(ref) FGameplayEffectContextHandle& EffectContextHandle, float InFrequency);
 
 	UFUNCTION(BlueprintCallable, Category = "AuraAbilitySystemLibrary|DamageEffects")
-	void static SetDamageTypeTag(UPARAM(ref) FGameplayEffectContextHandle& EffectContextHandle, const FGameplayTag &InDamageType);
+	static void SetDamageTypeTag(UPARAM(ref) FGameplayEffectContextHandle& EffectContextHandle, const FGameplayTag &InDamageType);
 	
 	UFUNCTION(BlueprintCallable, Category = "AuraAbilitySystemLibrary|GameplayMechanics")
 	static void GetLiveActorsWithinRadius(const UObject* WorldContextObject, TArray<AActor*>& OutOverlappingActors, const TArray<AActor*>& ActorsToIgnore, float Radius, const FVector& SphereOrigin);
