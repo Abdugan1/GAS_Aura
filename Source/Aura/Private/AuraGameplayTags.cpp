@@ -7,6 +7,15 @@
 FAuraGameplayTags FAuraGameplayTags::GameplayTags;
 
 
+const FAuraGameplayTags& FAuraGameplayTags::Get()
+{
+	if (!GameplayTags.bInitialized)
+	{
+		InitializeNativeGameplayTags();
+	}
+	return GameplayTags;
+}
+
 void FAuraGameplayTags::InitializeNativeGameplayTags()
 {
 	//** Primary Attributes */
@@ -128,4 +137,7 @@ void FAuraGameplayTags::InitializeNativeGameplayTags()
 	//** Effects */
 	GameplayTags.Effects_HitReact = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Effects.HitReact"));
 	//** end Effects
+
+
+	GameplayTags.bInitialized = true;
 }

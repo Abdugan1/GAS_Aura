@@ -13,7 +13,7 @@
 struct FAuraGameplayTags
 {
 public:
-	static const FAuraGameplayTags& Get() { return GameplayTags; }
+	static const FAuraGameplayTags& Get();
 	static void InitializeNativeGameplayTags();
 
 	//** Primary Attributes */
@@ -141,4 +141,6 @@ public:
 	
 private:
 	static FAuraGameplayTags GameplayTags;
+
+	bool bInitialized = false;
 };

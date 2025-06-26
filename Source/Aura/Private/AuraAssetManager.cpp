@@ -15,8 +15,6 @@ UAuraAssetManager& UAuraAssetManager::Get()
 
 void UAuraAssetManager::StartInitialLoading()
 {
-	Super::StartInitialLoading();
-
 	FAuraGameplayTags::Get().InitializeNativeGameplayTags();
 
 	// This is required to use TargetData!
