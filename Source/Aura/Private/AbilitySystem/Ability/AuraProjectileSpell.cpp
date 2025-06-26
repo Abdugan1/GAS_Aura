@@ -54,15 +54,9 @@ void UAuraProjectileSpell::SpawnProjectile(const FVector& ProjectileTargetLocati
 			ESpawnActorCollisionHandlingMethod::AlwaysSpawn
 		);
 
-		const UAbilitySystemComponent* SourceASC = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(GetAvatarActorFromActorInfo());
-		FGameplayEffectContextHandle EffectContextHandle = SourceASC->MakeEffectContext();
-		EffectContextHandle.Get()->SetEffectCauser(GetAvatarActorFromActorInfo());
-		const FGameplayEffectSpecHandle SpecHandle = SourceASC->MakeOutgoingSpec(DamageEffectClass, GetAbilityLevel(), EffectContextHandle);
-		
-		const float ScaledDamage = DamageScalableFloat.GetValueAtLevel(GetAbilityLevel());
-		UAbilitySystemBlueprintLibrary::AssignTagSetByCallerMagnitude(SpecHandle, DamageTypeTag, ScaledDamage);
-				
-		Projectile->DamageEffectSpecHandle = SpecHandle;			
+		Projectile->DamageEffectParams = MakeDamageEffectParamsFromClassDefaults(
+			/** We don't know who the target is, only when the projectile hits someone will the projectile set the TargetASC */
+			);
 			
 		Projectile->FinishSpawning(SpawnTransform);
 	}
