@@ -14,6 +14,7 @@
 #include "Interaction/CombatInterface.h"
 #include "Interaction/PlayerInterface.h"
 #include "Kismet/GameplayStatics.h"
+#include "GameplayEffectComponents/TargetTagsGameplayEffectComponent.h"
 #include "Player/AuraPlayerController.h"
 
 
@@ -53,6 +54,15 @@ void UAuraAttributeSet::PostGameplayEffectExecute(const FGameplayEffectModCallba
 	FEffectProperties EffectProperties;
 	SetEffectProperties(Data, EffectProperties);
 
+	// Skip everything if Target is dead.
+	if (EffectProperties.TargetCharacter->Implements<UCombatInterface>())
+	{
+		if (ICombatInterface::Execute_IsDead(EffectProperties.TargetCharacter))
+		{
+			return;
+		}
+	}
+	
 	// This helps to prevent overflow. Doesn't understand how though.
 	if (Data.EvaluatedData.Attribute == GetHealthAttribute())
 	{
@@ -150,7 +160,77 @@ void UAuraAttributeSet::HandleIncomingDamage(const FEffectProperties& EffectProp
 
 void UAuraAttributeSet::Debuff(const FEffectProperties& EffectProperties)
 {
+	/**
+	 * There's a post questioning using Dynamic GEs.
+	 * Dynamic GEs are for educational purposes, Stephen says.
+	 * https://www.udemy.com/course/unreal-engine-5-gas-top-down-rpg/learn/lecture/40456796#questions/21215166
+	 */
+
+	/**
+	 * Also, there's a quite complicated post about taking resistances into account.
+	 * https://www.udemy.com/course/unreal-engine-5-gas-top-down-rpg/learn/lecture/40456796#questions/21348082
+	 */
 	
+	FGameplayEffectContextHandle DebuffEffectContextHandle = EffectProperties.SourceAbilitySystemComponent->MakeEffectContext();
+	DebuffEffectContextHandle.AddSourceObject(EffectProperties.SourceAvatarActor);
+
+	const FGameplayTag DamageTypeTag =  UAuraAbilitySystemLibrary::GetDamageTypeTag(EffectProperties.EffectContextHandle);
+	const float DebuffDamage = UAuraAbilitySystemLibrary::GetDebuffDamage(EffectProperties.EffectContextHandle);
+	const float DebuffDuration = UAuraAbilitySystemLibrary::GetDebuffDuration(EffectProperties.EffectContextHandle);
+	const float DebuffFrequency = UAuraAbilitySystemLibrary::GetDebuffFrequency(EffectProperties.EffectContextHandle);
+	
+	const FString DebuffName = FString::Printf(TEXT("DynamicDebuff_%s"), *DamageTypeTag.ToString());
+
+	UGameplayEffect* DebuffEffect = NewObject<UGameplayEffect>(GetTransientPackage(), FName(DebuffName));
+	DebuffEffect->DurationPolicy = EGameplayEffectDurationType::HasDuration;
+	DebuffEffect->Period = DebuffFrequency;
+	DebuffEffect->DurationMagnitude = FScalableFloat(DebuffDuration);
+
+	// GrantingTags
+	
+	/** This is DEPRICATED */
+	// DebuffEffect->InheritableOwnedTagsContainer.AddTag(FAuraGameplayTags::Get().DamageTypesToDebuffs[DamageTypeTag]);
+	
+	/**
+	 * This is the same thing of the DEPRICATED code.
+	 * Need to use #include "GameplayEffectComponents/TargetTagsGameplayEffectComponent.h" 
+	 */
+	FInheritedTagContainer TagContainer = FInheritedTagContainer();
+	UTargetTagsGameplayEffectComponent& Component = DebuffEffect->FindOrAddComponent<UTargetTagsGameplayEffectComponent>();
+	TagContainer.Added.AddTag(FAuraGameplayTags::Get().DamageTypesToDebuffs[DamageTypeTag]);
+	TagContainer.CombinedTags.AddTag(FAuraGameplayTags::Get().DamageTypesToDebuffs[DamageTypeTag]);
+	Component.SetAndApplyTargetTagChanges(TagContainer);
+
+	// End of GrantingTags
+
+	DebuffEffect->StackingType = EGameplayEffectStackingType::AggregateBySource;
+	DebuffEffect->StackLimitCount = 1;
+
+	// Why can I not do this? Or can I?
+	// FGameplayModifierInfo ModifierInfo;
+	// ... do the stuff
+	// DebuffEffect->Modifiers.Add(FGameplayModifierInfo()); 
+	const int32 Index = DebuffEffect->Modifiers.Num();
+    DebuffEffect->Modifiers.Add(FGameplayModifierInfo());
+    FGameplayModifierInfo& ModifierInfo = DebuffEffect->Modifiers[Index];
+	
+    ModifierInfo.ModifierMagnitude = FScalableFloat(DebuffDamage);
+    ModifierInfo.ModifierOp = EGameplayModOp::Additive;
+    ModifierInfo.Attribute = UAuraAttributeSet::GetIncomingDamageAttribute();
+
+	if (FGameplayEffectSpec* MutableSpec = new FGameplayEffectSpec(DebuffEffect, DebuffEffectContextHandle, 1.f))
+	{
+		// For some reason, Stephen is not using the function from our Library.
+		// Maybe he forgot about that. Anyway, NOTE: I don't know if it's legal to use Ar << GameplayTag,
+		// but I did it that way. Stephen did it using the method used with the var HitResult.
+		
+		// FAuraGameplayEffectContext* AuraContext = static_cast<FAuraGameplayEffectContext*>(MutableSpec->GetContext().Get());
+		// TSharedPtr<FGameplayTag> DebuffDamageType = MakeShareable(new FGameplayTag(DamageType));
+		// AuraContext->SetDamageType(DebuffDamageType);
+		UAuraAbilitySystemLibrary::SetDamageTypeTag(DebuffEffectContextHandle, DamageTypeTag);
+
+		EffectProperties.TargetAbilitySystemComponent->ApplyGameplayEffectSpecToSelf(*MutableSpec);
+	}
 }
 
 void UAuraAttributeSet::PostAttributeChange(const FGameplayAttribute& Attribute, float OldValue, float NewValue)
