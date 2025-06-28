@@ -145,6 +145,8 @@ void AAuraEnemy::InitAbilityActorInfo()
 	// Enemies are a AI-PlayerController entities. No PlayerState. The owner and avatar are the same thing.
 	AbilitySystemComponent->InitAbilityActorInfo(this, this);
 
+	OnASCRegistered.Broadcast(AbilitySystemComponent);
+	
 	// We must call this to broadcast effects applied
 	Cast<UAuraAbilitySystemComponent>(AbilitySystemComponent)->AbilityActorInfoSet();
 

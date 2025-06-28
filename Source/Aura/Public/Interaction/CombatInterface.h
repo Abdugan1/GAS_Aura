@@ -8,6 +8,10 @@
 #include "CombatInterface.generated.h"
 
 class UNiagaraSystem;
+class UAbilitySystemComponent;
+
+DECLARE_MULTICAST_DELEGATE_OneParam(FOnASCRegistered, UAbilitySystemComponent*);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnDeath, AActor*, DeadActor);
 
 /**
  * Struct to hold a Montage bound to a particular GameplayTag - MontageTag.
@@ -105,4 +109,11 @@ public:
 	/** Get the Character class */
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
 	ECharacterClass GetCharacterClass() const;
+
+	// For some reason, you can, or can you, return a copy of it
+	// But GetOnDeathm you cannot do that...
+	virtual FOnASCRegistered GetOnASCRegistered() = 0;
+
+	// But 
+	virtual FOnDeath* GetOnDeath() = 0;
 };

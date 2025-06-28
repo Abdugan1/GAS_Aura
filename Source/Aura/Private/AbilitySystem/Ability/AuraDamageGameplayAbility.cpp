@@ -22,6 +22,12 @@ FDamageEffectParams UAuraDamageGameplayAbility::MakeDamageEffectParamsFromClassD
 	Params.DebuffDamage = DebuffDamage;
 	Params.DebuffFrequency = DebuffFrequency;
 	Params.DebuffDuration = DebuffDuration;
+	Params.DeathImpulseMagnitude = DeathImpulseMagnitude;
+	/**
+	 * Note on DeathImpulse.
+	 * Setting DeathImpulse is not possible at the beginning
+	 * as the projectile that hit an enemy defines the impulse/direction.
+	 */
 	return Params;
 }
 

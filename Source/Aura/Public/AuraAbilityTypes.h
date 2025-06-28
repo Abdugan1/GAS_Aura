@@ -42,6 +42,12 @@ struct FDamageEffectParams
 
 	UPROPERTY()
 	float DebuffFrequency = 0.f;
+
+	UPROPERTY()
+	float DeathImpulseMagnitude = 0.f;
+
+	UPROPERTY()
+	FVector DeathImpulse = FVector::ZeroVector;
 };
 
 USTRUCT(BlueprintType)
@@ -80,6 +86,8 @@ public:
 
 	FGameplayTag GetDamageTypeTag() const { return DamageTypeTag; }
 
+	FVector GetDeathImpulse() const { return DeathImpulse; }
+	
 	void SetIsSuccessfulDebuff(bool bInIsSuccessfulDebuff) { bIsSuccessfulDebuff = bInIsSuccessfulDebuff; }
 	void SetIsCriticalHit(bool bNewCriticalHit) { bIsCriticalHit = bNewCriticalHit; }
 	void SetIsBlockedHit(bool bNewBlockedHit) { bIsBlockedHit = bNewBlockedHit; }
@@ -87,6 +95,7 @@ public:
 	void SetDebuffDuration(float NewDuration) { DebuffDuration = NewDuration; }
 	void SetDebuffFrequency(float NewFreq) { DebuffFrequency = NewFreq; }
 	void SetDamageTypeTag(const FGameplayTag& NewTag) { DamageTypeTag = NewTag; }
+	void SetDeathImpulse(const FVector& NewImpulse) { DeathImpulse = NewImpulse; }
 	
 protected:
 	UPROPERTY()
@@ -109,6 +118,9 @@ protected:
 
 	UPROPERTY()
 	FGameplayTag DamageTypeTag;
+
+	UPROPERTY()
+	FVector DeathImpulse = FVector::ZeroVector;
 };
 
 /** BOILERPLATE */

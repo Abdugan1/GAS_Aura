@@ -95,9 +95,13 @@ bool FAuraGameplayEffectContext::NetSerialize(FArchive& Ar, class UPackageMap* M
 		{
 			RepBits |= 1 << 13;
 		}
+		if (!DeathImpulse.IsZero())
+		{
+			RepBits |= 1 << 14;
+		}
 	}
 
-	Ar.SerializeBits(&RepBits, 14);
+	Ar.SerializeBits(&RepBits, 15);
 
 	if (RepBits & (1 << 0))
 	{
@@ -178,6 +182,13 @@ bool FAuraGameplayEffectContext::NetSerialize(FArchive& Ar, class UPackageMap* M
 		 */
 		Ar << DamageTypeTag;
 	}
+	if (RepBits & (1 << 14))
+	{
+		// Note: Again, for some reason, Stephen uses this instead of Ar << DeathImpulse
+		DeathImpulse.NetSerialize(Ar, Map, bOutSuccess);
+		
+	}
+
 	// end mine
 	
 	if (Ar.IsLoading())
