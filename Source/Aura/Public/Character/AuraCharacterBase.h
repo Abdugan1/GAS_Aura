@@ -31,7 +31,7 @@ public:
 	/** ICombatInterface */
 	virtual UAnimMontage* GetHitReactMontage_Implementation() override;
 	
-	virtual void Die() override;
+	virtual void Die(const FVector& InDeathImpulse) override;
 
 	virtual bool IsDead_Implementation() const override;
 	
@@ -55,7 +55,7 @@ public:
 	/** end ICombatInterface */
 
 	UFUNCTION(NetMulticast, Reliable)
-	virtual void MulticastHandleDeath();
+	virtual void MulticastHandleDeath(const FVector& InDeathImpulse);
 
 	FOnASCRegistered OnASCRegistered;
 	

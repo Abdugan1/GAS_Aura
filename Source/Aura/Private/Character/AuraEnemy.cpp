@@ -96,12 +96,12 @@ int32 AAuraEnemy::GetPlayerLevel_Implementation()
 }
 
 
-void AAuraEnemy::Die()
+void AAuraEnemy::Die(const FVector& InDeathImpulse)
 {
 	AuraAIController->GetBrainComponent()->StopLogic(TEXT("Died"));
 	SetLifeSpan(LifeSpan);
 	
-	Super::Die();
+	Super::Die(InDeathImpulse);
 }
 
 

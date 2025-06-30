@@ -76,7 +76,7 @@ public:
 	UAnimMontage* GetHitReactMontage();
 
 	/** To die */
-	virtual void Die() = 0;
+	virtual void Die(const FVector& InDeathImpulse) = 0;
 
 	/** If the actor is dead */
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
