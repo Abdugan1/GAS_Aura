@@ -116,4 +116,6 @@ public:
 
 	// But 
 	virtual FOnDeath* GetOnDeath() = 0;
+
+	virtual void ApplyKnockback(const FVector& KnockbackImpulse) = 0;
 };

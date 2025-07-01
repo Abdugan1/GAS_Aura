@@ -51,6 +51,8 @@ public:
 
 	virtual FOnASCRegistered GetOnASCRegistered() override;
 	virtual FOnDeath* GetOnDeath() override;
+
+	virtual void ApplyKnockback(const FVector& KnockbackImpulse) override;
 	
 	/** end ICombatInterface */
 

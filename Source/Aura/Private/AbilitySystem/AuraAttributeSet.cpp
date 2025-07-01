@@ -141,6 +141,11 @@ void UAuraAttributeSet::HandleIncomingDamage(const FEffectProperties& EffectProp
 		}
 		else
 		{
+			if (ICombatInterface* CombatInterface = Cast<ICombatInterface>(EffectProperties.TargetAvatarActor))
+			{
+				CombatInterface->ApplyKnockback(UAuraAbilitySystemLibrary::GetKnockbackImpulse(EffectProperties.EffectContextHandle));
+			}
+			
 			FGameplayTagContainer TagContainer;
 			TagContainer.AddTag(FAuraGameplayTags::Get().Abilities_HitReact);
 			EffectProperties.TargetAbilitySystemComponent->TryActivateAbilitiesByTag(TagContainer);

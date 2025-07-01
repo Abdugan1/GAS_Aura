@@ -31,8 +31,9 @@ struct FDamageEffectParams
 	UPROPERTY()
 	FGameplayTag DamageTypeTag;
 
+	/** Debuff Properties */
 	UPROPERTY()
-	float DebugChance = 0.f;
+	float DebuffChance = 0.f;
 
 	UPROPERTY()
 	float DebuffDamage = 0.f;
@@ -43,11 +44,24 @@ struct FDamageEffectParams
 	UPROPERTY()
 	float DebuffFrequency = 0.f;
 
+	/** end Debuff Properties */
+
+	/** Death Impulse Properties */
 	UPROPERTY()
 	float DeathImpulseMagnitude = 0.f;
 
 	UPROPERTY()
 	FVector DeathImpulse = FVector::ZeroVector;
+	/** end Death Impulse Properties */
+
+	/** Knockback Properties */
+	UPROPERTY()
+	float KnockbackMagnitude = 0.f;
+
+	UPROPERTY()
+	FVector KnockbackImpulse = FVector::ZeroVector;
+	
+	/** end Knockback Properties */
 };
 
 USTRUCT(BlueprintType)
@@ -77,17 +91,13 @@ public:
 	bool IsBlockedHit() const { return bIsBlockedHit; }
 
 	bool IsSuccessfulDebuff() const { return bIsSuccessfulDebuff; }
-
 	float GetDebuffDamage() const { return DebuffDamage; }
-
 	float GetDebuffDuration() const { return DebuffDuration; }
-
 	float GetDebuffFrequency() const { return DebuffFrequency; }
-
 	FGameplayTag GetDamageTypeTag() const { return DamageTypeTag; }
-
 	FVector GetDeathImpulse() const { return DeathImpulse; }
-	
+	FVector GetKnockbackImpulse() const { return KnockbackImpulse; }
+		
 	void SetIsSuccessfulDebuff(bool bInIsSuccessfulDebuff) { bIsSuccessfulDebuff = bInIsSuccessfulDebuff; }
 	void SetIsCriticalHit(bool bNewCriticalHit) { bIsCriticalHit = bNewCriticalHit; }
 	void SetIsBlockedHit(bool bNewBlockedHit) { bIsBlockedHit = bNewBlockedHit; }
@@ -96,6 +106,7 @@ public:
 	void SetDebuffFrequency(float NewFreq) { DebuffFrequency = NewFreq; }
 	void SetDamageTypeTag(const FGameplayTag& NewTag) { DamageTypeTag = NewTag; }
 	void SetDeathImpulse(const FVector& NewImpulse) { DeathImpulse = NewImpulse; }
+	void SetKnockbackImpulse(const FVector& NewImpulse) { KnockbackImpulse = NewImpulse; }
 	
 protected:
 	UPROPERTY()
@@ -121,6 +132,9 @@ protected:
 
 	UPROPERTY()
 	FVector DeathImpulse = FVector::ZeroVector;
+
+	UPROPERTY()
+	FVector KnockbackImpulse = FVector::ZeroVector;
 };
 
 /** BOILERPLATE */

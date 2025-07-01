@@ -122,6 +122,11 @@ FOnDeath* AAuraCharacterBase::GetOnDeath()
 	return &OnDeath;
 }
 
+void AAuraCharacterBase::ApplyKnockback(const FVector& KnockbackImpulse)
+{
+	LaunchCharacter(KnockbackImpulse, true, true);
+}
+
 
 void AAuraCharacterBase::MulticastHandleDeath_Implementation(const FVector& InDeathImpulse)
 {

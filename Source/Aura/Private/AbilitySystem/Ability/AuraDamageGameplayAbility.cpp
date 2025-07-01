@@ -18,13 +18,19 @@ FDamageEffectParams UAuraDamageGameplayAbility::MakeDamageEffectParamsFromClassD
 	Params.BaseDamage = DamageScalableFloat.GetValueAtLevel(GetAbilityLevel());
 	Params.AbilityLevel = GetAbilityLevel();
 	Params.DamageTypeTag = DamageTypeTag;
-	Params.DebugChance = DebuffChance;
+	Params.DebuffChance = DebuffChance;
 	Params.DebuffDamage = DebuffDamage;
 	Params.DebuffFrequency = DebuffFrequency;
 	Params.DebuffDuration = DebuffDuration;
 	Params.DeathImpulseMagnitude = DeathImpulseMagnitude;
 	/**
 	 * Note on DeathImpulse.
+	 * Setting DeathImpulse is not possible at the beginning
+	 * as the projectile that hit an enemy defines the impulse/direction.
+	 */
+	Params.KnockbackMagnitude = KnockbackMagnitude;
+	/**
+	 * Note on KnockbackImpulse.
 	 * Setting DeathImpulse is not possible at the beginning
 	 * as the projectile that hit an enemy defines the impulse/direction.
 	 */
