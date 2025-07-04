@@ -11,6 +11,7 @@
 #include "MovieSceneTracksComponentTypes.h"
 #include "NavigationPath.h"
 #include "NavigationSystem.h"
+#include "NiagaraFunctionLibrary.h"
 #include "AbilitySystem/AuraAbilitySystemComponent.h"
 #include "Components/SplineComponent.h"
 #include "GameFramework/Character.h"
@@ -197,6 +198,7 @@ void AAuraPlayerController::AbilityInputKeyReleased(FGameplayTag Tag)
 			if (NavigationPath->PathPoints.Num() > 0)
 			{
 				CachedDestination = NavigationPath->PathPoints[NavigationPath->PathPoints.Num() - 1];
+				UNiagaraFunctionLibrary::SpawnSystemAtLocation(this, ClickNiagaraSystem, CachedDestination);
 			}
 			else
 			{
