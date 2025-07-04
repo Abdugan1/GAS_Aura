@@ -74,6 +74,8 @@ public:
 	/** Calls AbilitySpecInputPressed. TRYies to enable the ability. Does NOT enable if already enabled */
 	void AbilityInputKeyHeld(FGameplayTag InputTag);
 
+	void AbilityInputKeyPressed(FGameplayTag InputTag);
+
 	/** Loop through GetActivatableAbilities and execute the delegate's functor */
 	void ForEachAbility(const FForEachAbility& Delegate);
 

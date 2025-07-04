@@ -90,11 +90,30 @@ void UAuraAbilitySystemComponent::AbilityInputKeyReleased(FGameplayTag InputTag)
 		return;
 	}
 
+	FScopedAbilityListLock ScopedAbilityListLock(*this);
 	for (FGameplayAbilitySpec& AbilitySpec : GetActivatableAbilities())
 	{
 		if (AbilitySpec.GetDynamicSpecSourceTags().HasTagExact(InputTag))
 		{
 			AbilitySpecInputReleased(AbilitySpec);
+
+			if (AbilitySpec.IsActive())
+			{
+				// NOTE: GetPrimaryInstance() in only valid on IntancedPerActor abilities.
+				// If decided to use other instances, use GetAbilityInstances() and loop over it.
+				// More on this: https://www.udemy.com/course/unreal-engine-5-gas-top-down-rpg/learn/lecture/40435524#questions/22659811
+				UGameplayAbility* PrimaryIntance = AbilitySpec.GetPrimaryInstance();
+
+				if (PrimaryIntance)
+				{
+					InvokeReplicatedEvent(
+						EAbilityGenericReplicatedEvent::InputReleased,
+						AbilitySpec.Handle,
+						PrimaryIntance->GetCurrentActivationInfo().GetActivationPredictionKey()
+						);
+				}
+			}
+
 		}
 	}
 }
@@ -106,7 +125,8 @@ void UAuraAbilitySystemComponent::AbilityInputKeyHeld(FGameplayTag InputTag)
 	{
 		return;
 	}
-	
+
+	FScopedAbilityListLock ScopedAbilityListLock(*this);	
 	for (FGameplayAbilitySpec& AbilitySpec : GetActivatableAbilities())
 	{
 		if (AbilitySpec.GetDynamicSpecSourceTags().HasTagExact(InputTag))
@@ -119,6 +139,41 @@ void UAuraAbilitySystemComponent::AbilityInputKeyHeld(FGameplayTag InputTag)
 		}
 	}
 }
+
+void UAuraAbilitySystemComponent::AbilityInputKeyPressed(FGameplayTag InputTag)
+{
+	if (!InputTag.IsValid())
+	{
+		return;
+	}
+	
+	FScopedAbilityListLock ScopedAbilityListLock(*this);
+	for (FGameplayAbilitySpec& AbilitySpec : GetActivatableAbilities())
+	{
+		if (AbilitySpec.GetDynamicSpecSourceTags().HasTagExact(InputTag))
+		{
+			AbilitySpecInputPressed(AbilitySpec);
+			if (AbilitySpec.IsActive())
+			{
+				// NOTE: GetPrimaryInstance() in only valid on IntancedPerActor abilities.
+				// If decided to use other instances, use GetAbilityInstances() and loop over it.
+				// More on this: https://www.udemy.com/course/unreal-engine-5-gas-top-down-rpg/learn/lecture/40435524#questions/22659811
+				UGameplayAbility* PrimaryIntance = AbilitySpec.GetPrimaryInstance();
+
+				if (PrimaryIntance)
+				{
+					InvokeReplicatedEvent(
+						EAbilityGenericReplicatedEvent::InputPressed,
+						AbilitySpec.Handle,
+						PrimaryIntance->GetCurrentActivationInfo().GetActivationPredictionKey()
+						);
+				}
+			}
+		}
+	}
+	
+}
+
 
 
 void UAuraAbilitySystemComponent::ForEachAbility(const FForEachAbility& Delegate)

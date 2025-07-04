@@ -118,4 +118,7 @@ public:
 	virtual FOnDeath* GetOnDeath() = 0;
 
 	virtual void ApplyKnockback(const FVector& KnockbackImpulse) = 0;
+
+	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
+	void SetInShockLoop(bool bInLoop);
 };
