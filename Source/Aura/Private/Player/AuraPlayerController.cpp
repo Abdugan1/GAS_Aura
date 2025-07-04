@@ -53,6 +53,25 @@ void AAuraPlayerController::ShowDamageNumber_Implementation(float Damage, AChara
 
 void AAuraPlayerController::CursorTrace()
 {
+	// Checking for Block Tag Cursor Trace
+	if (GetAuraAbilitySystemComponent()
+		&& GetAuraAbilitySystemComponent()->HasMatchingGameplayTag(FAuraGameplayTags::Get().Player_Block_CursorTrace))
+	{
+		if (LastActor)
+		{
+			LastActor->UnHighlightActor();
+		}
+		if (CurrentActor)
+		{
+			CurrentActor->UnHighlightActor();
+		}
+
+		LastActor = nullptr;
+		CurrentActor = nullptr;
+		
+		return;
+	}
+	
 	GetHitResultUnderCursor(ECC_Visibility, false, CursorHit);
 	if (!CursorHit.bBlockingHit)
 	{
@@ -140,6 +159,12 @@ void AAuraPlayerController::SetupInputComponent()
 
 void AAuraPlayerController::Move(const FInputActionValue& InputActionValue)
 {
+	if (GetAuraAbilitySystemComponent()
+	&& GetAuraAbilitySystemComponent()->HasMatchingGameplayTag(FAuraGameplayTags::Get().Player_Block_InputPressed))
+	{
+		return;
+	}
+	
 	const FVector2D InputAxisVector = InputActionValue.Get<FVector2D>();
 	const FRotator Rotation = GetControlRotation();
 	const FRotator YawRotation(0.f, Rotation.Yaw, 0.f);
@@ -157,6 +182,12 @@ void AAuraPlayerController::Move(const FInputActionValue& InputActionValue)
 
 void AAuraPlayerController::AbilityInputTagPressed(FGameplayTag Tag)
 {
+	if (GetAuraAbilitySystemComponent()
+	&& GetAuraAbilitySystemComponent()->HasMatchingGameplayTag(FAuraGameplayTags::Get().Player_Block_InputPressed))
+	{
+		return;
+	}
+	
 	if (Tag.MatchesTagExact(FAuraGameplayTags::Get().InputTag_LMB))
 	{
 		bTargeting = CurrentActor != nullptr;
@@ -172,6 +203,12 @@ void AAuraPlayerController::AbilityInputTagPressed(FGameplayTag Tag)
 
 void AAuraPlayerController::AbilityInputKeyReleased(FGameplayTag Tag)
 {
+	if (GetAuraAbilitySystemComponent()
+		&& GetAuraAbilitySystemComponent()->HasMatchingGameplayTag(FAuraGameplayTags::Get().Player_Block_InputReleased))
+	{
+		return;
+	}
+	
 	// If the button is not LBM || if we weren't hovering something during the press || Shift was not pressed,
 	// We call GAS function
 	if (!Tag.MatchesTagExact(FAuraGameplayTags::Get().InputTag_LMB)
@@ -203,7 +240,13 @@ void AAuraPlayerController::AbilityInputKeyReleased(FGameplayTag Tag)
 			if (NavigationPath->PathPoints.Num() > 0)
 			{
 				CachedDestination = NavigationPath->PathPoints[NavigationPath->PathPoints.Num() - 1];
-				UNiagaraFunctionLibrary::SpawnSystemAtLocation(this, ClickNiagaraSystem, CachedDestination);
+
+				// If PRESSED isn't blocked. NOT RELEASED! 
+				if (GetAuraAbilitySystemComponent()
+					&& !GetAuraAbilitySystemComponent()->HasMatchingGameplayTag(FAuraGameplayTags::Get().Player_Block_InputPressed))
+				{
+					UNiagaraFunctionLibrary::SpawnSystemAtLocation(this, ClickNiagaraSystem, CachedDestination);
+				}
 			}
 			else
 			{
@@ -223,6 +266,12 @@ void AAuraPlayerController::AbilityInputKeyReleased(FGameplayTag Tag)
 
 void AAuraPlayerController::AbilityInputKeyHeld(FGameplayTag Tag)
 {
+	if (GetAuraAbilitySystemComponent()
+	&& GetAuraAbilitySystemComponent()->HasMatchingGameplayTag(FAuraGameplayTags::Get().Player_Block_InputHeld))
+	{
+		return;
+	}
+	
 	// NOTE: Includes code both for click-to-move and activation of GAs
 	
 	// If the button is not LBM || if we weren't hovering something during the press,
