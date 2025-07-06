@@ -10,7 +10,7 @@ void UAuraBeamSpell::StoreMouseDataInfo(const FHitResult& HitResult)
 {
 	if (HitResult.bBlockingHit)
 	{
-		MouseHitLocation = HitResult.Location;
+		MouseHitLocation = HitResult.ImpactPoint;
 		MouseHitActor = HitResult.GetActor();
 	}
 	else

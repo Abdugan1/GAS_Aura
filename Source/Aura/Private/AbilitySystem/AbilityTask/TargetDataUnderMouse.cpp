@@ -4,6 +4,7 @@
 #include "AbilitySystem/AbilityTask/TargetDataUnderMouse.h"
 
 #include "AbilitySystemComponent.h"
+#include "Aura/Aura.h"
 #include "ProfilingDebugging/CookStats.h"
 
 
@@ -51,7 +52,7 @@ void UTargetDataUnderMouse::SendMouseCursorData()
 	
 	FHitResult Hit;
 	// Get location under cursor. It's done using the PlayerController.
-	Ability->GetCurrentActorInfo()->PlayerController->GetHitResultUnderCursor(ECC_Visibility, false, Hit);
+	Ability->GetCurrentActorInfo()->PlayerController->GetHitResultUnderCursor(ECC_Target, false, Hit);
 
 	// UE's ready-to-use structure. No memory leakage is here. It's necessary to use 'new' for some reason I don't know.
 	FGameplayAbilityTargetData_SingleTargetHit* Data = new FGameplayAbilityTargetData_SingleTargetHit();

@@ -127,6 +127,11 @@ void AAuraCharacterBase::ApplyKnockback(const FVector& KnockbackImpulse)
 	LaunchCharacter(KnockbackImpulse, true, true);
 }
 
+USkeletalMeshComponent* AAuraCharacterBase::GetWeapon_Implementation()
+{
+	return Weapon;
+}
+
 
 void AAuraCharacterBase::MulticastHandleDeath_Implementation(const FVector& InDeathImpulse)
 {

@@ -53,6 +53,8 @@ public:
 	virtual FOnDeath* GetOnDeath() override;
 
 	virtual void ApplyKnockback(const FVector& KnockbackImpulse) override;
+
+	virtual USkeletalMeshComponent* GetWeapon_Implementation() override;
 	
 	/** end ICombatInterface */
 
