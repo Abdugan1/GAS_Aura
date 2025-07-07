@@ -365,6 +365,43 @@ void UAuraAbilitySystemLibrary::GetLiveActorsWithinRadius(const UObject* WorldCo
 	}
 }
 
+void UAuraAbilitySystemLibrary::GetClosestTargets(int32 MaxNumTargets, const TArray<AActor*>& Actors,
+	TArray<AActor*>& OutTargets, const FVector& Origin)
+{
+	if (Actors.Num() <= MaxNumTargets)
+	{
+		OutTargets = Actors;
+		return;
+	}
+
+	TArray<AActor*> ActorsToCheck = Actors;
+	int32 NumTargetsFound = 0;
+
+	while (NumTargetsFound < MaxNumTargets)
+	{
+		if (ActorsToCheck.Num() == 0)
+		{
+			break;
+		}
+		
+		double ClosestDistance = TNumericLimits<double>::Max();
+		AActor* ClosestActor = nullptr;
+		for (AActor* Actor : ActorsToCheck)
+		{
+			const double Distance = (Actor->GetActorLocation() - Origin).Length();
+			if (Distance < ClosestDistance)
+			{
+				ClosestDistance = Distance;
+				ClosestActor = Actor;
+			}
+		}
+		ActorsToCheck.Remove(ClosestActor);
+		OutTargets.AddUnique(ClosestActor);
+
+		NumTargetsFound++;
+	}
+}
+
 
 bool UAuraAbilitySystemLibrary::IsNotFriend(AActor* FirstActor, AActor* SecondActor)
 {
