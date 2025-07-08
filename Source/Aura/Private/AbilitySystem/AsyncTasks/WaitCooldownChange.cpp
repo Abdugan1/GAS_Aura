@@ -25,6 +25,14 @@ UWaitCooldownChange* UWaitCooldownChange::WaitForCooldownChange(UAbilitySystemCo
 	.AddUObject(WaitCooldownChange, &UWaitCooldownChange::CooldownTagChanged);
 
 	// To know when a cooldown has been applied
+	/**
+	 * VERY IMPORTANT NOTE:
+	 * This is called ONCE on the SERVER,
+	 * BUT, callded TWICE on CLIENTS!
+	 * For the PREDICTED GE, and the server's REPLICATED ONE.
+	 * Check out Diego's answer:
+	 * https://www.udemy.com/course/unreal-engine-5-gas-top-down-rpg/learn/lecture/40847062#questions/20624870
+	 */
 	ASC->OnActiveGameplayEffectAddedDelegateToSelf.AddUObject(WaitCooldownChange, &UWaitCooldownChange::OnActiveEffectAdded);
 	
 	return WaitCooldownChange;
@@ -53,6 +61,30 @@ void UWaitCooldownChange::CooldownTagChanged(const FGameplayTag InCooldownTag, i
 void UWaitCooldownChange::OnActiveEffectAdded(UAbilitySystemComponent* TargetASC,
 	const FGameplayEffectSpec& SpecApplied, FActiveGameplayEffectHandle ActiveGameplayEffect)
 {
+	/**
+	 * VERY IMPORTANT NOTE:
+	 * This is called ONCE on the SERVER,
+	 * BUT, callded TWICE on CLIENTS!
+	 * For the PREDICTED GE, and the server's REPLICATED ONE.
+	 * Check out Diego's answer:
+	 * https://www.udemy.com/course/unreal-engine-5-gas-top-down-rpg/learn/lecture/40847062#questions/20624870
+	 */
+
+	/**
+	 * Diego decided to remove this because he was having some issues with the Electrocute ability.
+	 * I think it works for me no problem.
+	 */
+	const bool bIsReplicatedEffect = !SpecApplied.GetContext().GetAbilityInstance_NotReplicated();
+	if (bIsReplicatedEffect)
+	{
+		return;
+	}
+
+	/**
+	 * This is Chelsey's solution. I don't know how he uses it though.
+	 */
+	// const bool bHasNotNonSnapAttrs = !SpecApplied.CapturedRelevantAttributes.HasNonSnapshottedAttributes();
+	
 	FGameplayTagContainer AssetTags;
 	SpecApplied.GetAllAssetTags(AssetTags);
 
