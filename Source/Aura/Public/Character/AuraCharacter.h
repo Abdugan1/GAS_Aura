@@ -49,6 +49,10 @@ public:
 protected:
 	virtual void InitAbilityActorInfo() override;
 
+	/** AuraCharacterBase */
+	virtual void OnRep_IsStunned(bool OldIsStunned) const override;
+	/** end AuraCharacterBase */
+
 private:
 	UFUNCTION(NetMulticast, Unreliable)
 	void MulticastLevelUpParticles();

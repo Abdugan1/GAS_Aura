@@ -9,7 +9,9 @@
 #include "AbilitySystem/Debuff/DebuffNiagaraComponent.h"
 #include "Aura/Aura.h"
 #include "Components/CapsuleComponent.h"
+#include "GameFramework/CharacterMovementComponent.h"
 #include "Kismet/GameplayStatics.h"
+#include "Net/UnrealNetwork.h"
 
 
 AAuraCharacterBase::AAuraCharacterBase()
@@ -167,6 +169,19 @@ void AAuraCharacterBase::MulticastHandleDeath_Implementation(const FVector& InDe
 }
 
 
+void AAuraCharacterBase::GetLifetimeReplicatedProps(TArray<class FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+	DOREPLIFETIME(AAuraCharacterBase, bIsStunned);
+}
+
+void AAuraCharacterBase::BeginPlay()
+{
+	Super::BeginPlay();
+	GetCharacterMovement()->MaxWalkSpeed = BaseWalkSpeed;
+}
+
 void AAuraCharacterBase::Tick(float DeltaSeconds)
 {
 	Super::Tick(DeltaSeconds);
@@ -281,4 +296,17 @@ void AAuraCharacterBase::Dissolve()
 
 		StartWeaponDissolveTimeline(DissolveMaterialInstance);
 	}
+}
+
+void AAuraCharacterBase::OnRep_IsStunned(bool OldIsStunned) const
+{
+	
+}
+
+
+void AAuraCharacterBase::IsStunnedChanged(const FGameplayTag Callbacktag, int32 NewCount)
+{
+	bIsStunned = NewCount > 0;
+	const int AAA = bIsStunned ? 0.f : BaseWalkSpeed;
+	GetCharacterMovement()->MaxWalkSpeed = bIsStunned ? 0.f : BaseWalkSpeed;
 }

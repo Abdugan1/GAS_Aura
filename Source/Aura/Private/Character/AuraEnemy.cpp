@@ -40,6 +40,9 @@ AAuraEnemy::AAuraEnemy()
 
 	IsHitReactingKey = "HitReacting";
 	IsRangedAttackerKey = "RangedAttacker";
+	IsStunnedKey = "IsStunned";
+
+	BaseWalkSpeed = 250.f;
 }
 
 
@@ -108,8 +111,6 @@ void AAuraEnemy::Die(const FVector& InDeathImpulse)
 void AAuraEnemy::BeginPlay()
 {
 	Super::BeginPlay();
-
-	GetCharacterMovement()->MaxWalkSpeed = BaseWalkSpeed;
 	
 	InitAbilityActorInfo();
 
@@ -117,6 +118,11 @@ void AAuraEnemy::BeginPlay()
 		FAuraGameplayTags::Get().Effects_HitReact,
 		EGameplayTagEventType::NewOrRemoved)
 	.AddUObject(this, &AAuraEnemy::HitReactTagChanged);
+	
+	AbilitySystemComponent->RegisterGameplayTagEvent(
+		FAuraGameplayTags::Get().Debuff_Stun,
+		EGameplayTagEventType::NewOrRemoved)
+	.AddUObject(this, &AAuraEnemy::IsStunnedChanged);
 
 	if (HasAuthority())
 	{
@@ -160,6 +166,17 @@ void AAuraEnemy::InitAbilityActorInfo()
 void AAuraEnemy::InitializeDefaultAttributes() const
 {
 	UAuraAbilitySystemLibrary::InitializeDefaultAttributes(this, CharacterClass, Level, AbilitySystemComponent);
+}
+
+void AAuraEnemy::IsStunnedChanged(const FGameplayTag Callbacktag, int32 NewCount)
+{
+	Super::IsStunnedChanged(Callbacktag, NewCount);
+
+	if (HasAuthority())
+	{
+		// AI controller exists only on the Server
+		AuraAIController->GetBlackboardComponent()->SetValueAsBool(IsStunnedKey, bIsStunned);
+	}
 }
 
 

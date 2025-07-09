@@ -55,6 +55,8 @@ protected:
 	virtual void InitAbilityActorInfo() override;
 
 	virtual void InitializeDefaultAttributes() const override;
+
+	virtual void IsStunnedChanged(const FGameplayTag Callbacktag, int32 NewCount) override;
 	/* end AuraCharacterBase interface */
 	
 private:
@@ -63,9 +65,6 @@ private:
 public:
 	UPROPERTY(BlueprintReadOnly, Category= "Combat")
 	bool bHitReacting = false;
-
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Combat")
-	float BaseWalkSpeed = 250.f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Combat")
 	float LifeSpan = 5.f;
@@ -91,4 +90,7 @@ protected:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "AI|BlackBoard")
 	FName IsRangedAttackerKey;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "AI|BlackBoard")
+	FName IsStunnedKey;
 };

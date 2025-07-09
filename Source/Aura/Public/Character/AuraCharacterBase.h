@@ -16,7 +16,7 @@ class UGameplayEffect;
 class UAbilitySystemComponent;
 class UAttributeSet;
 
-UCLASS()
+UCLASS(Abstract)
 class AURA_API AAuraCharacterBase : public ACharacter, public IAbilitySystemInterface, public ICombatInterface
 {
 	GENERATED_BODY()
@@ -65,8 +65,11 @@ public:
 	
 	UPROPERTY(BlueprintAssignable)
 	FOnDeath OnDeath;
+
+	virtual void GetLifetimeReplicatedProps(TArray<class FLifetimeProperty>& OutLifetimeProps) const override;
 	
 protected:
+	virtual void BeginPlay() override;
 	virtual void Tick(float DeltaSeconds) override;
 	
 	/**
@@ -101,6 +104,20 @@ protected:
 
 	UFUNCTION(BlueprintImplementableEvent)
 	void StartWeaponDissolveTimeline(UMaterialInstanceDynamic* DynamicMaterialInstance);
+
+	/** RepNotifies */
+	UFUNCTION()
+	virtual void OnRep_IsStunned(bool OldIsStunned) const;
+	/** end RepNotifies */
+
+	virtual void IsStunnedChanged(const FGameplayTag Callbacktag, int32 NewCount);
+	
+public:
+	UPROPERTY(ReplicatedUsing=OnRep_IsStunned, BlueprintReadOnly, Category= "Combat")
+	bool bIsStunned = false;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Combat")
+	float BaseWalkSpeed = 650.f;
 	
 protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Character Class Defaults")

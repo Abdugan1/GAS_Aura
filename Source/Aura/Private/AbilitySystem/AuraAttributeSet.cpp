@@ -174,6 +174,8 @@ void UAuraAttributeSet::Debuff(const FEffectProperties& EffectProperties)
 	 * Also, there's a quite complicated post about taking resistances into account.
 	 * https://www.udemy.com/course/unreal-engine-5-gas-top-down-rpg/learn/lecture/40456796#questions/21348082
 	 */
+
+	/** Dynamic GEs have limitations, like not replicating, or at least not executing on clients */
 	
 	FGameplayEffectContextHandle DebuffEffectContextHandle = EffectProperties.SourceAbilitySystemComponent->MakeEffectContext();
 	DebuffEffectContextHandle.AddSourceObject(EffectProperties.SourceAvatarActor);
@@ -201,9 +203,31 @@ void UAuraAttributeSet::Debuff(const FEffectProperties& EffectProperties)
 	 */
 	FInheritedTagContainer TagContainer = FInheritedTagContainer();
 	UTargetTagsGameplayEffectComponent& Component = DebuffEffect->FindOrAddComponent<UTargetTagsGameplayEffectComponent>();
-	TagContainer.Added.AddTag(FAuraGameplayTags::Get().DamageTypesToDebuffs[DamageTypeTag]);
-	TagContainer.CombinedTags.AddTag(FAuraGameplayTags::Get().DamageTypesToDebuffs[DamageTypeTag]);
+
+	/**
+	 * NOTE: I'm not sure why we're setting both Added and CombinedTags
+	 * Does this mean that these tags are not replicated to clients?
+	 * I'm setting Player_Block_* Tags in a RepNotify function inside AuraCharacter whenever bIsStunned is replicated. 
+	 */
+	const FGameplayTag DebuffTag = FAuraGameplayTags::Get().DamageTypesToDebuffs[DamageTypeTag]; 
+	TagContainer.Added.AddTag(DebuffTag);
+	TagContainer.CombinedTags.AddTag(DebuffTag);
+	
 	Component.SetAndApplyTargetTagChanges(TagContainer);
+
+	if (DebuffTag.MatchesTagExact(FAuraGameplayTags::Get().Debuff_Stun))
+	{
+		/** NOTE: I'm not sure why we're setting both Added and CombinedTags */
+		TagContainer.Added.AddTag(FAuraGameplayTags::Get().Player_Block_CursorTrace);
+		TagContainer.Added.AddTag(FAuraGameplayTags::Get().Player_Block_InputHeld);
+		TagContainer.Added.AddTag(FAuraGameplayTags::Get().Player_Block_InputPressed);
+		TagContainer.Added.AddTag(FAuraGameplayTags::Get().Player_Block_InputReleased);
+		
+		TagContainer.CombinedTags.AddTag(FAuraGameplayTags::Get().Player_Block_CursorTrace);
+		TagContainer.CombinedTags.AddTag(FAuraGameplayTags::Get().Player_Block_InputHeld);
+		TagContainer.CombinedTags.AddTag(FAuraGameplayTags::Get().Player_Block_InputPressed);
+		TagContainer.CombinedTags.AddTag(FAuraGameplayTags::Get().Player_Block_InputReleased);
+	}
 
 	// End of GrantingTags
 
