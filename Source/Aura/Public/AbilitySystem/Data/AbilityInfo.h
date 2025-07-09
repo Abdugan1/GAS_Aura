@@ -19,19 +19,19 @@ struct FAuraAbilityInfo
 {
 	GENERATED_BODY()
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite,  meta=(Categories="Abilities"))
 	FGameplayTag AbilityTag;
 	
 	UPROPERTY(BlueprintReadWrite)
 	FGameplayTag InputTag;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, meta=(Categories="Cooldown"))
 	FGameplayTag CooldownTag;
 	
 	UPROPERTY(BlueprintReadOnly)
 	FGameplayTag StatusTag;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly,  meta=(Categories="Abilities.Type"))
 	FGameplayTag AbilityTypeTag;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)

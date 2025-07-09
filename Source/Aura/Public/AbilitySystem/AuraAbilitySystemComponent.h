@@ -11,6 +11,7 @@ DECLARE_MULTICAST_DELEGATE_OneParam(FEffectAssetTags, const FGameplayTagContaine
 DECLARE_MULTICAST_DELEGATE(FAbilitiesGiven);
 DECLARE_MULTICAST_DELEGATE_TwoParams(FAbilityStatusChanged,  const FGameplayTag& /* AbilityTag */, const FGameplayTag& /* StatusTag */);
 DECLARE_MULTICAST_DELEGATE_FourParams(FAbilityEquipped, const FGameplayTag& /*AbilityTag*/, const FGameplayTag& /* AbilityStatusTag */, const FGameplayTag& /* ToSlot */, const FGameplayTag& /* PreviousSlot */);
+DECLARE_MULTICAST_DELEGATE_OneParam(FDeactivatePassiveAbility, const FGameplayTag& /** AbilityTag */)
 
 /**
  * Ugly name. But all it does is execute the function this delegate was bound to. Like a fancy callback passed to for_each
@@ -51,6 +52,9 @@ public:
 
 	/** */
 	FAbilityEquipped AbilityEquippedDelegate;
+
+	/** */
+	FDeactivatePassiveAbility DeactivatePassiveAbilityDelegate;
 	
 	/** Sometimes, it's hard to know the timelapse, so this is set along with AbilitiesGivenDelegate broadcast */
 	bool bStartupAbilitiesGiven = false;
