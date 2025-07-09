@@ -37,6 +37,7 @@ public:
 	/* Combat Interface */
 	virtual int32 GetPlayerLevel_Implementation() override;
 	virtual void Die(const FVector& InDeathImpulse) override;
+	virtual void SetIsBeingShocked_Implementation(bool InIsBeingShocked) override;
 	/* end Combat Interface*/
 
 	UFUNCTION()
@@ -93,4 +94,7 @@ protected:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "AI|BlackBoard")
 	FName IsStunnedKey;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "AI|BlackBoard")
+	FName IsBeingShockedKey;
 };

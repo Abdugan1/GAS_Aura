@@ -41,6 +41,7 @@ AAuraEnemy::AAuraEnemy()
 	IsHitReactingKey = "HitReacting";
 	IsRangedAttackerKey = "RangedAttacker";
 	IsStunnedKey = "IsStunned";
+	IsBeingShockedKey = "IsBeingShocked";
 
 	BaseWalkSpeed = 250.f;
 }
@@ -105,6 +106,17 @@ void AAuraEnemy::Die(const FVector& InDeathImpulse)
 	SetLifeSpan(LifeSpan);
 	
 	Super::Die(InDeathImpulse);
+}
+
+void AAuraEnemy::SetIsBeingShocked_Implementation(bool InIsBeingShocked)
+{
+	Super::SetIsBeingShocked_Implementation(InIsBeingShocked);
+
+	if (HasAuthority())
+	{
+		// AI controller exists only on the Server
+		AuraAIController->GetBlackboardComponent()->SetValueAsBool(IsBeingShockedKey, bIsBeingShocked);
+	}
 }
 
 

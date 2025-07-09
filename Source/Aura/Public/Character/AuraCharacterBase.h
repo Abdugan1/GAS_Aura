@@ -55,6 +55,9 @@ public:
 	virtual void ApplyKnockback(const FVector& KnockbackImpulse) override;
 
 	virtual USkeletalMeshComponent* GetWeapon_Implementation() override;
+
+	virtual bool IsBeingShocked_Implementation() const override;
+	virtual void SetIsBeingShocked_Implementation(bool InIsBeingShocked) override;
 	
 	/** end ICombatInterface */
 
@@ -113,8 +116,16 @@ protected:
 	virtual void IsStunnedChanged(const FGameplayTag Callbacktag, int32 NewCount);
 	
 public:
+	/**
+	 * Stephen also created bIsBurned var, I'm too lazy to do that.
+	 * It's needed to fix AuraCharacter on clients.
+	 * */
+	
 	UPROPERTY(ReplicatedUsing=OnRep_IsStunned, BlueprintReadOnly, Category= "Combat")
 	bool bIsStunned = false;
+
+	UPROPERTY(Replicated, BlueprintReadOnly, Category= "Combat")
+	bool bIsBeingShocked = false;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Combat")
 	float BaseWalkSpeed = 650.f;

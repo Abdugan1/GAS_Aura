@@ -139,6 +139,16 @@ USkeletalMeshComponent* AAuraCharacterBase::GetWeapon_Implementation()
 	return Weapon;
 }
 
+bool AAuraCharacterBase::IsBeingShocked_Implementation() const
+{
+	return bIsBeingShocked;
+}
+
+void AAuraCharacterBase::SetIsBeingShocked_Implementation(bool InIsBeingShocked)
+{
+	bIsBeingShocked = InIsBeingShocked;
+}
+
 
 void AAuraCharacterBase::MulticastHandleDeath_Implementation(const FVector& InDeathImpulse)
 {
@@ -177,8 +187,9 @@ void AAuraCharacterBase::MulticastHandleDeath_Implementation(const FVector& InDe
 void AAuraCharacterBase::GetLifetimeReplicatedProps(TArray<class FLifetimeProperty>& OutLifetimeProps) const
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
-
+	
 	DOREPLIFETIME(AAuraCharacterBase, bIsStunned);
+	DOREPLIFETIME(AAuraCharacterBase, bIsBeingShocked);
 }
 
 void AAuraCharacterBase::BeginPlay()

@@ -141,14 +141,19 @@ void UAuraAttributeSet::HandleIncomingDamage(const FEffectProperties& EffectProp
 		}
 		else
 		{
+			// Is TargetCharacter NOT being shocked? If so, HitReact, otherwise, ShockLoop in ABP
+			if (EffectProperties.TargetCharacter->Implements<UCombatInterface>()
+				&& !ICombatInterface::Execute_IsBeingShocked(EffectProperties.TargetCharacter))
+			{
+				FGameplayTagContainer TagContainer;
+				TagContainer.AddTag(FAuraGameplayTags::Get().Abilities_HitReact);
+				EffectProperties.TargetAbilitySystemComponent->TryActivateAbilitiesByTag(TagContainer);
+			}
+			
 			if (ICombatInterface* CombatInterface = Cast<ICombatInterface>(EffectProperties.TargetAvatarActor))
 			{
 				CombatInterface->ApplyKnockback(UAuraAbilitySystemLibrary::GetKnockbackImpulse(EffectProperties.EffectContextHandle));
 			}
-			
-			FGameplayTagContainer TagContainer;
-			TagContainer.AddTag(FAuraGameplayTags::Get().Abilities_HitReact);
-			EffectProperties.TargetAbilitySystemComponent->TryActivateAbilitiesByTag(TagContainer);
 		}
 
 		const bool bBlockedHit = UAuraAbilitySystemLibrary::IsBlockedHit(EffectProperties.EffectContextHandle);
