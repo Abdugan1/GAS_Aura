@@ -13,7 +13,7 @@ class UNiagaraComponent;
 /**
  * 
  */
-UCLASS()
+UCLASS(Abstract)
 class AURA_API AAuraCharacter : public AAuraCharacterBase, public IPlayerInterface
 {
 	GENERATED_BODY()

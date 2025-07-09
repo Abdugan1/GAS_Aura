@@ -195,6 +195,12 @@ UAbilityInfo* UAuraAbilitySystemLibrary::GetAbilityInfo(const UObject* WorldCont
 FGameplayEffectContextHandle UAuraAbilitySystemLibrary::ApplyDamageEffect(const FDamageEffectParams& Params)
 {
 	const AActor* SourceAvatarActor = Params.SourceAbilitySystemComponent->GetAvatarActor();
+
+	if (!SourceAvatarActor->HasAuthority())
+	{
+		UE_LOG(LogAura, Warning, TEXT("Attempting to apply damage on Clients! Skipping"));
+		return FGameplayEffectContextHandle();
+	}
 	
 	FGameplayEffectContextHandle EffectContextHandle = Params.SourceAbilitySystemComponent->MakeEffectContext();
 	EffectContextHandle.AddSourceObject(SourceAvatarActor);

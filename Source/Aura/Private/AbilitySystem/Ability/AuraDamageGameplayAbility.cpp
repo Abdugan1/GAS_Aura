@@ -6,6 +6,7 @@
 #include "AbilitySystemBlueprintLibrary.h"
 #include "AbilitySystemComponent.h"
 #include "AbilitySystem/AuraAttributeSet.h"
+#include "Aura/AuraLogChannels.h"
 
 
 FDamageEffectParams UAuraDamageGameplayAbility::MakeDamageEffectParamsFromClassDefaults(AActor* TargetActor) const
@@ -39,7 +40,14 @@ FDamageEffectParams UAuraDamageGameplayAbility::MakeDamageEffectParamsFromClassD
 
 void UAuraDamageGameplayAbility::CauseDamage(AActor* TargetActor)
 {
+	if (!GetAvatarActorFromActorInfo()->HasAuthority())
+   	{
+   		UE_LOG(LogAura, Warning, TEXT("CauseDamage: Not Authoritative"));
+   		return;
+   	}
+	
 	FGameplayEffectSpecHandle EffectSpecHandle = MakeOutgoingGameplayEffectSpec(DamageEffectClass);
+
 
 	float Damage = DamageScalableFloat.GetValueAtLevel(GetAbilityLevel());
 	UAbilitySystemBlueprintLibrary::AssignTagSetByCallerMagnitude(EffectSpecHandle, DamageTypeTag, Damage);
