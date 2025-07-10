@@ -5,9 +5,10 @@
 
 #include "AbilitySystemComponent.h"
 #include "GameplayTagContainer.h"
+#include "Misc/Iteration.h"
 
 UWaitCooldownChange* UWaitCooldownChange::WaitForCooldownChange(UAbilitySystemComponent* ASC,
-	const FGameplayTag& InCooldownTag)
+                                                                const FGameplayTag& InCooldownTag)
 {
 	auto WaitCooldownChange = NewObject<UWaitCooldownChange>();
 
@@ -75,10 +76,15 @@ void UWaitCooldownChange::OnActiveEffectAdded(UAbilitySystemComponent* TargetASC
 	 * I think it works for me no problem.
 	 */
 	const bool bIsReplicatedEffect = !SpecApplied.GetContext().GetAbilityInstance_NotReplicated();
-	if (bIsReplicatedEffect)
+	bool Authority = ASC->GetAvatarActor()->HasAuthority();
+	if (!Authority)
 	{
-		return;
+		Authority = Authority;
 	}
+	// if (bIsReplicatedEffect)
+	// {
+	// 	return;
+	// }
 
 	/**
 	 * This is Chelsey's solution. I don't know how he uses it though.
