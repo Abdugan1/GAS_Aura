@@ -66,6 +66,8 @@ void UWaitCooldownChange::OnActiveEffectAdded(UAbilitySystemComponent* TargetASC
 	 * VERY IMPORTANT NOTE:
 	 * This is called ONCE on the SERVER,
 	 * BUT, callded TWICE on CLIENTS!
+	 * ACTUALLY, I don't know how many times this is called.
+	 * The only hunch I have that it's called more times on Clients than on the Server
 	 * For the PREDICTED GE, and the server's REPLICATED ONE.
 	 * Check out Diego's answer:
 	 * https://www.udemy.com/course/unreal-engine-5-gas-top-down-rpg/learn/lecture/40847062#questions/20624870

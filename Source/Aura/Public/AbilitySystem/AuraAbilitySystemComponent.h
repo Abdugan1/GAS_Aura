@@ -50,10 +50,14 @@ public:
 	/** Broadcasts whenever Ability Status changes */
 	FAbilityStatusChanged AbilityStatusChangedDelegate; 
 
-	/** */
+	/**
+	 * Whenever an Ability is equipped, this broadcasts previous slot - usually or mainly to clear
+	 * the appearance of the slot(ClearGlobe or something), and to-slot - to update
+	 * its according icon and background to the slot
+	 */
 	FAbilityEquipped AbilityEquippedDelegate;
 
-	/** */
+	/** Aura Passive Abilities automatically EndAbility themselves whenever this is broadcast */
 	FDeactivatePassiveAbility DeactivatePassiveAbilityDelegate;
 	
 	/** Sometimes, it's hard to know the timelapse, so this is set along with AbilitiesGivenDelegate broadcast */
@@ -102,6 +106,18 @@ public:
 	/** Returns GameplayTag -> Abilities.Status.* from DynamicAbilityTags. Returns an empty GameplayTag if failed to find any */
 	static FGameplayTag GetStatusFromSpec(const FGameplayAbilitySpec& AbilitySpec);
 
+	/** Returns true, if the Slot is NOT occupied with anything */
+	bool SlotIsEmpty(const FGameplayTag& SlotTag);
+	/** Returns true if the AbilitySpec has the SlotTag/InputTag exactly */
+	static bool AbilityHasSlot(const FGameplayAbilitySpec& AbilitySpec, const FGameplayTag& SlotTag);
+	/** Returns true if the AbilitySpec has any SlotTag/InputTag */
+	static bool AbilityHasAnySlot(const FGameplayAbilitySpec& AbilitySpec);
+	/** Returns true if AbilitySpec is a Passive Spell */
+	bool IsPassiveAbility(const FGameplayAbilitySpec& AbilitySpec) const;
+	/** Returns the AbilitySpec of the Slot */
+	FGameplayAbilitySpec* GetSpecWithSlot(const FGameplayTag& Slot);
+	static void AssignSlotToAbility(FGameplayAbilitySpec* AbilitySpec, const FGameplayTag& SlotTag);
+	
 	UFUNCTION(Server, Reliable)
 	void ServerSpendSpellPoint(const FGameplayTag& AbilityTag);
 
@@ -114,6 +130,7 @@ public:
 	void ClientEquipAbilityToSlot(const FGameplayTag& AbilityTag, const FGameplayTag& AbilityStatusTag, const FGameplayTag& ToSlot, const FGameplayTag& PreviousSlot); 
 	
 protected:
+	/** Increments an Attribute's level by 1 and spends 1 Attribute Point */
 	UFUNCTION(Server, Reliable)
 	void ServerUpgradeAttribute(const FGameplayTag& AttributeTag);
 	
@@ -137,5 +154,5 @@ protected:
 private:
 	/** Removes all the abilities assigned to a Slot. Basically, removes only one as it's only possible for a slot to have only one ability */
 	void ClearAbilitiesOfSlot(const FGameplayTag& Slot);
-	void RemoveAbilityFromItsSlot(FGameplayAbilitySpec& AbilitySpec);
+	static void RemoveAbilityFromItsSlot(FGameplayAbilitySpec& AbilitySpec);
 };

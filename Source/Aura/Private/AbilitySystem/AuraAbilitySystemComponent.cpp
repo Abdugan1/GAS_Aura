@@ -3,6 +3,8 @@
 
 #include "AbilitySystem/AuraAbilitySystemComponent.h"
 
+#include <rapidjson/schema.h>
+
 #include "AbilitySystemBlueprintLibrary.h"
 #include "AssetDefinitionAssetInfo.h"
 #include "AuraGameplayTags.h"
@@ -322,6 +324,56 @@ FGameplayTag UAuraAbilitySystemComponent::GetStatusFromSpec(const FGameplayAbili
 	return FGameplayTag{};
 }
 
+bool UAuraAbilitySystemComponent::SlotIsEmpty(const FGameplayTag& SlotTag)
+{
+	FScopedAbilityListLock Lock(*this);
+	for (FGameplayAbilitySpec& AbilitySpec : GetActivatableAbilities())
+	{
+		if (AbilityHasSlot(AbilitySpec, SlotTag))
+		{
+			return false;
+		}
+	}
+	return true;
+}
+
+bool UAuraAbilitySystemComponent::AbilityHasSlot(const FGameplayAbilitySpec& AbilitySpec, const FGameplayTag& SlotTag)
+{
+	return AbilitySpec.GetDynamicSpecSourceTags().HasTagExact(SlotTag);
+}
+
+bool UAuraAbilitySystemComponent::AbilityHasAnySlot(const FGameplayAbilitySpec& AbilitySpec)
+{
+	return AbilitySpec.GetDynamicSpecSourceTags().HasTag(FGameplayTag::RequestGameplayTag(FName{"Input"}));
+}
+
+bool UAuraAbilitySystemComponent::IsPassiveAbility(const FGameplayAbilitySpec& AbilitySpec) const
+{
+	const UAbilityInfo* Info = UAuraAbilitySystemLibrary::GetAbilityInfo(GetAvatarActor());
+	const FGameplayTag AbilityTag = GetAbilityTagFromSpec(AbilitySpec);
+	const FAuraAbilityInfo& AbilityInfo = Info->FindAbilityInfoFromTag(AbilityTag);
+	const FGameplayTag AbilityType = AbilityInfo.AbilityTypeTag;
+	return AbilityType.MatchesTagExact(FAuraGameplayTags::Get().Abilities_Type_Passive);
+}
+
+FGameplayAbilitySpec* UAuraAbilitySystemComponent::GetSpecWithSlot(const FGameplayTag& Slot)
+{
+	FScopedAbilityListLock Lock(*this);
+	for (FGameplayAbilitySpec& AbilitySpec : GetActivatableAbilities())
+	{
+		if (AbilityHasSlot(AbilitySpec, Slot))
+		{
+			return &AbilitySpec;
+		}
+	}
+	return nullptr;
+}
+
+void UAuraAbilitySystemComponent::AssignSlotToAbility(FGameplayAbilitySpec* AbilitySpec, const FGameplayTag& SlotTag)
+{
+	RemoveAbilityFromItsSlot(*AbilitySpec); // I think this is redundant, since we already did that.
+	AbilitySpec->GetDynamicSpecSourceTags().AddTag(SlotTag);
+}
 
 void UAuraAbilitySystemComponent::ServerEquipAbilityToSlot_Implementation(const FGameplayTag& AbilityTag,
                                                                           const FGameplayTag& ToSlot)
@@ -336,13 +388,44 @@ void UAuraAbilitySystemComponent::ServerEquipAbilityToSlot_Implementation(const 
 	check(StatusTag.MatchesTagExact(FAuraGameplayTags::Get().Abilities_Status_Equipped)
 		|| StatusTag.MatchesTagExact(FAuraGameplayTags::Get().Abilities_Status_Unlocked));
 
-	// If the Slot is already occupied, clear it
-	ClearAbilitiesOfSlot(ToSlot);
-	
-	// Reassigning the slot
-	AbilitySpec->GetDynamicSpecSourceTags().RemoveTag(PreviousSlot);
-	AbilitySpec->GetDynamicSpecSourceTags().AddTag(ToSlot);
+	if (!SlotIsEmpty(ToSlot)) // There's an ability in this slot already. Deactivate and clear its slot.
+	{
+		FGameplayAbilitySpec* SpecWithSlot = GetSpecWithSlot(ToSlot);
+		if (SpecWithSlot) // Valid Slot
+		{
+			// Check if the ability we're trying to equip to the slot is the same ability that's already there.
+			// That is, if the "replacy" is equal to "replacer"
+			// If so, well, nothing needed to be replaced. Just return.
+			if (AbilityTag.MatchesTagExact(GetAbilityTagFromSpec(*SpecWithSlot)))
+			{
+				// This is NEEDED! Because the UI has an animated rectange showing the user where to click and equip.
+				// With this, the rectangle will disappear. 
+				ClientEquipAbilityToSlot(AbilityTag, StatusTag, ToSlot, PreviousSlot);
+				return;
+			}
 
+			// If it's passive ability, deactivate it.
+			if (IsPassiveAbility(*SpecWithSlot))
+			{
+				DeactivatePassiveAbilityDelegate.Broadcast(GetAbilityTagFromSpec(*SpecWithSlot));
+			}
+
+			RemoveAbilityFromItsSlot(*SpecWithSlot);
+		}
+	}
+
+
+	if (!AbilityHasAnySlot(*AbilitySpec)) // Doesn't yet have any Slot (it's not active), so ->...
+	{
+		// ...-> if it's passive, activate it ONLY WHEN IT WAS EQUIPPED FOR THE FIRST TIME!
+		if (IsPassiveAbility(*AbilitySpec))
+		{
+			TryActivateAbility(AbilitySpec->Handle);
+		}
+	}
+
+	AssignSlotToAbility(AbilitySpec, ToSlot);
+	
 	// If it wasn't equipped before, change its status to Equipped
 	if (StatusTag.MatchesTagExact(FAuraGameplayTags::Get().Abilities_Status_Unlocked))
 	{
