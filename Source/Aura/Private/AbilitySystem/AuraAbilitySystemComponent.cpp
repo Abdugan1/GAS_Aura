@@ -265,7 +265,12 @@ bool UAuraAbilitySystemComponent::GetDescriptionsByAbilityTag(const FGameplayTag
 	// Ability is Locked
 	const UAbilityInfo* AbilityInfo = UAuraAbilitySystemLibrary::GetAbilityInfo(GetAvatarActor());
 
-	if (GetAvatarActor()->HasAuthority())
+	if (!AbilityTag.IsValid() || AbilityTag.MatchesTagExact(FAuraGameplayTags::Get().Abilities_None))
+	{
+		// If nothing is selected, don't do anything
+		OutDescription = "";
+	}
+	else if (GetAvatarActor()->HasAuthority())
 	{
 		/**
 		 * ERROR: This DOES NOT WORK on CLIENTS because it fetches AbilityInfo from Game Mode, which exist only on the SERVER!
@@ -277,6 +282,8 @@ bool UAuraAbilitySystemComponent::GetDescriptionsByAbilityTag(const FGameplayTag
 	{
 		OutDescription = "ERROR: Doesn't work on CLIENTS!";
 	}
+
+
 	
 	OutNextLevelDescription = FString();
 	return false;

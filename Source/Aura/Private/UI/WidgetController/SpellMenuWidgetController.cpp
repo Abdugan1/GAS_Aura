@@ -55,6 +55,13 @@ void USpellMenuWidgetController::SpendPointButtonPressed()
 	GetAuraAbilitySystemComponent()->ServerSpendSpellPoint(SelectedAbility.AbilityTag);
 }
 
+void USpellMenuWidgetController::GlobeDeselect()
+{
+	SelectedAbility.AbilityTag = FAuraGameplayTags::Get().Abilities_None;
+	SelectedAbility.StatusTag = FAuraGameplayTags::Get().Abilities_Status_Locked;
+
+	OnSpellGlobeSelected.Broadcast(false, false, "", "");
+}
 
 void USpellMenuWidgetController::SpellGlobeSelected(const FGameplayTag& AbilityTag)
 {
@@ -173,6 +180,9 @@ void USpellMenuWidgetController::OnAbilityEquippedToSlot(const FGameplayTag& Abi
 	AbilityInfoDelegate.Broadcast(CurrentSlotInfo);
 
 	StopWaitForEquipSelectionDelegate.Broadcast(CurrentSlotInfo.AbilityTypeTag);
+	
+	SpellGlobeReassignedDelegate.Broadcast(CurrentSlotInfo.AbilityTag);
+	GlobeDeselect();
 }
 
 
