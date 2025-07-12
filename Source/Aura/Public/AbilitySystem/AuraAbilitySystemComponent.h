@@ -11,7 +11,8 @@ DECLARE_MULTICAST_DELEGATE_OneParam(FEffectAssetTags, const FGameplayTagContaine
 DECLARE_MULTICAST_DELEGATE(FAbilitiesGiven);
 DECLARE_MULTICAST_DELEGATE_TwoParams(FAbilityStatusChanged,  const FGameplayTag& /* AbilityTag */, const FGameplayTag& /* StatusTag */);
 DECLARE_MULTICAST_DELEGATE_FourParams(FAbilityEquipped, const FGameplayTag& /*AbilityTag*/, const FGameplayTag& /* AbilityStatusTag */, const FGameplayTag& /* ToSlot */, const FGameplayTag& /* PreviousSlot */);
-DECLARE_MULTICAST_DELEGATE_OneParam(FDeactivatePassiveAbility, const FGameplayTag& /** AbilityTag */)
+DECLARE_MULTICAST_DELEGATE_OneParam(FDeactivatePassiveAbility, const FGameplayTag& /** AbilityTag */);
+DECLARE_MULTICAST_DELEGATE_TwoParams(FActivatePassiveEffect, const FGameplayTag& /* AbilityTag */, bool /* bActivate */);
 
 /**
  * Ugly name. But all it does is execute the function this delegate was bound to. Like a fancy callback passed to for_each
@@ -59,6 +60,9 @@ public:
 
 	/** Aura Passive Abilities automatically EndAbility themselves whenever this is broadcast */
 	FDeactivatePassiveAbility DeactivatePassiveAbilityDelegate;
+
+	/** This is just for cosmetics, that is, NiagaraSystem */
+	FActivatePassiveEffect ActivatePassiveEffectDelegate;
 	
 	/** Sometimes, it's hard to know the timelapse, so this is set along with AbilitiesGivenDelegate broadcast */
 	bool bStartupAbilitiesGiven = false;
@@ -128,6 +132,9 @@ public:
 	/** Broadcasts AbilityEquippedDelegate */
 	UFUNCTION(Client, Reliable)
 	void ClientEquipAbilityToSlot(const FGameplayTag& AbilityTag, const FGameplayTag& AbilityStatusTag, const FGameplayTag& ToSlot, const FGameplayTag& PreviousSlot); 
+
+	UFUNCTION(NetMulticast, Unreliable)
+	void MulticastActivatePassiveEffect(const FGameplayTag& AbilityTag, bool bActivate);
 	
 protected:
 	/** Increments an Attribute's level by 1 and spends 1 Attribute Point */

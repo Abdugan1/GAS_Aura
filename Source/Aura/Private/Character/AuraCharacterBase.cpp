@@ -7,6 +7,7 @@
 #include "AuraGameplayTags.h"
 #include "AbilitySystem/AuraAbilitySystemComponent.h"
 #include "AbilitySystem/Debuff/DebuffNiagaraComponent.h"
+#include "AbilitySystem/Pasive/PassiveNiagaraComponent.h"
 #include "Aura/Aura.h"
 #include "Components/CapsuleComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
@@ -25,7 +26,23 @@ AAuraCharacterBase::AAuraCharacterBase()
 	StunDebuffComponent = CreateDefaultSubobject<UDebuffNiagaraComponent>(TEXT("Stun Debuff Component"));
 	StunDebuffComponent->SetupAttachment(GetRootComponent());
 	StunDebuffComponent->DebuffTag = FAuraGameplayTags::Get().Debuff_Stun;
-	
+
+	EffectAttachComponent = CreateDefaultSubobject<USceneComponent>(TEXT("Effect Attach Point"));
+	EffectAttachComponent->SetupAttachment(GetRootComponent());
+
+	// Stephen uses Tick to rotate, but some dude used this and works fine
+	// https://www.udemy.com/course/unreal-engine-5-gas-top-down-rpg/learn/lecture/41300112#questions/21204486
+	EffectAttachComponent->SetUsingAbsoluteRotation(true);
+	EffectAttachComponent->SetWorldRotation(FRotator::ZeroRotator);
+
+	HaloOfProtectionComponent = CreateDefaultSubobject<UPassiveNiagaraComponent>("Halo of Protection Component");
+	HaloOfProtectionComponent->SetupAttachment(EffectAttachComponent);
+
+	LifeSiphonComponent = CreateDefaultSubobject<UPassiveNiagaraComponent>("Life Siphon Component");
+	LifeSiphonComponent->SetupAttachment(EffectAttachComponent);
+
+	ManaSiphonComponent = CreateDefaultSubobject<UPassiveNiagaraComponent>("Mana Siphon Component");
+	ManaSiphonComponent->SetupAttachment(EffectAttachComponent);
 	
 	GetCapsuleComponent()->SetCollisionResponseToChannel(ECC_Camera, ECR_Ignore);
 	// GE_FireArea is applying the effect twice because it's overlapping both with the capsule and the mesh
@@ -119,7 +136,7 @@ ECharacterClass AAuraCharacterBase::GetCharacterClass_Implementation() const
 	return CharacterClass;
 }
 
-FOnASCRegistered AAuraCharacterBase::GetOnASCRegistered()
+FOnASCRegistered& AAuraCharacterBase::GetOnASCRegistered()
 {
 	return OnASCRegistered;
 }

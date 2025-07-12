@@ -9,6 +9,7 @@
 #include "Interaction/CombatInterface.h"
 #include "AuraCharacterBase.generated.h"
 
+class UPassiveNiagaraComponent;
 class UDebuffNiagaraComponent;
 class UNiagaraSystem;
 class UGameplayAbility;
@@ -49,7 +50,7 @@ public:
 
 	virtual ECharacterClass GetCharacterClass_Implementation() const override;
 
-	virtual FOnASCRegistered GetOnASCRegistered() override;
+	virtual FOnASCRegistered& GetOnASCRegistered() override;
 	virtual FOnDeath* GetOnDeath() override;
 
 	virtual void ApplyKnockback(const FVector& KnockbackImpulse) override;
@@ -139,6 +140,19 @@ protected:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
 	TObjectPtr<UDebuffNiagaraComponent> StunDebuffComponent;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
+	TObjectPtr<UPassiveNiagaraComponent> HaloOfProtectionComponent;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
+	TObjectPtr<UPassiveNiagaraComponent> LifeSiphonComponent;
+	
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
+	TObjectPtr<UPassiveNiagaraComponent> ManaSiphonComponent;
+
+	// This is one is needed to rotate Passive Spell Niagara Systems
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
+	TObjectPtr<USceneComponent> EffectAttachComponent;
 	
 	UPROPERTY(EditAnywhere, Category = "Combat")
 	TArray<FTaggedMontage> AttackMontages;

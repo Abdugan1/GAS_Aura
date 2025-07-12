@@ -110,11 +110,12 @@ public:
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
 	ECharacterClass GetCharacterClass() const;
 
-	// For some reason, you can, or can you, return a copy of it
-	// But GetOnDeathm you cannot do that...
-	virtual FOnASCRegistered GetOnASCRegistered() = 0;
+	// NEVER RETURN BY VALUE, it might work sometimes, but not all the times
+	// A pointer or a reference both are fine
+	virtual FOnASCRegistered& GetOnASCRegistered() = 0;
 
-	// But 
+	// NEVER RETURN BY VALUE, it might work sometimes, but not all the times
+	// A pointer or a reference both are fine
 	virtual FOnDeath* GetOnDeath() = 0;
 
 	virtual void ApplyKnockback(const FVector& KnockbackImpulse) = 0;

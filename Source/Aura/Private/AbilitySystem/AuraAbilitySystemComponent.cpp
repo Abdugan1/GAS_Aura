@@ -382,6 +382,12 @@ void UAuraAbilitySystemComponent::AssignSlotToAbility(FGameplayAbilitySpec* Abil
 	AbilitySpec->GetDynamicSpecSourceTags().AddTag(SlotTag);
 }
 
+void UAuraAbilitySystemComponent::MulticastActivatePassiveEffect_Implementation(const FGameplayTag& AbilityTag,
+	bool bActivate)
+{
+	ActivatePassiveEffectDelegate.Broadcast(AbilityTag, bActivate);
+}
+
 void UAuraAbilitySystemComponent::ServerEquipAbilityToSlot_Implementation(const FGameplayTag& AbilityTag,
                                                                           const FGameplayTag& ToSlot)
 {
@@ -414,6 +420,9 @@ void UAuraAbilitySystemComponent::ServerEquipAbilityToSlot_Implementation(const 
 			// If it's passive ability, deactivate it.
 			if (IsPassiveAbility(*SpecWithSlot))
 			{
+				// Deactivate Niagara
+				MulticastActivatePassiveEffect(GetAbilityTagFromSpec(*SpecWithSlot), false);
+				// Deactivate the Passive Spell
 				DeactivatePassiveAbilityDelegate.Broadcast(GetAbilityTagFromSpec(*SpecWithSlot));
 			}
 
@@ -427,6 +436,9 @@ void UAuraAbilitySystemComponent::ServerEquipAbilityToSlot_Implementation(const 
 		// ...-> if it's passive, activate it ONLY WHEN IT WAS EQUIPPED FOR THE FIRST TIME!
 		if (IsPassiveAbility(*AbilitySpec))
 		{
+			// Activate Niagara Effect
+			MulticastActivatePassiveEffect(AbilityTag, true);
+			// Active the Passive Spell
 			TryActivateAbility(AbilitySpec->Handle);
 		}
 	}
