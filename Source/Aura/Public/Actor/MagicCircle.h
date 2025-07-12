@@ -18,7 +18,7 @@ public:
 protected:
 	virtual void BeginPlay() override;
 
-protected:
+public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
 	TObjectPtr<UDecalComponent> MagicCircleDecalComponent;
 };

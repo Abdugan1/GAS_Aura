@@ -30,7 +30,6 @@ public:
 	/** end Combat Interface */
 
 	/** Player Interface */
-	
 	virtual int32 GetXP_Implementation() const override;
 	virtual int32 GetAttributePointsReward_Implementation(int32 Level) const override;
 	virtual int32 GetSpellPointsReward_Implementation(int32 Level) const override;
@@ -44,6 +43,9 @@ public:
 	
 	virtual void LevelUp_Implementation() override;
 	virtual int32 FindLevelForXp_Implementation(int32 InXP) override;
+
+	virtual void ShowMagicCircle_Implementation(UMaterialInterface* DecalMaterial = nullptr) override;
+	virtual void HideMagicCircle_Implementation() override;
 	/** end Player Interface */
 	
 protected:

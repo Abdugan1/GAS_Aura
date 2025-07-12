@@ -158,6 +158,22 @@ int32 AAuraCharacter::FindLevelForXp_Implementation(int32 InXP)
 	return AuraPlayerState->LevelUpInfo->FindLevelForXP(InXP);
 }
 
+void AAuraCharacter::ShowMagicCircle_Implementation(UMaterialInterface* DecalMaterial)
+{
+	AAuraPlayerController* AuraPlayerController = GetController<AAuraPlayerController>();
+	check(AuraPlayerController);
+	AuraPlayerController->ShowMagicCircle(DecalMaterial);
+	AuraPlayerController->bShowMouseCursor = false;
+}
+
+void AAuraCharacter::HideMagicCircle_Implementation()
+{
+	AAuraPlayerController* AuraPlayerController = GetController<AAuraPlayerController>();
+	check(AuraPlayerController);
+	AuraPlayerController->HideMagicCircle();
+	AuraPlayerController->bShowMouseCursor = true;
+}
+
 
 /**
  * This is basically called in both the client and sever.
