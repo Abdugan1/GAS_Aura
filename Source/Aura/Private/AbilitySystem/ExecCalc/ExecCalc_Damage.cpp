@@ -14,6 +14,7 @@
 #include "AbilitySystem/Data/CharacterClassInfo.h"
 #include "Chaos/PBDSuspensionConstraintData.h"
 #include "Interaction/CombatInterface.h"
+#include "Kismet/GameplayStatics.h"
 
 
 struct AuraDamageStatics
@@ -179,6 +180,50 @@ void UExecCalc_Damage::Execute_Implementation(const FGameplayEffectCustomExecuti
 		Resistance = FMath::Clamp(Resistance, 0.f, 100.f);
 
 		DamageTypeValue = (DamageTypeValue - DamageTypeValue * (Resistance) / 100.f);
+
+		if (UAuraAbilitySystemLibrary::IsRadialDamage(EffectContextHandle))
+		{
+			/*
+			 * !!!!IMPORTANT!!!! If you don't read this, you might be wondering that this doesn't work!
+			 * I know Qt's Signal and Slot system, and it's asynchronous. Here, it seems not! 
+			 * Good thing to remember: In UE, Delegates' bound-to functions are called immediately, or so I understand.
+			 */
+			
+			// 1. override TakeDamage in AuraCharacterBase *
+			// 2. create delegate OnDamageDelegate, broadcast damage received in TakeDamage *
+			// 3. bind lambda to OnDamageDelegate on the Victim here.*
+			// 4. In Lambda, set DamageTypeValue to the damage received from the broadcast *
+			// 5. Call UGameplayStatics::ApplyRadialDamageWithFalloff to cause damage (this will result in TakeDamage being called
+			//								on the Victim, which will then broadcast OnDamageDelegate) *
+
+			// Victim is Target
+			if (ICombatInterface* CombatInterface = Cast<ICombatInterface>(TargetAvatar))
+			{
+				CombatInterface->GetOnDamageDelegate().AddLambda([& /*Capture everything by ref*/](float DamageAmount)
+				{
+					// We're not throwing away our work here by setting it directly to this.
+					// That is, DamageTypeValue = (DamageTypeValue - DamageTypeValue * (Resistance) / 100.f);
+					// The value above is the BASE damage!
+					// Here, it's calculated from the Radial Damage, it can be equal or less that the BASE value.
+					// I don't know if it can be greater than the BASE value
+					DamageTypeValue = DamageAmount;
+				});
+			}
+
+			UGameplayStatics::ApplyRadialDamageWithFalloff(
+				TargetAvatar,
+				DamageTypeValue, // BaseDamage. See? We're NOT throwing it away!
+				0.f,
+				UAuraAbilitySystemLibrary::GetRadialDamageOrigin(EffectContextHandle),
+				UAuraAbilitySystemLibrary::GetRadialDamageInnerRadius(EffectContextHandle),
+				UAuraAbilitySystemLibrary::GetRadialDamageOuterRadius(EffectContextHandle),
+				1.f /* == 1 -> Linear. > 1 -> Exponential*/,
+				UDamageType::StaticClass(),
+				TArray<AActor*>(),
+				SourceAvatar,
+				nullptr /* no use here. We could cast to Character class and get the controller.*/
+				);
+		}
 		
 		Damage += DamageTypeValue;
 	}

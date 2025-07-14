@@ -71,6 +71,14 @@ UAbilitySystemComponent* AAuraCharacterBase::GetAbilitySystemComponent() const
 }
 
 
+float AAuraCharacterBase::TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent,
+	class AController* EventInstigator, AActor* DamageCauser)
+{
+	const float DamageTaken = Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
+	OnDamageDelegate.Broadcast(DamageTaken);
+	return DamageTaken;
+}
+
 UAnimMontage* AAuraCharacterBase::GetHitReactMontage_Implementation()
 {
 	return HitReactMontage;
@@ -146,8 +154,14 @@ FOnDeath* AAuraCharacterBase::GetOnDeath()
 	return &OnDeath;
 }
 
+FOnDamageSignature& AAuraCharacterBase::GetOnDamageDelegate()
+{
+	return OnDamageDelegate;
+}
+
 void AAuraCharacterBase::ApplyKnockback(const FVector& KnockbackImpulse)
 {
+	// This DOES NOT need physics simulation
 	LaunchCharacter(KnockbackImpulse, true, true);
 }
 

@@ -9,6 +9,8 @@
 #include "Interaction/CombatInterface.h"
 #include "AuraCharacterBase.generated.h"
 
+
+
 class UPassiveNiagaraComponent;
 class UDebuffNiagaraComponent;
 class UNiagaraSystem;
@@ -29,6 +31,8 @@ public:
 
 	UAttributeSet* GetAttributeSet() const { return AttributeSet; }
 
+	virtual float TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent, class AController* EventInstigator, AActor* DamageCauser) override;
+	
 	/** ICombatInterface */
 	virtual UAnimMontage* GetHitReactMontage_Implementation() override;
 	
@@ -52,7 +56,8 @@ public:
 
 	virtual FOnASCRegistered& GetOnASCRegistered() override;
 	virtual FOnDeath* GetOnDeath() override;
-
+	virtual FOnDamageSignature& GetOnDamageDelegate() override;
+	
 	virtual void ApplyKnockback(const FVector& KnockbackImpulse) override;
 
 	virtual USkeletalMeshComponent* GetWeapon_Implementation() override;
@@ -69,6 +74,8 @@ public:
 	
 	UPROPERTY(BlueprintAssignable)
 	FOnDeath OnDeath;
+	
+	FOnDamageSignature OnDamageDelegate;
 
 	virtual void GetLifetimeReplicatedProps(TArray<class FLifetimeProperty>& OutLifetimeProps) const override;
 	

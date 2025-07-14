@@ -12,6 +12,7 @@ class UAbilitySystemComponent;
 
 DECLARE_MULTICAST_DELEGATE_OneParam(FOnASCRegistered, UAbilitySystemComponent*);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnDeath, AActor*, DeadActor);
+DECLARE_MULTICAST_DELEGATE_OneParam(FOnDamageSignature, float /* DamageAmount */);
 
 /**
  * Struct to hold a Montage bound to a particular GameplayTag - MontageTag.
@@ -117,6 +118,8 @@ public:
 	// NEVER RETURN BY VALUE, it might work sometimes, but not all the times
 	// A pointer or a reference both are fine
 	virtual FOnDeath* GetOnDeath() = 0;
+
+	virtual FOnDamageSignature& GetOnDamageDelegate() = 0;
 
 	virtual void ApplyKnockback(const FVector& KnockbackImpulse) = 0;
 
