@@ -103,9 +103,26 @@ bool FAuraGameplayEffectContext::NetSerialize(FArchive& Ar, class UPackageMap* M
 		{
 			RepBits |= 1 << 15;
 		}
+		if (bIsRadialDamage)
+		{
+			RepBits |= 1 << 16;
+
+			if (!FMath::IsNearlyZero(RadialDamageInnerRadius))
+			{
+				RepBits |= 1 << 17;
+			}
+			if (!FMath::IsNearlyZero(RadialDamageOuterRadius))
+			{
+				RepBits |= 1 << 18;
+			}
+			if (!RadialDamageOrigin.IsZero())
+			{
+				RepBits |= 1 << 19;
+			}
+		}
 	}
 
-	Ar.SerializeBits(&RepBits, 16);
+	Ar.SerializeBits(&RepBits, 20);
 
 	if (RepBits & (1 << 0))
 	{
@@ -196,6 +213,25 @@ bool FAuraGameplayEffectContext::NetSerialize(FArchive& Ar, class UPackageMap* M
 		// Note: Again, for some reason, Stephen uses this instead of Ar << DeathImpulse
 		KnockbackImpulse.NetSerialize(Ar, Map, bOutSuccess);
 	}
+	if (RepBits & (1 << 16))
+	{
+		bIsRadialDamage = true;
+		
+		if (RepBits & (1 << 17))
+		{
+			Ar << RadialDamageInnerRadius;
+		}
+		if (RepBits & (1 << 18))
+		{
+			Ar << RadialDamageOuterRadius;
+		}
+		if (RepBits & (1 << 19))
+		{
+			// Note: Again, for some reason, Stephen uses this instead of Ar << RadialDamageOrigin
+			RadialDamageOrigin.NetSerialize(Ar, Map, bOutSuccess);
+		}
+	}
+
 
 	// end mine
 	

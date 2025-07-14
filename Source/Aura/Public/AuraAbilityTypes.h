@@ -62,6 +62,20 @@ struct FDamageEffectParams
 	FVector KnockbackImpulse = FVector::ZeroVector;
 	
 	/** end Knockback Properties */
+
+	/** Radial Damage Properties */
+	UPROPERTY()
+	bool bIsRadialDamage = false;
+
+	UPROPERTY()
+	float RadialDamageInnerRadius = 0.f;
+
+	UPROPERTY()
+	float RadialDamageOuterRadius = 0.f;
+
+	UPROPERTY()
+	FVector RadialDamageOrigin = FVector::ZeroVector;
+	/** end Radial Damage Properties */
 };
 
 USTRUCT(BlueprintType)
@@ -97,6 +111,10 @@ public:
 	FGameplayTag GetDamageTypeTag() const { return DamageTypeTag; }
 	FVector GetDeathImpulse() const { return DeathImpulse; }
 	FVector GetKnockbackImpulse() const { return KnockbackImpulse; }
+	bool IsRadialDamage() const { return bIsRadialDamage; }
+	float GetRadialDamageInnerRadius() const { return RadialDamageInnerRadius; }
+	float GetRadialDamageOuterRadius() const { return RadialDamageOuterRadius; }
+	FVector GetRadialDamageOrigin() const { return RadialDamageOrigin; } 
 		
 	void SetIsSuccessfulDebuff(bool bInIsSuccessfulDebuff) { bIsSuccessfulDebuff = bInIsSuccessfulDebuff; }
 	void SetIsCriticalHit(bool bNewCriticalHit) { bIsCriticalHit = bNewCriticalHit; }
@@ -107,6 +125,10 @@ public:
 	void SetDamageTypeTag(const FGameplayTag& NewTag) { DamageTypeTag = NewTag; }
 	void SetDeathImpulse(const FVector& NewImpulse) { DeathImpulse = NewImpulse; }
 	void SetKnockbackImpulse(const FVector& NewImpulse) { KnockbackImpulse = NewImpulse; }
+	void SetIsRadialDamage(bool bNewIsRadialDamage) { bIsRadialDamage = bNewIsRadialDamage; }
+	void SetRadialDamageInnerRadius(float NewRadialDamageInnerRadius) { RadialDamageInnerRadius = NewRadialDamageInnerRadius; }
+	void SetRadialDamageOuterRadius(float NewRadialDamageOuterRadius) { RadialDamageOuterRadius = NewRadialDamageOuterRadius; }
+	void SetRadialDamageOrigin(const FVector& NewRadialDamageOrigin) { RadialDamageOrigin = NewRadialDamageOrigin; }
 	
 protected:
 	UPROPERTY()
@@ -135,6 +157,18 @@ protected:
 
 	UPROPERTY()
 	FVector KnockbackImpulse = FVector::ZeroVector;
+
+	UPROPERTY()
+	bool bIsRadialDamage = false;
+
+	UPROPERTY()
+	float RadialDamageInnerRadius = 0.f;
+
+	UPROPERTY()
+	float RadialDamageOuterRadius = 0.f;
+
+	UPROPERTY()
+	FVector RadialDamageOrigin = FVector::ZeroVector;
 };
 
 /** BOILERPLATE */
