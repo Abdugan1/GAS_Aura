@@ -17,7 +17,7 @@ class AURA_API UAuraDamageGameplayAbility : public UAuraGameplayAbility
 	GENERATED_BODY()
 public:
 	UFUNCTION(BlueprintPure, Category = "Damage")
-	FDamageEffectParams MakeDamageEffectParamsFromClassDefaults(AActor* TargetActor = nullptr) const;
+	FDamageEffectParams MakeDamageEffectParamsFromClassDefaults(AActor* TargetActor = nullptr, FVector RadialDamageOrigin = FVector::ZeroVector) const;
 protected:
 	/** Convenient function to cause damage to a given actor. The actor must hold ASC */
 	UFUNCTION(BlueprintCallable, Category = "Damage")
@@ -65,7 +65,4 @@ protected:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Damage")
 	float RadialDamageOuterRadius = 0.f;
-
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Damage")
-	FVector RadialDamageOrigin = FVector::ZeroVector;
 };
