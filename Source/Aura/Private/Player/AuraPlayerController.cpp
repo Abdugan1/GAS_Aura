@@ -14,6 +14,7 @@
 #include "NiagaraFunctionLibrary.h"
 #include "AbilitySystem/AuraAbilitySystemComponent.h"
 #include "Actor/MagicCircle.h"
+#include "Aura/Aura.h"
 #include "Components/DecalComponent.h"
 #include "Components/SplineComponent.h"
 #include "GameFramework/Character.h"
@@ -95,8 +96,13 @@ void AAuraPlayerController::CursorTrace()
 		
 		return;
 	}
-	
-	GetHitResultUnderCursor(ECC_Visibility, false, CursorHit);
+
+	// This is to prevent sudden focus on Enemies while casting Arcane Shards
+	// If you want to have them highlighted, that is, all of them who will be affected by the Arcane Shards.
+	// Check here. He implemented it inside PointCollection.
+	// https://www.udemy.com/course/unreal-engine-5-gas-top-down-rpg/learn/lecture/42141188#questions/22026653
+	const ECollisionChannel TraceChannel = IsValid(MagicCircleObject) ? ECC_ExcludePlayers : ECC_Visibility;
+	GetHitResultUnderCursor(TraceChannel, false, CursorHit);
 	if (!CursorHit.bBlockingHit)
 	{
 		return;
