@@ -41,6 +41,12 @@ FDamageEffectParams UAuraDamageGameplayAbility::MakeDamageEffectParamsFromClassD
 		Params.RadialDamageInnerRadius = RadialDamageInnerRadius;
 		Params.RadialDamageOuterRadius = RadialDamageOuterRadius;
 		Params.RadialDamageOrigin = RadialDamageOrigin;
+
+		// Since it's radial, not a projectile or something, it should knockback from the source of the radial damage.
+		FRotator Rotation = (TargetActor->GetActorLocation() - RadialDamageOrigin).Rotation();
+		Rotation.Pitch = 45.0f;
+		Rotation.Normalize();
+		Params.KnockbackImpulse = Rotation.Vector() * Params.KnockbackMagnitude;
 	}
 	return Params;
 }

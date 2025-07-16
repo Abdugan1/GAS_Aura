@@ -158,6 +158,7 @@ void UAuraAttributeSet::HandleIncomingDamage(const FEffectProperties& EffectProp
 			
 			if (ICombatInterface* CombatInterface = Cast<ICombatInterface>(EffectProperties.TargetAvatarActor))
 			{
+				const auto Knockback = UAuraAbilitySystemLibrary::GetKnockbackImpulse(EffectProperties.EffectContextHandle);
 				CombatInterface->ApplyKnockback(UAuraAbilitySystemLibrary::GetKnockbackImpulse(EffectProperties.EffectContextHandle));
 			}
 		}
