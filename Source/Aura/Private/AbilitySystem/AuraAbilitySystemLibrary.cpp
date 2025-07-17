@@ -128,7 +128,8 @@ TArray<FRotator> UAuraAbilitySystemLibrary::EvenlySpacedRotators(const FVector& 
 
 	if (NumRotators > 1)
 	{
-		const float DeltaSpread = Spread / (NumRotators - 1);
+		// If it's a full circle, the first and last rotators result having the same value
+		const float DeltaSpread = Spread < 360.0f ? Spread / (NumRotators - 1) : 360.0f / NumRotators;
 		for (int32 i = 0; i < NumRotators; i++)
 		{
 			const FVector Direction = LeftOfSpread.RotateAngleAxis(DeltaSpread * i, FVector::UpVector);
@@ -151,7 +152,8 @@ TArray<FVector> UAuraAbilitySystemLibrary::EvenlySpacedVectors(const FVector& Fo
 
 	if (NumVectors > 1)
 	{
-		const float DeltaSpread = Spread / (NumVectors - 1);
+		// If it's a full circle, the first and last rotators result having the same value
+		const float DeltaSpread = Spread < 360.0f ? Spread / (NumVectors - 1) : 360.0f / NumVectors;
 		for (int32 i = 0; i < NumVectors; i++)
 		{
 			const FVector Direction = LeftOfSpread.RotateAngleAxis(DeltaSpread * i, FVector::UpVector);
