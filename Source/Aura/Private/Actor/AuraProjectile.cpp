@@ -93,7 +93,8 @@ void AAuraProjectile::OnSphereOverlap(UPrimitiveComponent* OverlapComponent, AAc
 			DamageEffectParams.DeathImpulse = DeathImpulse;
 			DamageEffectParams.KnockbackImpulse = KnockbackImpulse;
 			
-			UAuraAbilitySystemLibrary::ApplyDamageEffect(DamageEffectParams);}
+			UAuraAbilitySystemLibrary::ApplyDamageEffect(DamageEffectParams);
+		}
 		
 		Destroy();
 	}

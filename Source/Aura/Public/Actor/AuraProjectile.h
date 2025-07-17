@@ -38,12 +38,13 @@ public:
 
 	UPROPERTY()
 	TObjectPtr<USceneComponent> HomingTargetSceneComponent;
+
+protected:
+	bool bHit = false;
 	
 private:
 	UPROPERTY(EditDefaultsOnly)
 	float LifeSpan = 8.f;
-
-	bool bHit = false;
 	
 	UPROPERTY(VisibleAnywhere)
 	TObjectPtr<USphereComponent> SphereComponent;

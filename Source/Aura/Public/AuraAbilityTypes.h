@@ -10,70 +10,74 @@ struct FDamageEffectParams
 	GENERATED_BODY()
 	FDamageEffectParams() = default;
 
-	UPROPERTY()
+	/**
+	 * You might wonder why BlueprintReadWrite, well, it enables to set individual params in Blueprint
+	 */
+	
+	UPROPERTY(BlueprintReadWrite)
 	TObjectPtr<UObject> WorldContextObject = nullptr;
 
-	UPROPERTY()
+	UPROPERTY(BlueprintReadWrite)
 	TSubclassOf<UGameplayEffect> DamageGameplayEffectClass;
 
-	UPROPERTY()
+	UPROPERTY(BlueprintReadWrite)
 	TObjectPtr<UAbilitySystemComponent> SourceAbilitySystemComponent;
 
-	UPROPERTY()
+	UPROPERTY(BlueprintReadWrite)
 	TObjectPtr<UAbilitySystemComponent> TargetAbiltySystemComponent;
 
-	UPROPERTY()
+	UPROPERTY(BlueprintReadWrite)
 	float BaseDamage = 0.f;
 
-	UPROPERTY()
+	UPROPERTY(BlueprintReadWrite)
 	float AbilityLevel = 1.f;
 
-	UPROPERTY()
+	UPROPERTY(BlueprintReadWrite)
 	FGameplayTag DamageTypeTag;
 
 	/** Debuff Properties */
-	UPROPERTY()
+	UPROPERTY(BlueprintReadWrite)
 	float DebuffChance = 0.f;
 
-	UPROPERTY()
+	UPROPERTY(BlueprintReadWrite)
 	float DebuffDamage = 0.f;
 
-	UPROPERTY()
+	UPROPERTY(BlueprintReadWrite)
 	float DebuffDuration = 0.f;
 
-	UPROPERTY()
+	UPROPERTY(BlueprintReadWrite)
 	float DebuffFrequency = 0.f;
 
 	/** end Debuff Properties */
 
 	/** Death Impulse Properties */
-	UPROPERTY()
+	UPROPERTY(BlueprintReadWrite)
 	float DeathImpulseMagnitude = 0.f;
 
-	UPROPERTY()
+	UPROPERTY(BlueprintReadWrite)
 	FVector DeathImpulse = FVector::ZeroVector;
 	/** end Death Impulse Properties */
 
 	/** Knockback Properties */
-	UPROPERTY()
+	UPROPERTY(BlueprintReadWrite)
 	float KnockbackMagnitude = 0.f;
 
-	UPROPERTY()
+	UPROPERTY(BlueprintReadWrite)
 	FVector KnockbackImpulse = FVector::ZeroVector;
 	
 	/** end Knockback Properties */
 
 	/** Radial Damage Properties */
-	UPROPERTY()
+	UPROPERTY(BlueprintReadWrite)
 	bool bIsRadialDamage = false;
 
-	UPROPERTY()
+	UPROPERTY(BlueprintReadWrite)
 	float RadialDamageInnerRadius = 0.f;
 
-	UPROPERTY()
+	UPROPERTY(BlueprintReadWrite)
 	float RadialDamageOuterRadius = 0.f;
 
-	UPROPERTY()
+	UPROPERTY(BlueprintReadWrite)
 	FVector RadialDamageOrigin = FVector::ZeroVector;
 	/** end Radial Damage Properties */
 };
