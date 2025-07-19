@@ -4,14 +4,14 @@
 
 #include "CoreMinimal.h"
 #include "MVVMViewModelBase.h"
-#include "MVVM_LoadScreen.generated.h"
+#include "MVVM_LoadMenu.generated.h"
 
 class UMVVM_LoadSlot;
 /**
  * 
  */
 UCLASS()
-class AURA_API UMVVM_LoadScreen : public UMVVMViewModelBase
+class AURA_API UMVVM_LoadMenu : public UMVVMViewModelBase
 {
 	GENERATED_BODY()
 public:
@@ -22,6 +22,15 @@ public:
 
 	UFUNCTION(BlueprintPure)
 	UMVVM_LoadSlot* GetLoadSlotViewModelByIndex(int32 Index) const;
+	
+	UFUNCTION(BlueprintCallable)
+	void NewSlotButtonPressed(int32 Slot, const FString& EnteredName);
+
+	UFUNCTION(BlueprintCallable)
+	void NewGameButtonPressed(int32 Slot);
+
+	UFUNCTION(BlueprintCallable)
+	void SelectedSlotButtonPressed(int32 Slot);
 	
 private:
 	UPROPERTY()
