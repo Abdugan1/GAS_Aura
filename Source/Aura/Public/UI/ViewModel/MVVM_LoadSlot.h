@@ -21,11 +21,15 @@ public:
 
 	void InitializeSlot();
 
-	UPROPERTY()
-	FString PlayerName;
+
 
 	UPROPERTY()
 	FString LoadSlotName;
 
-	
+	/** Field Notifies */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, FieldNotify, Setter, Getter)
+	FString PlayerName;
+
+	void SetPlayerName(FString NewPlayerName);
+	FString GetPlayerName() const {return PlayerName;};
 };
