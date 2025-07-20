@@ -31,6 +31,9 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	void SelectedSlotButtonPressed(int32 Slot);
+
+	void SetNumSlots(int32 NewNumSlots);
+	int32 GetNumSlots() const {return NumSlots;};
 	
 private:
 	UPROPERTY()
@@ -42,4 +45,9 @@ private:
 	TObjectPtr<UMVVM_LoadSlot> LoadSlot_1;
 	UPROPERTY()
 	TObjectPtr<UMVVM_LoadSlot> LoadSlot_2;
+	
+	/** Field Notifies */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, FieldNotify, Setter, Getter, meta=(AllowPrivateAccess=true))
+	int32 NumSlots;
 };
+
