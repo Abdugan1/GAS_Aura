@@ -28,9 +28,11 @@ public:
 
 	void SetPlayerName(FString NewPlayerName);
 	void SetLoadSlotName(FString NewLoadSlotName);
+	void SetMapName(FString NewMapName);
 	
 	FString GetPlayerName() const {return PlayerName;};
 	FString GetLoadSlotName() const {return LoadSlotName;};
+	FString GetMapName() const {return MapName;};
 
 public:
 	UPROPERTY()
@@ -44,6 +46,9 @@ private:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, FieldNotify, Setter, Getter, meta=(AllowPrivateAccess=true))
 	FString PlayerName;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, FieldNotify, Setter, Getter, meta=(AllowPrivateAccess=true))
+	FString MapName;
+	
 	/** NOTE! This is a dummy field notify. It's in beta so it needs at least one field notify bound to something
 	* just to make the whole thing work.
 	*/

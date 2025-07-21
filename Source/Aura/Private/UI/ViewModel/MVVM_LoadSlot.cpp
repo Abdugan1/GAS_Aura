@@ -18,3 +18,8 @@ void UMVVM_LoadSlot::SetLoadSlotName(FString NewLoadSlotName)
 {
 	UE_MVVM_SET_PROPERTY_VALUE(LoadSlotName, NewLoadSlotName);
 }
+
+void UMVVM_LoadSlot::SetMapName(FString NewMapName)
+{
+	UE_MVVM_SET_PROPERTY_VALUE(MapName, NewMapName);
+}

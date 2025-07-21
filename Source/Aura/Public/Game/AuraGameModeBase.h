@@ -23,6 +23,10 @@ public:
 	void SaveSlotData(UMVVM_LoadSlot* LoadSlot);
 	ULoadMenuSaveGame* GetSaveSlotData(UMVVM_LoadSlot* LoadSlot);
 	static void DeleteSlot(const FString& SlotName, int32 SlotIndex);
+
+protected:
+	virtual void BeginPlay() override;
+	
 public:
 	/** We store this as a singleton. All enemies' info about their abilities, stats, etc are located here */
 	UPROPERTY(EditDefaultsOnly, Category = "Character Class Defaults")
@@ -33,4 +37,13 @@ public:
 
 	UPROPERTY(EditDefaultsOnly, Category = "Save")
 	TSubclassOf<USaveGame> LoadMenuSaveGameClass;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Maps")
+	FString DefaultMapName;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Maps")
+	TSoftObjectPtr<UWorld> DefaultMap;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Maps")
+	TMap<FString, TSoftObjectPtr<UWorld>> Maps;
 };
