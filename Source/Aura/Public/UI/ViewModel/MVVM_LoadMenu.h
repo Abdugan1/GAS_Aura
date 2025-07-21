@@ -34,6 +34,8 @@ public:
 
 	void SetNumSlots(int32 NewNumSlots);
 	int32 GetNumSlots() const {return NumSlots;};
+
+	void LoadData();
 	
 private:
 	UPROPERTY()
