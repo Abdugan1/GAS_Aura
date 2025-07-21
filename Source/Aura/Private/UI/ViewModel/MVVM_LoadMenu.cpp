@@ -73,6 +73,13 @@ void UMVVM_LoadMenu::DeleteButtonPressed()
 	SelectedSlot = nullptr;
 }
 
+void UMVVM_LoadMenu::PlayButtonPressed()
+{
+	check(SelectedSlot);
+	AAuraGameModeBase* AuraGameMode = Cast<AAuraGameModeBase>(UGameplayStatics::GetGameMode(this));
+	AuraGameMode->TravelToMap(SelectedSlot);
+}
+
 void UMVVM_LoadMenu::SetNumSlots(int32 NewNumSlots)
 {
 	UE_MVVM_SET_PROPERTY_VALUE(NumSlots, NewNumSlots);

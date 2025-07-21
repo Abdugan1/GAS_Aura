@@ -24,6 +24,8 @@ public:
 	ULoadMenuSaveGame* GetSaveSlotData(UMVVM_LoadSlot* LoadSlot);
 	static void DeleteSlot(const FString& SlotName, int32 SlotIndex);
 
+	void TravelToMap(UMVVM_LoadSlot* LoadSlot);
+	
 protected:
 	virtual void BeginPlay() override;
 	
