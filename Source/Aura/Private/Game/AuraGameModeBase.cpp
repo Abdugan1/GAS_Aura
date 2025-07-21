@@ -4,6 +4,7 @@
 #include "Game/AuraGameModeBase.h"
 
 #include "Game/LoadMenuSaveGame.h"
+#include "GameFramework/PlayerStart.h"
 #include "Kismet/GameplayStatics.h"
 #include "UI/ViewModel/MVVM_LoadSlot.h"
 
@@ -46,6 +47,27 @@ void AAuraGameModeBase::DeleteSlot(const FString& SlotName, int32 SlotIndex)
 void AAuraGameModeBase::TravelToMap(UMVVM_LoadSlot* LoadSlot)
 {
 	UGameplayStatics::OpenLevelBySoftObjectPtr(LoadSlot, Maps.FindChecked(LoadSlot->GetMapName()));
+}
+
+AActor* AAuraGameModeBase::ChoosePlayerStart_Implementation(AController* Player)
+{
+	TArray<AActor*> PlayerStartActors;
+	UGameplayStatics::GetAllActorsOfClass(GetWorld(), APlayerStart::StaticClass(), PlayerStartActors);
+	if (PlayerStartActors.Num() > 0)
+	{
+		AActor* SelectedPlayerStartActor = PlayerStartActors[0];
+		for (AActor* PlayerStartActor : PlayerStartActors)
+		{
+			APlayerStart* PlayerStart = Cast<APlayerStart>(PlayerStartActor);
+			if (PlayerStart->PlayerStartTag == FName("TheTag"))
+			{
+				SelectedPlayerStartActor = PlayerStart;
+				break;
+			}
+		}
+		return SelectedPlayerStartActor;
+	}
+	return nullptr;
 }
 
 void AAuraGameModeBase::BeginPlay()
