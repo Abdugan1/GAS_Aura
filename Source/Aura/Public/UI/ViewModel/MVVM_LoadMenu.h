@@ -34,6 +34,9 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void SelectedSlotButtonPressed(int32 Slot);
 
+	UFUNCTION(BlueprintCallable)
+	void DeleteButtonPressed();
+	
 	void SetNumSlots(int32 NewNumSlots);
 	int32 GetNumSlots() const {return NumSlots;};
 
@@ -53,6 +56,9 @@ private:
 	UPROPERTY()
 	TObjectPtr<UMVVM_LoadSlot> LoadSlot_2;
 
+	UPROPERTY()
+	TObjectPtr<UMVVM_LoadSlot> SelectedSlot;
+	
 	/** NOTE! This is a dummy field notify. It's in beta so it needs at least one field notify bound to something
 	 * just to make the whole thing work.
 	 */

@@ -35,6 +35,9 @@ public:
 public:
 	UPROPERTY()
 	TEnumAsByte<ESaveSlotStatus> SlotStatus;
+
+	UPROPERTY()
+	int32 SlotIndex = -1;
 	
 private:
 	/** Field Notifies */
