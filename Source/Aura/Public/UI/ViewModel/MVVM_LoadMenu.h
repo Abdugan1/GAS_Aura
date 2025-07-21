@@ -6,6 +6,8 @@
 #include "MVVMViewModelBase.h"
 #include "MVVM_LoadMenu.generated.h"
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FSlotSelected);
+
 class UMVVM_LoadSlot;
 /**
  * 
@@ -36,6 +38,9 @@ public:
 	int32 GetNumSlots() const {return NumSlots;};
 
 	void LoadData();
+
+	UPROPERTY(BlueprintAssignable)
+	FSlotSelected SlotSelected;
 	
 private:
 	UPROPERTY()
@@ -47,7 +52,10 @@ private:
 	TObjectPtr<UMVVM_LoadSlot> LoadSlot_1;
 	UPROPERTY()
 	TObjectPtr<UMVVM_LoadSlot> LoadSlot_2;
-	
+
+	/** NOTE! This is a dummy field notify. It's in beta so it needs at least one field notify bound to something
+	 * just to make the whole thing work.
+	 */
 	/** Field Notifies */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, FieldNotify, Setter, Getter, meta=(AllowPrivateAccess=true))
 	int32 NumSlots;
