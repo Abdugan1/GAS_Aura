@@ -40,6 +40,9 @@ public:
 
 	UPROPERTY()
 	int32 SlotIndex = -1;
+
+	UPROPERTY()
+	FName PlayerStartTag;
 	
 private:
 	/** Field Notifies */
