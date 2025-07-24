@@ -14,6 +14,7 @@
 #include "Player/AuraPlayerState.h"
 #include "UI/HUD/AuraHUD.h"
 #include "NiagaraComponent.h"
+#include "AbilitySystem/AuraAbilitySystemLibrary.h"
 #include "AbilitySystem/AuraAttributeSet.h"
 #include "Game/AuraGameInstance.h"
 #include "Game/AuraGameModeBase.h"
@@ -62,7 +63,7 @@ void AAuraCharacter::PossessedBy(AController* NewController)
 	/** TODO: Load in Abilities from disk */
 	// Since Abilities are granted in the server, 
 	// and this function works in the server, we are good.
-	AddCharacterAbilities();
+	// AddCharacterAbilities(); REMOVED. WENT TO LoadProgress
 }
 
 
@@ -83,19 +84,23 @@ void AAuraCharacter::LoadProgress()
 	AAuraGameModeBase* AuraGameMode = Cast<AAuraGameModeBase>(UGameplayStatics::GetGameMode(this));
 	ULoadMenuSaveGame* SaveData = AuraGameMode->RetrieveInGameSaveData();
 	AAuraPlayerState* AuraPlayerState = GetPlayerState<AAuraPlayerState>();
-	AuraPlayerState->SetLevel(SaveData->PlayerLevel);
-	AuraPlayerState->SetXP(SaveData->XP);
-	AuraPlayerState->SetAttributePoints(SaveData->AttributePoints);
-	AuraPlayerState->SetSpellPoints(SaveData->SpellPoints);
+
 
 	if (SaveData->bFirstTimeLoadIn)
 	{
 		InitializeDefaultAttributes();
+		/** TODO: Load in Abilities from disk */
 		AddCharacterAbilities();
 	}
 	else
 	{
-		
+		AuraPlayerState->SetLevel(SaveData->PlayerLevel);
+		AuraPlayerState->SetXP(SaveData->XP);
+		AuraPlayerState->SetAttributePoints(SaveData->AttributePoints);
+		AuraPlayerState->SetSpellPoints(SaveData->SpellPoints);
+		UAuraAbilitySystemLibrary::InitializeDefaultAttributesFromSavedData(this, GetAbilitySystemComponent(), SaveData);
+		ApplyEffectToSelf(DefaultSecondaryAttributes, AuraPlayerState->GetPlayerLevel());
+		ApplyEffectToSelf(DefaultVitalAttributes, AuraPlayerState->GetPlayerLevel());
 	}
 }
 

@@ -9,6 +9,7 @@
 #include "UI/WidgetController/SpellMenuWidgetController.h"
 #include "AuraAbilitySystemLibrary.generated.h"
 
+class ULoadMenuSaveGame;
 struct FGameplayEffectContextHandle;
 struct FDamageEffectParams;
 class UCharacterClassInfo;
@@ -59,6 +60,9 @@ public:
 	/** Initializes a given ASC's (character's) default attributes using a special DataAsset */
 	UFUNCTION(BlueprintCallable, Category = "AuraAbilitySystemLibrary|CharacterClassDefaults")
 	static void InitializeDefaultAttributes(const UObject* WorldContextObject, ECharacterClass CharacterClass, float Level, UAbilitySystemComponent* AbilitySystemComponent);
+
+	UFUNCTION(BlueprintCallable, Category = "AuraAbilitySystemLibrary|CharacterClassDefaults")
+	static void InitializeDefaultAttributesFromSavedData(const UObject* WorldContextObject, UAbilitySystemComponent* AbilitySystemComponent, ULoadMenuSaveGame* SaveGame);
 
 	/** Initializes a given ASC's (character's) default abilities using a special DataAsset */
 	UFUNCTION(BlueprintCallable, Category = "AuraAbilitySystemLibrary|CharacterClassDefaults")

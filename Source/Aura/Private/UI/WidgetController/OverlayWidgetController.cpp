@@ -39,9 +39,9 @@ void UOverlayWidgetController::BindCallbacksToDependencies()
 
 	GetAuraPlayerState()->OnXPChanged.AddUObject(this, &UOverlayWidgetController::OnXPChanged);
 	GetAuraPlayerState()->OnLevelChanged.AddLambda(
-		[this](int32 NewLevel)
+		[this](int32 NewLevel, bool bShowLevelUpMessage)
 	{
-		OnPlayerLevelChanged.Broadcast(NewLevel);
+		OnPlayerLevelChanged.Broadcast(NewLevel, bShowLevelUpMessage);
 	});
 }
 

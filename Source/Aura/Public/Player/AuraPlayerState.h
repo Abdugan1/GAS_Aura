@@ -9,6 +9,7 @@
 
 class ULevelUpInfo;
 DECLARE_MULTICAST_DELEGATE_OneParam(FOnPlayerStatChanged, int32 /*StatValue*/);
+DECLARE_MULTICAST_DELEGATE_TwoParams(FOnLevelChanged, int32 /*StatValue*/, bool /* bShowLevelUpMessage */);
 
 class UAttributeSet;
 /**
@@ -33,11 +34,13 @@ public:
 	
 	void SetXP(int32 NewXP);
 	void SetLevel(int32 NewLevel);
+	void SetLevelWithLevelUpMessage(int32 NewLevel);
 	void SetAttributePoints(int32 NewAttributePoints);
 	void SetSpellPoints(int32 NewSpellPoints);
 	
 	
 	void AddToXp(int32 AdditionalXP);
+	/** NOTE: This function triggers level up message! */
 	void AddToLevel(int32 AdditionalLevel);
 	void AddToAttributePoints(int32 AdditionalAttributePoints);
 	void AddToSpellPoints(int32 AdditionalSpellPoints);
@@ -45,7 +48,7 @@ public:
 	/** public DELEGATES */
 public: 
 	FOnPlayerStatChanged OnXPChanged;
-	FOnPlayerStatChanged OnLevelChanged;
+	FOnLevelChanged OnLevelChanged;
 	FOnPlayerStatChanged OnAttributePointsChanged;
 	FOnPlayerStatChanged OnSpellPointsChanged;
 

@@ -45,7 +45,13 @@ void AAuraPlayerState::SetXP(int32 NewXP)
 void AAuraPlayerState::SetLevel(int32 NewLevel)
 {
 	Level = NewLevel;
-	OnLevelChanged.Broadcast(NewLevel);
+	OnLevelChanged.Broadcast(NewLevel, false);
+}
+
+void AAuraPlayerState::SetLevelWithLevelUpMessage(int32 NewLevel)
+{
+	Level = NewLevel;
+	OnLevelChanged.Broadcast(NewLevel, true);
 }
 
 void AAuraPlayerState::SetAttributePoints(int32 NewAttributePoints)
@@ -68,7 +74,7 @@ void AAuraPlayerState::AddToXp(int32 AdditionalXP)
 
 void AAuraPlayerState::AddToLevel(int32 AdditionalLevel)
 {
-	SetLevel(Level + AdditionalLevel);
+	SetLevelWithLevelUpMessage(Level + AdditionalLevel);
 }
 
 void AAuraPlayerState::AddToAttributePoints(int32 AdditionalAttributePoints)
@@ -83,7 +89,7 @@ void AAuraPlayerState::AddToSpellPoints(int32 AdditionalSpellPoints)
 
 void AAuraPlayerState::OnRep_Level(int32 OldLevel)
 {
-	OnLevelChanged.Broadcast(Level);
+	OnLevelChanged.Broadcast(Level, true /** Nasty. This is no longer a multiplayer game... */);
 }
 
 void AAuraPlayerState::OnRep_XP(int32 OldXP)
