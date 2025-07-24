@@ -14,6 +14,7 @@
 #include "Player/AuraPlayerState.h"
 #include "UI/HUD/AuraHUD.h"
 #include "NiagaraComponent.h"
+#include "AbilitySystem/AuraAttributeSet.h"
 #include "Game/AuraGameInstance.h"
 #include "Game/AuraGameModeBase.h"
 #include "Game/LoadMenuSaveGame.h"
@@ -55,6 +56,10 @@ void AAuraCharacter::PossessedBy(AController* NewController)
 {
 	Super::PossessedBy(NewController);
 	InitAbilityActorInfo();
+
+	LoadProgress();
+	
+	/** TODO: Load in Abilities from disk */
 	// Since Abilities are granted in the server, 
 	// and this function works in the server, we are good.
 	AddCharacterAbilities();
@@ -70,6 +75,28 @@ void AAuraCharacter::OnRep_PlayerState()
 {
 	Super::OnRep_PlayerState();
 	InitAbilityActorInfo();
+}
+
+
+void AAuraCharacter::LoadProgress()
+{
+	AAuraGameModeBase* AuraGameMode = Cast<AAuraGameModeBase>(UGameplayStatics::GetGameMode(this));
+	ULoadMenuSaveGame* SaveData = AuraGameMode->RetrieveInGameSaveData();
+	AAuraPlayerState* AuraPlayerState = GetPlayerState<AAuraPlayerState>();
+	AuraPlayerState->SetLevel(SaveData->PlayerLevel);
+	AuraPlayerState->SetXP(SaveData->XP);
+	AuraPlayerState->SetAttributePoints(SaveData->AttributePoints);
+	AuraPlayerState->SetSpellPoints(SaveData->SpellPoints);
+
+	if (SaveData->bFirstTimeLoadIn)
+	{
+		InitializeDefaultAttributes();
+		AddCharacterAbilities();
+	}
+	else
+	{
+		
+	}
 }
 
 
@@ -183,6 +210,21 @@ void AAuraCharacter::SaveProgress_Implementation(const FName& PlayerStartTag)
 	AAuraGameModeBase* AuraGameMode = Cast<AAuraGameModeBase>(UGameplayStatics::GetGameMode(this));
 	ULoadMenuSaveGame* SaveData = AuraGameMode->RetrieveInGameSaveData();
 	SaveData->PlayerStartTag = PlayerStartTag;
+
+	AAuraPlayerState* AuraPlayerState = GetPlayerState<AAuraPlayerState>();
+	SaveData->PlayerLevel = AuraPlayerState->GetPlayerLevel();
+	SaveData->XP = AuraPlayerState->GetXP();
+	SaveData->AttributePoints = AuraPlayerState->GetAttributePoints();
+	SaveData->SpellPoints = AuraPlayerState->GetSpellPoints();
+
+	UAuraAttributeSet* AuraAttributeSet = Cast<UAuraAttributeSet>(GetAttributeSet());
+	SaveData->Strength = AuraAttributeSet->GetStrength();
+	SaveData->Intelligence = AuraAttributeSet->GetIntelligence();
+	SaveData->Resilience = AuraAttributeSet->GetResilience();
+	SaveData->Vigor = AuraAttributeSet->GetVigor();
+
+	SaveData->bFirstTimeLoadIn = false;
+	
 	AuraGameMode->SaveInGameProgressData(SaveData);
 }
 
@@ -218,8 +260,8 @@ void AAuraCharacter::InitAbilityActorInfo()
 		}
 	}
 
-	InitializeDefaultAttributes();
-
+	// InitializeDefaultAttributes(); REMOVED
+	
 	AbilitySystemComponent->RegisterGameplayTagEvent(
 		FAuraGameplayTags::Get().Debuff_Stun,
 		EGameplayTagEventType::NewOrRemoved)

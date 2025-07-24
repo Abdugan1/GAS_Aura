@@ -57,6 +57,8 @@ protected:
 	virtual void OnRep_IsStunned(bool OldIsStunned) const override;
 	/** end AuraCharacterBase */
 
+	void LoadProgress();
+	
 private:
 	UFUNCTION(NetMulticast, Unreliable)
 	void MulticastLevelUpParticles();
