@@ -61,5 +61,6 @@ public:
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
 	void HideMagicCircle();
 
-	// void SetMaterial
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
+	void SaveProgress(const FName& PlayerStartTag);	
 };

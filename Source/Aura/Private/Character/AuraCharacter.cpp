@@ -14,7 +14,11 @@
 #include "Player/AuraPlayerState.h"
 #include "UI/HUD/AuraHUD.h"
 #include "NiagaraComponent.h"
+#include "Game/AuraGameInstance.h"
+#include "Game/AuraGameModeBase.h"
+#include "Game/LoadMenuSaveGame.h"
 #include "GameFramework/InputSettings.h"
+#include "Kismet/GameplayStatics.h"
 
 AAuraCharacter::AAuraCharacter()
 {
@@ -172,6 +176,14 @@ void AAuraCharacter::HideMagicCircle_Implementation()
 	check(AuraPlayerController);
 	AuraPlayerController->HideMagicCircle();
 	AuraPlayerController->bShowMouseCursor = true;
+}
+
+void AAuraCharacter::SaveProgress_Implementation(const FName& PlayerStartTag)
+{
+	AAuraGameModeBase* AuraGameMode = Cast<AAuraGameModeBase>(UGameplayStatics::GetGameMode(this));
+	ULoadMenuSaveGame* SaveData = AuraGameMode->RetrieveInGameSaveData();
+	SaveData->PlayerStartTag = PlayerStartTag;
+	AuraGameMode->SaveInGameProgressData(SaveData);
 }
 
 

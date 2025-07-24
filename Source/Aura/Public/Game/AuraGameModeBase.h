@@ -22,7 +22,10 @@ class AURA_API AAuraGameModeBase : public AGameModeBase
 public:
 	void SaveSlotData(UMVVM_LoadSlot* LoadSlot);
 	ULoadMenuSaveGame* GetSaveSlotData(UMVVM_LoadSlot* LoadSlot);
+	ULoadMenuSaveGame* GetSaveSlotData(const FString& SlotName, int32 SlotIndex);
+	ULoadMenuSaveGame* RetrieveInGameSaveData();
 	static void DeleteSlot(const FString& SlotName, int32 SlotIndex);
+	void SaveInGameProgressData(ULoadMenuSaveGame* SaveData);
 
 	void TravelToMap(UMVVM_LoadSlot* LoadSlot);
 	

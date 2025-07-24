@@ -28,10 +28,15 @@ void AAuraGameModeBase::SaveSlotData(UMVVM_LoadSlot* LoadSlot)
 
 ULoadMenuSaveGame* AAuraGameModeBase::GetSaveSlotData(UMVVM_LoadSlot* LoadSlot)
 {
+	return GetSaveSlotData(LoadSlot->GetLoadSlotName(), LoadSlot->SlotIndex);
+}
+
+ULoadMenuSaveGame* AAuraGameModeBase::GetSaveSlotData(const FString& SlotName, int32 SlotIndex)
+{
 	USaveGame* SaveGameObject = nullptr;
-	if (UGameplayStatics::DoesSaveGameExist(LoadSlot->GetLoadSlotName(), LoadSlot->SlotIndex))
+	if (UGameplayStatics::DoesSaveGameExist(SlotName, SlotIndex))
 	{
-		SaveGameObject = UGameplayStatics::LoadGameFromSlot(LoadSlot->GetLoadSlotName(), LoadSlot->SlotIndex);
+		SaveGameObject = UGameplayStatics::LoadGameFromSlot(SlotName, SlotIndex);
 	}
 	else
 	{
@@ -40,12 +45,33 @@ ULoadMenuSaveGame* AAuraGameModeBase::GetSaveSlotData(UMVVM_LoadSlot* LoadSlot)
 	return Cast<ULoadMenuSaveGame>(SaveGameObject);
 }
 
+ULoadMenuSaveGame* AAuraGameModeBase::RetrieveInGameSaveData()
+{
+	UAuraGameInstance* AuraGameInstance = GetGameInstance<UAuraGameInstance>();
+
+	const FString InGameLoadSlotName = AuraGameInstance->LoadSlotName;
+	const int32 InGameLoadSlotIndex = AuraGameInstance->LoadSlotIndex;
+
+	return GetSaveSlotData(InGameLoadSlotName, InGameLoadSlotIndex);
+}
+
 void AAuraGameModeBase::DeleteSlot(const FString& SlotName, int32 SlotIndex)
 {
 	if (UGameplayStatics::DoesSaveGameExist(SlotName, SlotIndex))
 	{
 		UGameplayStatics::DeleteGameInSlot(SlotName, SlotIndex);
 	}
+}
+
+void AAuraGameModeBase::SaveInGameProgressData(ULoadMenuSaveGame* SaveData)
+{
+	UAuraGameInstance* AuraGameInstance = GetGameInstance<UAuraGameInstance>();
+	AuraGameInstance->PlayerStartTag = SaveData->PlayerStartTag;
+
+	const FString InGameLoadSlotName = AuraGameInstance->LoadSlotName;
+	const int32 InGameLoadSlotIndex = AuraGameInstance->LoadSlotIndex;
+
+	UGameplayStatics::SaveGameToSlot(SaveData, InGameLoadSlotName, InGameLoadSlotIndex);
 }
 
 void AAuraGameModeBase::TravelToMap(UMVVM_LoadSlot* LoadSlot)
